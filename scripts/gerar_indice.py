@@ -5,6 +5,17 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 SECTIONS = ["boards", "shields"]
 
 
+def _strip_inline_comment(value):
+    value = value.strip()
+    if value[:1] in ('"', "'"):
+        quote = value[0]
+        end = value.find(quote, 1)
+        if end != -1:
+            return value[: end + 1]
+        return value
+    return value.split("#", 1)[0].strip()
+
+
 def parse_front_matter(readme_path):
     text = readme_path.read_text(encoding="utf-8")
     lines = text.splitlines()
@@ -27,6 +38,7 @@ def parse_front_matter(readme_path):
         key, value = line.split(":", 1)
         key = key.strip()
         value = value.strip()
+        value = _strip_inline_comment(value)
         if key == "tags":
             value = value.strip("[]")
             data[key] = [

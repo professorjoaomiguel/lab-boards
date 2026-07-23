@@ -91,5 +91,61 @@ class TestGenerateIndex(unittest.TestCase):
         )
 
 
+class TestFrontMatterComentarioInline(unittest.TestCase):
+    def test_remove_comentario_inline_do_valor_de_tipo(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            readme = Path(tmp) / "README.md"
+            readme.write_text(
+                '---\n'
+                'titulo: "Item com comentario"\n'
+                'tipo: placa            # placa | shield\n'
+                'tags: [teste]\n'
+                '---\n'
+                '# Item\n',
+                encoding="utf-8",
+            )
+            data = gi.parse_front_matter(readme)
+            self.assertEqual(data["tipo"], "placa")
+
+
+class TestParseFrontMatterErroDeFechamento(unittest.TestCase):
+    def test_levanta_erro_sem_delimitador_de_fechamento(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            readme = Path(tmp) / "README.md"
+            readme.write_text(
+                '---\ntitulo: "Sem fechamento"\ntipo: placa\n# falta o --- final\n',
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                gi.parse_front_matter(readme)
+
+
+class TestItemSemTags(unittest.TestCase):
+    def test_tags_ausentes_ou_vazias_viram_lista_vazia(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            readme = Path(tmp) / "README.md"
+            readme.write_text(
+                '---\ntitulo: "Sem tags"\ntipo: placa\ntags: []\n---\n# Sem tags\n',
+                encoding="utf-8",
+            )
+            data = gi.parse_front_matter(readme)
+            self.assertEqual(data["tags"], [])
+
+    def test_generate_index_nao_quebra_com_item_sem_tags(self):
+        items = [
+            {
+                "titulo": "Sem tags",
+                "tipo": "placa",
+                "tags": [],
+                "link": "boards/sem-tags/README.md",
+            },
+        ]
+        content = gi.generate_index(items)
+        self.assertIn(
+            "| Sem tags | placa |  | [boards/sem-tags/README.md](boards/sem-tags/README.md) |",
+            content,
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
