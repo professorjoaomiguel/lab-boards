@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+
+# Claude Code (subagent-driven-development scratch state; self-ignoring but
+# kept here too for clarity/portability)
+.superpowers/
+
+# Claude Code local settings (machine-specific, not shared)
+.claude/settings.local.json
+
+# OS cruft
+.DS_Store
+Thumbs.db
