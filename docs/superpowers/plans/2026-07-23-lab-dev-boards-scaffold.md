@@ -15,8 +15,8 @@
 - `scripts/gerar_indice.py` não pode depender de bibliotecas externas (só stdlib).
 - A geração do `INDEX.md` é manual (`python scripts/gerar_indice.py`) — sem git hook nem CI.
 - Código de teste/validação de periféricos fica dentro da pasta do próprio item (`<item>/code/`), não em uma árvore separada no topo do repo.
-- Sem `AGENTS.md`/`CLAUDE.md` dedicado por enquanto — convenções ficam só no README raiz.
 - `boards/` e `shields/` são pastas separadas por tipo (não uma pasta única `devices/`).
+- (Adendo 2026-07-23) `.ai/` é a SSoT para agentes de IA: `.ai/README.md` (ponto de entrada), `.ai/CONVENTIONS.md` (guia detalhado de convenções, substitui a ideia de um `AGENTS.md`/`CLAUDE.md` dedicado), `.ai/STATE.md` (log vivo de itens documentados, decisões e próximos passos).
 
 ---
 
@@ -458,4 +458,161 @@ Expected: `7` — uma ocorrência na tabela geral em "Todos os itens", mais uma 
 ```bash
 git add boards/esp32-s3-n16r8 INDEX.md
 git commit -m "Add first board entry (ESP32-S3 N16R8) and generated index"
+```
+
+---
+
+### Task 4: Pasta `.ai/` como SSoT para agentes de IA
+
+**Files:**
+- Create: `.ai/README.md`
+- Create: `.ai/CONVENTIONS.md`
+- Create: `.ai/STATE.md`
+- Modify: `README.md` (raiz)
+
+**Interfaces:**
+- Consumes: a estrutura e as decisões já registradas em `docs/superpowers/specs/2026-07-23-repositorio-documentacao-placas-design.md` e no restante deste plano.
+- Produces: `.ai/CONVENTIONS.md` passa a ser a referência canônica e detalhada para qualquer agente de IA adicionar ou editar itens; o README raiz aponta para ela em vez de duplicar o passo a passo completo.
+
+- [ ] **Step 1: Criar `.ai/README.md`**
+
+Crie `.ai/README.md` com este conteúdo exato:
+
+```markdown
+# .ai/
+
+Fonte única de verdade (SSoT) para agentes de IA (Claude, Antigravity,
+Copilot, etc.) que constroem este repositório junto com o mantenedor.
+
+- [`CONVENTIONS.md`](CONVENTIONS.md) — como este repositório é estruturado
+  e as regras para adicionar ou editar um item.
+- [`STATE.md`](STATE.md) — o que já foi feito, decisões tomadas e o que
+  falta, para qualquer agente retomar o contexto do zero.
+```
+
+- [ ] **Step 2: Criar `.ai/CONVENTIONS.md`**
+
+Crie `.ai/CONVENTIONS.md` com este conteúdo exato:
+
+```markdown
+# Convenções para agentes de IA
+
+Guia de referência para qualquer agente de IA (Claude, Antigravity,
+Copilot, etc.) que for adicionar ou editar conteúdo neste repositório.
+
+## Estrutura do repositório
+
+- `boards/<slug>/` — placas de desenvolvimento (ESP32, Arduino, etc.)
+- `shields/<slug>/` — shields e módulos que acoplam nas placas (teclado,
+  display, etc.)
+- `templates/item-README.md` — template a ser copiado para criar um item novo.
+- `scripts/gerar_indice.py` — gera `INDEX.md` a partir do front matter de
+  todos os itens.
+- `docs/superpowers/specs/` e `docs/superpowers/plans/` — histórico de
+  design e planos de implementação deste repositório.
+
+## Slugs
+
+O nome da pasta de cada item é um slug: minúsculo, com hífens no lugar de
+espaços, sem acentos (ex: `esp32-s3-n16r8`, `teclado-matricial-4x4`).
+
+## Adicionar um item novo
+
+1. Copie `templates/item-README.md` para
+   `boards/<slug>/README.md` ou `shields/<slug>/README.md`.
+2. Preencha o front matter:
+   - `titulo`: nome de exibição do item, entre aspas.
+   - `tipo`: `placa` ou `shield`.
+   - `tags`: lista entre colchetes, minúsculas, sem espaços dentro de cada
+     tag (ex: `[esp32, wifi, i2c]`). Não deixe comentários na mesma linha
+     de um valor de front matter que não seja `tags` — o parser do script
+     de índice remove comentários (`# ...`) de qualquer valor, mas evite
+     depender disso além do que o template já usa.
+3. Preencha as seções do template (visão geral, fotos, diagrama
+   esquemático, componentes, funcionalidades, referências).
+4. Crie as subpastas `imagens/` (fotos e diagramas) e `code/` (código de
+   teste/validação, quando existir) dentro da pasta do item.
+5. Rode `python scripts/gerar_indice.py` para atualizar o `INDEX.md`. A
+   geração é sempre manual — não há hook de git nem CI fazendo isso
+   automaticamente.
+6. Atualize `.ai/STATE.md` com o item novo.
+7. Faça commit do item novo junto com o `INDEX.md` atualizado.
+
+## Testes
+
+`scripts/gerar_indice.py` tem testes em `scripts/test_gerar_indice.py`,
+rodados com `python -m unittest scripts/test_gerar_indice.py -v`. Qualquer
+mudança no script deve manter esses testes passando e seguir TDD (teste
+antes da implementação).
+```
+
+- [ ] **Step 3: Criar `.ai/STATE.md`**
+
+Crie `.ai/STATE.md` com este conteúdo exato:
+
+```markdown
+# Estado do projeto
+
+Log vivo do que já foi feito e do que falta neste repositório. Atualize
+este arquivo sempre que adicionar um item novo ou tomar uma decisão
+estrutural.
+
+## Itens documentados
+
+| Item | Tipo | Status |
+|------|------|--------|
+| [ESP32-S3 N16R8 DevKit](../boards/esp32-s3-n16r8/README.md) | placa | Estrutura completa; fotos e diagrama ainda pendentes |
+
+## Decisões tomadas
+
+- Estrutura do repositório, template de item, sistema de tags e script de
+  índice: ver `docs/superpowers/specs/2026-07-23-repositorio-documentacao-placas-design.md`.
+- Plano de implementação do scaffold inicial: ver
+  `docs/superpowers/plans/2026-07-23-lab-dev-boards-scaffold.md`.
+- `.ai/` como SSoT para agentes de IA: ver o adendo no spec acima
+  (2026-07-23).
+
+## Próximos passos
+
+- Adicionar fotos e diagrama esquemático reais de `boards/esp32-s3-n16r8/`.
+- Documentar mais placas e shields conforme forem usados em aula.
+- Preencher `code/` de cada item com código de teste/validação de
+  periféricos, quando disponível.
+```
+
+- [ ] **Step 4: Atualizar o README raiz para apontar para `.ai/`**
+
+No `README.md` da raiz, substitua a seção "Como adicionar um item novo"
+inteira (o bloco que começa em `## Como adicionar um item novo` e termina
+antes do fim do arquivo) por este conteúdo exato:
+
+```markdown
+## Como adicionar um item novo
+
+Passo a passo resumido:
+
+1. Copie [`templates/item-README.md`](templates/item-README.md) para
+   `boards/<slug-do-item>/README.md` ou `shields/<slug-do-item>/README.md`.
+2. Preencha o front matter (`titulo`, `tipo`, `tags`) e as seções do
+   template.
+3. Crie as subpastas `imagens/` e `code/` dentro da pasta do item.
+4. Rode `python scripts/gerar_indice.py` para atualizar o `INDEX.md`.
+5. Faça commit do item novo junto com o `INDEX.md` atualizado.
+
+Para o guia completo de convenções (formato exato do front matter,
+convenção de slugs, testes do script de índice), veja
+[`.ai/CONVENTIONS.md`](.ai/CONVENTIONS.md) — é a referência usada por
+agentes de IA que constroem este repositório.
+```
+
+- [ ] **Step 5: Verificar os quatro arquivos**
+
+Run: `grep -l "Fonte única de verdade" .ai/README.md && grep -l "Adicionar um item novo" .ai/CONVENTIONS.md && grep -l "Itens documentados" .ai/STATE.md && grep -l "CONVENTIONS.md" README.md`
+Expected: os quatro caminhos impressos (`.ai/README.md`, `.ai/CONVENTIONS.md`, `.ai/STATE.md`, `README.md`), sem erro.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add .ai README.md
+git commit -m "Add .ai/ as SSoT for AI agents building this repo"
 ```
