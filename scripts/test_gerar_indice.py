@@ -61,6 +61,30 @@ class TestFindItems(unittest.TestCase):
             esp32_item = next(item for item in items if item["titulo"] == "ESP32 DevKit V1")
             self.assertEqual(esp32_item["link"], "boards/esp32-devkit-v1/README.md")
 
+    def test_ignora_readme_solto_na_raiz_da_secao(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "shields").mkdir(parents=True)
+            (root / "shields" / "README.md").write_text(
+                "# Shields\n\nAinda sem itens documentados.\n", encoding="utf-8"
+            )
+            board_dir = root / "boards" / "esp32-devkit-v1"
+            board_dir.mkdir(parents=True)
+            (board_dir / "README.md").write_text(
+                '---\n'
+                'titulo: "ESP32 DevKit V1"\n'
+                'tipo: placa\n'
+                'tags: [esp32]\n'
+                '---\n'
+                '# ESP32\n',
+                encoding="utf-8",
+            )
+
+            items = gi.find_items(root=root)
+
+            self.assertEqual(len(items), 1)
+            self.assertEqual(items[0]["titulo"], "ESP32 DevKit V1")
+
 
 class TestGenerateIndex(unittest.TestCase):
     def test_agrupa_itens_por_tag(self):

@@ -24,7 +24,8 @@ Passo a passo resumido:
    template.
 3. Crie as subpastas `imagens/` e `code/` dentro da pasta do item.
 4. Rode `python scripts/gerar_indice.py` para atualizar o `INDEX.md`.
-5. Faça commit do item novo junto com o `INDEX.md` atualizado.
+5. Atualize [`.ai/STATE.md`](.ai/STATE.md) com o item novo.
+6. Faça commit do item novo junto com o `INDEX.md` atualizado.
 
 Para o guia completo de convenções (formato exato do front matter,
 convenção de slugs, testes do script de índice), veja

@@ -1,6 +1,6 @@
-# Indice
+# Índice
 
-Gerado automaticamente por `scripts/gerar_indice.py`. Nao editar a mao.
+Gerado automaticamente por `scripts/gerar_indice.py`. Não editar à mão.
 
 ## Todos os itens
 
