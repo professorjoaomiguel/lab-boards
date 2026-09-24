@@ -9,6 +9,7 @@ estrutural.
 | Item | Tipo | Status |
 |------|------|--------|
 | [ESP32-S3 N16R8 DevKit](../boards/esp32-s3-n16r8/README.md) | placa | Estrutura completa; fotos e diagrama ainda pendentes |
+| [Shield Multifunção 9 em 1 (UNO)](../shields/uno-shield-9in1/README.md) | shield | Pinagem, fotos e componentes completos; código de teste pendente |
 
 ## Decisões tomadas
 
@@ -23,5 +24,7 @@ estrutural.
 
 - Adicionar fotos e diagrama esquemático reais de `boards/esp32-s3-n16r8/`.
 - Documentar mais placas e shields conforme forem usados em aula.
+- Escrever código de teste de cada periférico do shield 9 em 1
+  (`shields/uno-shield-9in1/code/`).
 - Preencher `code/` de cada item com código de teste/validação de
   periféricos, quando disponível.
