@@ -55,6 +55,9 @@ microcontrolador em aula:
 - Um shield de 3,3V sobre uma placa de 5V pode receber 5V nas saídas da
   placa e queimar os sensores do shield.
 
+Em **Referências**, toda placa leva o link para o datasheet de cada
+microcontrolador que ela tem (principal e auxiliares, como a ponte USB).
+
 Sempre informe a tensão lógica, se as entradas toleram 5V e a corrente
 máxima por pino, e diga explicitamente com quais placas/shields do
 repositório o item é compatível. Quando um dado não puder ser confirmado

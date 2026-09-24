@@ -36,5 +36,5 @@ o que acontece se misturar 5V com 3,3V.
 (preenchido futuramente — ver pasta `code/`)
 
 ## Referências
-- Datasheet: link
+- Datasheet do microcontrolador: link
 - Loja/fabricante: link

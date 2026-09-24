@@ -36,11 +36,9 @@ Também traz barras de pinos para expansão: I2C, serial TTL, digitais livres
 
 | Placa | Lógica | Compatível? | Observações |
 |-------|--------|-------------|-------------|
-| Arduino UNO R3 (ATmega328P) | 5V | ✅ Sim | Placa-alvo original do shield. Até 20 mA por pino. ADC de 10 bits. |
-| Arduino UNO R4 Minima / WiFi (Renesas RA4M1) | 5V | ✅ Sim | Mesmo formato e pinagem. **Corrente máxima de 8 mA por pino** (menor que a do R3). ADC de 10 bits por padrão, configurável até 14 bits com `analogReadResolution()`. |
+| [Arduino UNO R3](../../boards/arduino-uno-r3/README.md) (ATmega328P) | 5V | ✅ Sim | Placa-alvo original do shield. Até 20 mA por pino. ADC de 10 bits. |
+| [Arduino UNO R4 Minima / WiFi](../../boards/arduino-uno-r4/README.md) (Renesas RA4M1) | 5V | ✅ Sim | Mesmo formato e pinagem. **Corrente máxima de 8 mA por pino** (menor que a do R3). ADC de 10 bits por padrão, configurável até 14 bits com `analogReadResolution()`. |
 | ESP32-S3 N16R8 DevKit e outras placas de 3,3V | 3,3V | ❌ Não | Risco de queimar os GPIOs. Ver [ESP32-S3 N16R8](../../boards/esp32-s3-n16r8/README.md). |
-
-As fichas das placas UNO R3 e UNO R4 serão adicionadas em `boards/`.
 
 ## Fotos
 ![frente e verso](imagens/frente-verso.jpg)
@@ -73,8 +71,9 @@ As fichas das placas UNO R3 e UNO R4 serão adicionadas em `boards/`.
 
 > **Atenção:** D13 também é o LED embutido do UNO (`LED_BUILTIN`), então o
 > LED azul acende junto com ele. D9–D11 são pinos PWM, o que permite variar
-> as cores do LED RGB com `analogWrite()`. O serial TTL usa os mesmos pinos
-> D0/D1 da USB: evite usá-lo enquanto o Monitor Serial estiver aberto.
+> as cores do LED RGB com `analogWrite()`. O serial TTL usa os pinos D0/D1. No
+> UNO R3, eles são a mesma porta da USB: evite usá-los com o Monitor Serial
+> aberto. No UNO R4, o serial TTL é o `Serial1`, independente da USB.
 
 ## Componentes principais
 - 2 botões táteis (SW1, SW2)
@@ -101,8 +100,8 @@ As fichas das placas UNO R3 e UNO R4 serão adicionadas em `boards/`.
 (preenchido futuramente — ver pasta `code/`)
 
 ## Referências
-- Arduino UNO R3: https://docs.arduino.cc/hardware/uno-rev3/
-- Arduino UNO R4 Minima: https://docs.arduino.cc/hardware/uno-r4-minima/
-- Arduino UNO R4 WiFi: https://docs.arduino.cc/hardware/uno-r4-wifi/
+- Placas compatíveis (com datasheets dos microcontroladores):
+  [UNO R3](../../boards/arduino-uno-r3/README.md) e
+  [UNO R4](../../boards/arduino-uno-r4/README.md)
 - Pinagem levantada a partir da serigrafia da placa e das imagens em
   `imagens/`.

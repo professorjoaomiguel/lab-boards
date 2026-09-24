@@ -53,4 +53,8 @@ referenciar aqui com `![esquemático](imagens/nome-do-arquivo.png)`._
 (preenchido futuramente — ver pasta `code/`)
 
 ## Referências
+- Datasheet do ESP32-S3 (Espressif):
+  https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf
+- Datasheet do módulo ESP32-S3-WROOM-1 (Espressif):
+  https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf
 - Produto: https://makerselectronics.com/product/esp32-s3-n16r8-development-board-2
