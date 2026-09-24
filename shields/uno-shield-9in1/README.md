@@ -97,7 +97,23 @@ Também traz barras de pinos para expansão: I2C, serial TTL, digitais livres
 - Expansão: I2C, serial TTL, D7, D8 e A3
 
 ## Código de teste e validação
-(preenchido futuramente — ver pasta `code/`)
+O sketch [`code/teste_shield_9em1`](code/teste_shield_9em1/teste_shield_9em1.ino)
+testa os 9 periféricos por um menu no Monitor Serial (9600 baud, final de
+linha "Nova linha"). Compila no UNO R3 e no UNO R4 (Minima e WiFi) e não
+precisa de bibliotecas externas. Instruções, resultado esperado de cada
+teste e problemas comuns: [`code/README.md`](code/README.md).
+
+### A confirmar com o shield em mãos
+Detalhes que variam entre lotes e que o sketch de teste ajuda a descobrir:
+
+| Item | Como descobrir | Resultado |
+|------|----------------|-----------|
+| Cor ligada a D9, D10 e D11 | Teste 2, parte A | _a preencher_ |
+| LED RGB: cátodo ou ânodo comum | Teste 2, parte B | _a preencher_ |
+| Buzzer: ativo ou passivo, e nível que liga | Teste 4 | _a preencher_ |
+| Botões: pull-up ou pull-down | Teste 3 (nível de repouso) | _a preencher_ |
+| LDR: leitura sobe ou desce com mais luz | Teste 6 | _a preencher_ |
+| `VCC` das barras de pinos = 5V | Multímetro | _a preencher_ |
 
 ## Referências
 - Placas compatíveis (com datasheets dos microcontroladores):
