@@ -31,8 +31,10 @@ espaços, sem acentos (ex: `esp32-s3-n16r8`, `teclado-matricial-4x4`).
      de um valor de front matter que não seja `tags` — o parser do script
      de índice remove comentários (`# ...`) de qualquer valor, mas evite
      depender disso além do que o template já usa.
-3. Preencha as seções do template (visão geral, fotos, diagrama
-   esquemático, componentes, funcionalidades, referências).
+   - Toda placa e todo shield leva a tag de tensão lógica: `5v` ou `3v3`.
+     Assim o `INDEX.md` agrupa os itens por tensão.
+3. Preencha as seções do template (visão geral, tensão de operação,
+   fotos, diagrama esquemático, componentes, funcionalidades, referências).
 4. Crie as subpastas `imagens/` (fotos e diagramas) e `code/` (código de
    teste/validação, quando existir) dentro da pasta do item.
 5. Rode `python scripts/gerar_indice.py` para atualizar o `INDEX.md`. A
@@ -40,6 +42,24 @@ espaços, sem acentos (ex: `esp32-s3-n16r8`, `teclado-matricial-4x4`).
    automaticamente.
 6. Atualize `.ai/STATE.md` com o item novo.
 7. Faça commit do item novo junto com o `INDEX.md` atualizado.
+
+## Tensão de operação (obrigatório)
+
+A seção **Tensão de operação** nunca pode ficar vazia. Misturar placa e
+shield de tensões diferentes é a forma mais comum de queimar um
+microcontrolador em aula:
+
+- Um shield de 5V sobre uma placa de 3,3V (ex: ESP32) coloca 5V nos
+  pinos de entrada do microcontrolador, que só suportam até 3,6V. Isso pode
+  queimar a porta ou o chip inteiro.
+- Um shield de 3,3V sobre uma placa de 5V pode receber 5V nas saídas da
+  placa e queimar os sensores do shield.
+
+Sempre informe a tensão lógica, se as entradas toleram 5V e a corrente
+máxima por pino, e diga explicitamente com quais placas/shields do
+repositório o item é compatível. Quando um dado não puder ser confirmado
+pela serigrafia ou pelo datasheet, escreva que ele precisa ser medido
+(multímetro) em vez de supor.
 
 ## Testes
 

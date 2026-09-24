@@ -14,14 +14,22 @@ periféricos.
 - [`shields/`](shields/) — shields e módulos que acoplam nas placas (teclado,
   display, etc.)
 
+## ⚠️ Atenção à tensão (5V × 3,3V)
+
+Antes de encaixar um shield em uma placa, confira a seção **Tensão de
+operação** dos dois. Placas como o Arduino UNO trabalham em 5V, e placas
+como o ESP32 trabalham em 3,3V. Um shield de 5V sobre uma placa de 3,3V
+pode queimar as portas do microcontrolador. No `INDEX.md`, as tags `5v` e
+`3v3` agrupam os itens por tensão.
+
 ## Como adicionar um item novo
 
 Passo a passo resumido:
 
 1. Copie [`templates/item-README.md`](templates/item-README.md) para
    `boards/<slug-do-item>/README.md` ou `shields/<slug-do-item>/README.md`.
-2. Preencha o front matter (`titulo`, `tipo`, `tags`) e as seções do
-   template.
+2. Preencha o front matter (`titulo`, `tipo`, `tags`, com a tag `5v` ou
+   `3v3`) e as seções do template, incluindo a **Tensão de operação**.
 3. Crie as subpastas `imagens/` e `code/` dentro da pasta do item.
 4. Rode `python scripts/gerar_indice.py` para atualizar o `INDEX.md`.
 5. Atualize [`.ai/STATE.md`](.ai/STATE.md) com o item novo.

@@ -1,7 +1,7 @@
 ---
 titulo: "ESP32-S3 N16R8 DevKit"
 tipo: placa
-tags: [esp32, esp32-s3, wifi, bluetooth, devkit, usb-c]
+tags: [esp32, esp32-s3, wifi, bluetooth, devkit, usb-c, 3v3]
 ---
 
 # ESP32-S3 N16R8 DevKit
@@ -12,6 +12,20 @@ com 16MB de memória flash e 8MB de PSRAM (daí o sufixo "N16R8"). Usada em
 aula para projetos que exigem mais memória do que o ESP32 clássico, como
 processamento de imagem, buffers de tela e projetos com Wi-Fi/Bluetooth
 simultâneos.
+
+## Tensão de operação
+| | |
+|---|---|
+| Tensão lógica dos pinos | **3,3V** |
+| Alimentação | USB-C 5V (regulador interno para 3,3V) |
+| Tolera 5V nas entradas? | **Não**: máximo de 3,6V nos GPIOs |
+| Corrente máxima por pino | 40 mA (máximo absoluto); prefira até 20 mA |
+
+> ⚠️ **Não use shields de 5V diretamente nesta placa**, como o
+> [Shield Multifunção 9 em 1](../../shields/uno-shield-9in1/README.md).
+> Qualquer sinal de 5V em um GPIO pode queimar a porta ou o ESP32-S3. Para
+> ligar módulos de 5V, use um conversor de nível lógico (level shifter) ou
+> um divisor resistivo nas entradas.
 
 Produto de referência: https://makerselectronics.com/product/esp32-s3-n16r8-development-board-2
 

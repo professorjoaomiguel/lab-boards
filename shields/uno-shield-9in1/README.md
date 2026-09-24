@@ -1,7 +1,7 @@
 ---
 titulo: "Shield Multifunção 9 em 1 (UNO)"
 tipo: shield
-tags: [arduino, uno, dht11, lm35, ldr, infravermelho, buzzer, led-rgb, i2c]
+tags: [arduino, uno, uno-r3, uno-r4, 5v, dht11, lm35, ldr, infravermelho, buzzer, led-rgb, i2c]
 ---
 
 # Shield Multifunção 9 em 1 (UNO)
@@ -16,6 +16,31 @@ sensores.
 
 Também traz barras de pinos para expansão: I2C, serial TTL, digitais livres
 (D7, D8) e um analógico livre (A3), além do botão RESET repetido.
+
+## Tensão de operação
+| | |
+|---|---|
+| Tensão lógica | **5V** |
+| Alimentação | pino 5V do header da placa (não tem alimentação própria) |
+| Sensores que exigem 5V | LM35 (opera de 4V a 30V; não funciona em 3,3V) |
+
+> ⚠️ **Shield de 5V.** Use apenas em placas cuja lógica seja 5V. Em uma
+> placa de 3,3V, as entradas do microcontrolador recebem 5V (botões,
+> DHT11, receptor IR) e podem queimar.
+>
+> **A confirmar com multímetro:** que o `VCC` das barras de pinos do
+> shield está ligado ao pino 5V (e não ao 3,3V) do header. Meça entre
+> `VCC` e `GND` com o shield encaixado em uma placa ligada.
+
+## Compatibilidade com placas
+
+| Placa | Lógica | Compatível? | Observações |
+|-------|--------|-------------|-------------|
+| Arduino UNO R3 (ATmega328P) | 5V | ✅ Sim | Placa-alvo original do shield. Até 20 mA por pino. ADC de 10 bits. |
+| Arduino UNO R4 Minima / WiFi (Renesas RA4M1) | 5V | ✅ Sim | Mesmo formato e pinagem. **Corrente máxima de 8 mA por pino** (menor que a do R3). ADC de 10 bits por padrão, configurável até 14 bits com `analogReadResolution()`. |
+| ESP32-S3 N16R8 DevKit e outras placas de 3,3V | 3,3V | ❌ Não | Risco de queimar os GPIOs. Ver [ESP32-S3 N16R8](../../boards/esp32-s3-n16r8/README.md). |
+
+As fichas das placas UNO R3 e UNO R4 serão adicionadas em `boards/`.
 
 ## Fotos
 ![frente e verso](imagens/frente-verso.jpg)
@@ -76,5 +101,8 @@ Também traz barras de pinos para expansão: I2C, serial TTL, digitais livres
 (preenchido futuramente — ver pasta `code/`)
 
 ## Referências
+- Arduino UNO R3: https://docs.arduino.cc/hardware/uno-rev3/
+- Arduino UNO R4 Minima: https://docs.arduino.cc/hardware/uno-r4-minima/
+- Arduino UNO R4 WiFi: https://docs.arduino.cc/hardware/uno-r4-wifi/
 - Pinagem levantada a partir da serigrafia da placa e das imagens em
   `imagens/`.

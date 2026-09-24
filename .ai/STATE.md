@@ -17,11 +17,17 @@ estrutural.
   índice: ver `docs/superpowers/specs/2026-07-23-repositorio-documentacao-placas-design.md`.
 - Plano de implementação do scaffold inicial: ver
   `docs/superpowers/plans/2026-07-23-lab-dev-boards-scaffold.md`.
+- Seção **Tensão de operação** obrigatória e tag `5v`/`3v3` em todo item,
+  para evitar queimar portas misturando placas e shields de tensões
+  diferentes (2026-09-24). Ver `.ai/CONVENTIONS.md`.
 - `.ai/` como SSoT para agentes de IA: ver o adendo no spec acima
   (2026-07-23).
 
 ## Próximos passos
 
+- Documentar as placas Arduino UNO R3 (`boards/arduino-uno-r3/`) e UNO R4
+  (`boards/arduino-uno-r4/`) e ligar os links de compatibilidade do shield
+  9 em 1 a elas.
 - Adicionar fotos e diagrama esquemático reais de `boards/esp32-s3-n16r8/`.
 - Documentar mais placas e shields conforme forem usados em aula.
 - Escrever código de teste de cada periférico do shield 9 em 1
