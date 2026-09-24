@@ -39,7 +39,8 @@ Pinout e esquemático oficiais (Arduino):
 - Microcontrolador **ATmega328P** (AVR 8 bits, 16 MHz): 32 KB de flash,
   2 KB de SRAM, 1 KB de EEPROM
 - Microcontrolador **ATmega16U2**: ponte USB-serial (faz a comunicação da
-  USB com o ATmega328P)
+  USB com o ATmega328P). Em clones, costuma ser trocado por um CH340 (ver
+  [Ponte USB-serial](#ponte-usb-serial))
 - Conector USB-B e conector de alimentação P4 (barrel jack)
 - Regulador de 5V e de 3,3V
 - LED embutido no D13 (`LED_BUILTIN`), LEDs de alimentação e TX/RX
@@ -52,6 +53,37 @@ Pinout e esquemático oficiais (Arduino):
   (D10–D13 e ICSP)
 - Interrupções externas em D2 e D3
 
+## Ponte USB-serial
+O ATmega328P não tem USB: ele só fala serial (UART, pinos D0/D1). Entre o
+conector USB e o ATmega328P existe um segundo chip, a **ponte USB-serial**,
+que o computador enxerga como uma porta COM. É por ela que o sketch é
+gravado e que o Monitor Serial funciona. A ponte também reinicia o
+ATmega328P antes de cada gravação (sinal DTR), o que dispara o bootloader.
+
+Qual chip faz a ponte depende de quem fabricou a placa:
+
+| Chip da ponte | Onde aparece | Driver no Windows | Nome no Gerenciador de Dispositivos |
+|---------------|--------------|-------------------|-------------------------------------|
+| **ATmega16U2** | UNO R3 original (Arduino) e clones de melhor qualidade | Instalado com a IDE do Arduino | `Arduino Uno (COMx)` |
+| **CH340** (CH340G/CH340C) | Maioria dos clones baratos | Em geral instalado pelo Windows Update; se não, [driver da WCH](https://www.wch-ic.com/downloads/CH341SER_EXE.html) | `USB-SERIAL CH340 (COMx)` |
+| ATmega8U2 | UNO R1 e R2 (versões antigas) | Instalado com a IDE do Arduino | `Arduino Uno (COMx)` |
+
+**Como identificar na placa:** o chip da ponte fica ao lado do conector
+USB. O ATmega16U2 é um chip quadrado pequeno (QFN) com um segundo conector
+ICSP de 6 pinos perto dele. O CH340 é um chip retangular com a marcação
+`CH340`.
+
+**O que muda na prática:**
+- Para gravar e usar o Monitor Serial, as duas pontes funcionam igual: a
+  diferença é só o driver e o nome da porta COM.
+- Se a placa não aparece como porta COM, quase sempre é falta do driver do
+  CH340 (ou um cabo USB que só carrega, sem dados).
+- Só o ATmega16U2 é um microcontrolador reprogramável: com o firmware
+  certo (modo DFU), ele pode fazer a placa aparecer como teclado, mouse ou
+  dispositivo MIDI. Com o CH340, a placa só funciona como porta serial.
+- Como D0/D1 estão ligados à ponte, qualquer circuito nesses pinos pode
+  atrapalhar a gravação e o Monitor Serial.
+
 ## Código de teste e validação
 (preenchido futuramente — ver pasta `code/`)
 
@@ -60,6 +92,8 @@ Pinout e esquemático oficiais (Arduino):
   https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/ATmega48A-PA-88A-PA-168A-PA-328-P-DS-DS40002061B.pdf
 - Datasheet do ATmega16U2 (Microchip):
   https://ww1.microchip.com/downloads/en/DeviceDoc/doc7799.pdf
+- Datasheet do CH340 (WCH, ponte USB-serial dos clones):
+  https://www.wch-ic.com/downloads/CH340DS1_PDF.html
 - Datasheet da placa (Arduino):
   https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf
 - Página oficial do Arduino (especificações, tutoriais, downloads):

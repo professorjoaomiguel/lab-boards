@@ -79,6 +79,23 @@ Pinout e esquemático oficiais (Arduino):
 - Alguns sketches de AVR que acessam registradores diretamente (`PORTB`,
   `DDRD`, etc.) não funcionam no RA4M1.
 
+## Ponte USB-serial
+Diferente do UNO R3, o UNO R4 **não tem um chip dedicado de ponte
+USB-serial** (nem ATmega16U2, nem CH340). Como não há chip de ponte, não é
+preciso instalar driver extra no Windows.
+
+- **UNO R4 Minima:** o RA4M1 tem USB nativa. O conector USB-C vai direto ao
+  microcontrolador, que grava o sketch, faz o `Serial` e pode agir como
+  teclado ou mouse (HID). Se um sketch travar a USB e a placa sumir da
+  porta COM, **aperte RESET duas vezes rápido** para entrar no bootloader.
+- **UNO R4 WiFi:** por padrão, o USB-C vai ao **ESP32-S3**, que faz a ponte
+  USB-serial até o RA4M1 (é ele quem grava o RA4M1). A comunicação pode ser
+  desviada direto para a USB nativa do RA4M1, por software (pino P408/D40
+  em nível alto) ou de forma permanente (soldando o jumper SJ1).
+
+Em nenhuma das versões os pinos D0/D1 estão ligados à USB: eles formam o
+`Serial1`, livre para módulos externos.
+
 ## Código de teste e validação
 (preenchido futuramente — ver pasta `code/`)
 
