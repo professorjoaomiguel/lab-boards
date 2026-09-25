@@ -54,11 +54,11 @@ Para o UNO R4, troque o `--fqbn` por `arduino:renesas_uno:minima` ou
 | Opção | Teste | O que fazer | Resultado esperado |
 |-------|-------|-------------|--------------------|
 | 1 | LEDs D12 e D13 | Só observar | Vermelho pisca 3×, azul pisca 3×, os dois juntos |
-| 2 | LED RGB D9–D11 | Anotar a cor de cada pino | Uma cor por pino; as três juntas formam o branco; brilho varia suave |
+| 2 | LED RGB D9–D11 | Conferir a cor de cada pino | D9 vermelho, D10 azul, D11 verde; as três juntas formam o branco; brilho varia suave |
 | 3 | Botões SW1 e SW2 | Apertar e soltar | Cada aperto conta 1 e acende um LED (SW1 = vermelho, SW2 = azul) |
-| 4 | Buzzer D5 | Ouvir | Apita em um dos níveis (HIGH ou LOW) e toca a escala |
-| 5 | Potenciômetro A0 | Girar de ponta a ponta | Leitura vai de ~0 a ~1023; brilho do LED RGB acompanha |
-| 6 | LDR A1 | Cobrir e iluminar | Diferença de centenas entre escuro e claro |
+| 4 | Buzzer D5 | Ouvir | Buzzer passivo: só um clique nos níveis fixos, e a escala sai com notas distintas |
+| 5 | Potenciômetro A0 | Girar de ponta a ponta | Leitura vai de ~0 a ~1023; brilho do vermelho do LED RGB acompanha |
+| 6 | LDR A1 | Cobrir e iluminar | Leitura sobe com a luz; diferença de centenas entre escuro e claro |
 | 7 | LM35 A2 | Segurar entre os dedos | Temperatura ambiente, subindo com o calor da mão |
 | 8 | DHT11 D4 | Soprar no sensor | Umidade sobe; temperatura parecida com a do LM35 |
 | 9 | Receptor IR D6 | Apertar botões de um controle | Mesmo botão gera sempre o mesmo código NEC |
@@ -75,8 +75,8 @@ certo de cada constante:
 
 | Constante | Padrão | Quando mudar | Teste que mostra |
 |-----------|--------|--------------|------------------|
-| `RGB_ANODO_COMUM` | `false` | LED RGB aceso quando deveria estar apagado | 2 |
-| `BUZZER_NIVEL_LIGADO` | `HIGH` | Buzzer apita sem parar quando a placa liga | 4 |
+| `RGB_ANODO_COMUM` | `false` | Não precisa mudar: cátodo comum (ativo em HIGH) confirmado na placa | 2 |
+| `BUZZER_NIVEL_LIGADO` | `LOW` | Só se o seu lote tiver buzzer ativo que apita sem parar quando a placa liga (o padrão segue a Keyestudio: passivo, liga em LOW) | 4 |
 | `TENSAO_REFERENCIA` | `5.0` | Temperatura do LM35 acima da real (meça o pino 5V com multímetro) | 7 |
 
 ## Problemas comuns

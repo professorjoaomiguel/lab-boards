@@ -20,9 +20,9 @@
  *    D4   | Sensor de temperatura e umidade DHT11
  *    D5   | Buzzer
  *    D6   | Receptor infravermelho (IR)
- *    D9   | LED RGB (uma das cores)
- *    D10  | LED RGB (uma das cores)
- *    D11  | LED RGB (uma das cores)
+ *    D9   | LED RGB — vermelho
+ *    D10  | LED RGB — azul
+ *    D11  | LED RGB — verde
  *    D12  | LED vermelho de 3 mm (LED2 na placa)
  *    D13  | LED azul de 3 mm (LED1 na placa) — também é o LED_BUILTIN
  *    A0   | Potenciômetro
@@ -60,6 +60,11 @@
  *    - BUZZER_NIVEL_LIGADO -> teste 4 (Buzzer)
  *    - TENSAO_REFERENCIA   -> teste 7 (LM35)
  *
+ *  REFERÊNCIAS
+ *  -----------
+ *  O shield é um clone do Keyestudio Easy Module Shield V1 (KS0183):
+ *    https://wiki.keyestudio.com/Ks0183_keyestudio_Multi-purpose_Shield_V1
+ *
  *  Repositório: https://github.com/professorjoaomiguel/lab-boards
  * =============================================================================
  */
@@ -73,19 +78,24 @@ const uint8_t PINO_SW2          = 3;
 const uint8_t PINO_DHT11        = 4;
 const uint8_t PINO_BUZZER       = 5;
 const uint8_t PINO_IR           = 6;
-const uint8_t PINO_RGB_D9       = 9;
-const uint8_t PINO_RGB_D10      = 10;
-const uint8_t PINO_RGB_D11      = 11;
+const uint8_t PINO_RGB_VERMELHO = 9;
+const uint8_t PINO_RGB_AZUL     = 10;
+const uint8_t PINO_RGB_VERDE    = 11;
 const uint8_t PINO_LED_VERMELHO = 12;
 const uint8_t PINO_LED_AZUL     = 13;
 const uint8_t PINO_POT          = A0;
 const uint8_t PINO_LDR          = A1;
 const uint8_t PINO_LM35         = A2;
 
-// Os três pinos do LED RGB, na ordem em que o teste 2 os acende.
-// A cor de cada pino (vermelho, verde ou azul) depende do LED montado no
-// shield. O teste 2 serve justamente para descobrir essa correspondência.
-const uint8_t PINOS_RGB[3] = {PINO_RGB_D9, PINO_RGB_D10, PINO_RGB_D11};
+// Cores do LED RGB: CONFIRMADAS em teste na placa (D9 = vermelho,
+// D10 = azul, D11 = verde, ativo em HIGH).
+// Atenção: a documentação da Keyestudio e da RoboticX diz D10 = verde e
+// D11 = azul, o contrário do que foi medido. Clones podem trocar a posição
+// do LED; se as cores do seu shield não baterem, o teste 2 mostra a cor
+// real de cada pino.
+//
+// Os três pinos, na ordem em que o teste 2 os acende (vermelho, verde, azul):
+const uint8_t PINOS_RGB[3] = {PINO_RGB_VERMELHO, PINO_RGB_VERDE, PINO_RGB_AZUL};
 
 // =============================================================================
 //  AJUSTES
@@ -95,19 +105,22 @@ const uint8_t PINOS_RGB[3] = {PINO_RGB_D9, PINO_RGB_D10, PINO_RGB_D11};
 const unsigned long VELOCIDADE_SERIAL = 9600;
 
 // Tipo do LED RGB:
-//   false = cátodo comum: o pino em HIGH acende a cor (caso mais comum).
+//   false = cátodo comum: o pino em HIGH acende a cor. CONFIRMADO neste
+//           shield (e também indicado pela Keyestudio e pela RoboticX).
 //   true  = ânodo comum: o pino em LOW acende a cor.
 // Se no teste 2 o LED ficar ACESO quando o texto disser "apagado" (e
 // apagado quando disser "aceso"), troque este valor.
 const bool RGB_ANODO_COMUM = false;
 
-// Nível do pino D5 que faz o buzzer tocar:
-//   HIGH = buzzer acionado por transistor NPN (ou ligado direto no pino).
-//   LOW  = buzzer acionado por transistor PNP (ex: S8550), comum nesses
-//          shields.
-// Se o buzzer ficar apitando sem parar logo que a placa liga, este valor
-// está trocado. O teste 4 mostra qual é o certo.
-const uint8_t BUZZER_NIVEL_LIGADO = HIGH;
+// Nível do pino D5 que liga o transistor do buzzer:
+//   LOW  = transistor PNP (ex: S8550). É o caso deste shield segundo a
+//          Keyestudio, fabricante do projeto original: no código dela,
+//          digitalWrite(buzzer, LOW) = som e HIGH = silêncio.
+//   HIGH = transistor NPN (ou buzzer ligado direto no pino).
+// Com o valor errado, o transistor fica conduzindo o tempo todo: um buzzer
+// ativo apita sem parar, e um passivo fica com corrente contínua passando
+// pela bobina (esquenta à toa). O teste 4 ajuda a confirmar.
+const uint8_t BUZZER_NIVEL_LIGADO = LOW;
 
 // Tensão de referência do conversor analógico-digital (ADC), em volts.
 // Por padrão é a tensão de alimentação da placa (5V). Na prática ela varia:
@@ -478,12 +491,16 @@ void testeRgb() {
 
   // Parte A: descobrir qual cor está em cada pino.
   Serial.println(F("Parte A: um pino de cada vez. Anote a cor de cada pino."));
+  // Cor esperada em cada pino (confirmada em teste na placa).
+  const __FlashStringHelper *corEsperada[3] = {F("vermelho"), F("verde"), F("azul")};
   for (uint8_t i = 0; i < 3; i++) {
     rgbApagar();
     rgbEscrever(PINOS_RGB[i], 255);
     Serial.print(F("-> D"));
     Serial.print(PINOS_RGB[i]);
-    Serial.println(F(" aceso. Qual cor apareceu?"));
+    Serial.print(F(" aceso. Qual cor apareceu? (esperado: "));
+    Serial.print(corEsperada[i]);
+    Serial.println(F(")"));
     esperarEnter();
   }
 
@@ -533,7 +550,8 @@ void testeRgb() {
 //  de pull-up (solto = HIGH, apertado = LOW) ou de pull-down (solto = LOW,
 //  apertado = HIGH). O shield tem resistores próprios ao lado dos botões.
 //
-//  Para não depender de saber qual dos dois foi usado, o teste lê o nível
+//  Os exemplos da RoboticX tratam o botão apertado como HIGH, o que indica
+//  pull-down. Ainda assim, para não depender disso, o teste lê o nível
 //  dos botões soltos no início ("repouso") e considera apertado o nível
 //  oposto. Por isso, NÃO aperte os botões no início do teste.
 //
@@ -617,14 +635,17 @@ void testeBotoes() {
 // =============================================================================
 //
 //  Existem dois tipos de buzzer, e o teste ajuda a identificar qual está no
-//  shield:
+//  shield (segundo a Keyestudio, este shield usa um PASSIVO):
 //    - ATIVO: tem um oscilador interno. Basta ligá-lo (nível fixo) para
 //      apitar, sempre na mesma frequência.
 //    - PASSIVO: é só um alto-falante pequeno. Com nível fixo ele não apita
 //      (só dá um "clique"); precisa de uma onda quadrada, gerada por tone().
 //
 //  O buzzer é acionado por um transistor. Dependendo do transistor (NPN ou
-//  PNP), ele liga com o pino em HIGH ou em LOW. A parte A descobre isso.
+//  PNP), ele liga com o pino em HIGH ou em LOW. Com buzzer ativo, a parte A
+//  mostra o nível que liga. Com buzzer passivo, nenhum nível fixo apita
+//  (só dá um clique na troca); nesse caso vale o que diz o fabricante:
+//  LOW liga (transistor PNP).
 
 void testeBuzzer() {
   imprimirTitulo(F("TESTE 4: Buzzer (D5)"));
@@ -641,7 +662,8 @@ void testeBuzzer() {
   Serial.println(F("   Em qual nível o buzzer apitou?"));
   Serial.println(F("   - HIGH: use BUZZER_NIVEL_LIGADO = HIGH (é um buzzer ATIVO)."));
   Serial.println(F("   - LOW : use BUZZER_NIVEL_LIGADO = LOW  (é um buzzer ATIVO)."));
-  Serial.println(F("   - Só um clique nos dois: é um buzzer PASSIVO."));
+  Serial.println(F("   - Só um clique nos dois: é um buzzer PASSIVO (o esperado neste"));
+  Serial.println(F("     shield). Mantenha BUZZER_NIVEL_LIGADO = LOW."));
   Serial.print(F("   Valor atual no código: BUZZER_NIVEL_LIGADO = "));
   Serial.println(BUZZER_NIVEL_LIGADO == HIGH ? F("HIGH") : F("LOW"));
   esperarEnter();
@@ -676,7 +698,7 @@ void testePotenciometro() {
   imprimirTitulo(F("TESTE 5: Potenciômetro (A0)"));
   Serial.println(F("Gire o potenciômetro de um extremo ao outro, devagar."));
   Serial.println(F("A leitura deve ir de ~0 a ~1023, sem saltos."));
-  Serial.println(F("O brilho do LED RGB (D9) acompanha o potenciômetro."));
+  Serial.println(F("O brilho do vermelho do LED RGB (D9) acompanha o potenciômetro."));
   Serial.println(F("Pressione Enter para voltar ao menu."));
 
   int minimo = 1023;
@@ -688,7 +710,7 @@ void testePotenciometro() {
     maximo = max(maximo, leitura);
 
     // map() converte a faixa 0–1023 do ADC para a faixa 0–255 do PWM.
-    rgbEscrever(PINO_RGB_D9, map(leitura, 0, 1023, 0, 255));
+    rgbEscrever(PINO_RGB_VERMELHO, map(leitura, 0, 1023, 0, 255));
 
     Serial.print(F("A0 = "));
     Serial.print(leitura);
@@ -717,8 +739,8 @@ void testePotenciometro() {
 //
 //  O LDR é um resistor cuja resistência cai quando recebe luz. No shield,
 //  ele forma um divisor de tensão com um resistor fixo. Conforme o lado em
-//  que o LDR está no divisor, a leitura SOBE ou DESCE com mais luz — o teste
-//  mostra qual é o caso deste shield.
+//  que o LDR está no divisor, a leitura SOBE ou DESCE com mais luz. Segundo a
+//  Keyestudio, neste shield ela SOBE com mais luz; o teste confirma.
 
 void testeLdr() {
   imprimirTitulo(F("TESTE 6: LDR - sensor de luminosidade (A1)"));
@@ -751,7 +773,7 @@ void testeLdr() {
   Serial.print(maximo);
   Serial.println(F("."));
   Serial.println(F("A diferença entre escuro e claro deve ser grande (centenas)."));
-  Serial.println(F("Anote se a leitura SOBE ou DESCE com mais luz."));
+  Serial.println(F("Anote se a leitura SOBE ou DESCE com mais luz (esperado: sobe)."));
 }
 
 // =============================================================================
