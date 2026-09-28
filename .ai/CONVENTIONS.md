@@ -119,6 +119,68 @@ repositório o item é compatível. Quando um dado não puder ser confirmado
 pela serigrafia ou pelo datasheet, escreva que ele precisa ser medido
 (multímetro) em vez de supor.
 
+## Scripts (Python e PowerShell)
+
+Todo script do repositório é documentado **no próprio arquivo**, junto com
+o código, de forma que a ajuda apareça pela linha de comando. Não criar um
+README separado só para explicar um script. Tudo em português (PT-BR).
+
+Todo script deve ter:
+
+- **Cabeçalho de autoria e licença** nas primeiras linhas: autor e
+  `SPDX-License-Identifier: MIT`.
+- **Ajuda completa** no formato padrão da linguagem (abaixo), com: o que o
+  script faz, como usar, cada parâmetro e pelo menos um exemplo.
+- **Ajuda para cada função**, com os parâmetros, o retorno e os erros que
+  ela pode gerar.
+- **Comentários que explicam o porquê** das decisões que não são óbvias.
+  Não comente o que o código já diz sozinho.
+
+### Python
+
+- O **docstring do módulo** (o texto entre `"""` no topo) é a ajuda
+  principal, com as seções O QUE FAZ, COMO USAR e, se houver, TESTES.
+- Linha de comando com `argparse`, usando o docstring do módulo como
+  `description`, para `python scripts/<script>.py --help` mostrar a ajuda.
+  A função `main(argv=None)` recebe os argumentos, para poder ser testada.
+- Cada função tem docstring no formato Google (`Args:`, `Returns:`,
+  `Raises:`).
+- Referência: `scripts/gerar_indice.py`.
+
+### PowerShell
+
+- **Ajuda baseada em comentários** (comment-based help) no topo do
+  arquivo, para `Get-Help .\scripts\<script>.ps1 -Full` mostrar a ajuda:
+
+  ```powershell
+  # Autor: Prof. Joao Miguel Roehe (@professorjoaomiguel)
+  # SPDX-License-Identifier: MIT
+  <#
+  .SYNOPSIS
+      Uma linha dizendo o que o script faz.
+  .DESCRIPTION
+      Explicação completa: o que faz, quando usar, o que é alterado.
+  .PARAMETER Porta
+      O que o parâmetro significa e qual o valor padrão.
+  .EXAMPLE
+      .\scripts\exemplo.ps1 -Porta COM3
+      O que acontece ao rodar este exemplo.
+  .NOTES
+      Requisitos (ex: arduino-cli no PATH) e observações.
+  #>
+  [CmdletBinding()]
+  param(
+      [Parameter(Mandatory)]
+      [string]$Porta
+  )
+  ```
+
+- Um bloco `.PARAMETER` para cada parâmetro do `param()`, e pelo menos um
+  `.EXAMPLE`.
+- Parâmetros tipados no `param()`, com `[CmdletBinding()]`.
+- Funções internas também têm ajuda baseada em comentários (pelo menos
+  `.SYNOPSIS` e `.PARAMETER`).
+
 ## Testes
 
 `scripts/gerar_indice.py` tem testes em `scripts/test_gerar_indice.py`,

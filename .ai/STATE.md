@@ -32,6 +32,9 @@ estrutural.
   código sob MIT (`LICENSE-CODE`), citação em `CITATION.cff`. Autor
   identificado como Prof. Joao Miguel Roehe (@professorjoaomiguel), sem
   e-mail público.
+- Scripts documentados no próprio arquivo (2026-09-28): Python com docstrings
+  e `--help` via argparse; PowerShell com ajuda baseada em comentários
+  (`Get-Help`). Ver `.ai/CONVENTIONS.md`, seção "Scripts".
 
 ## Próximos passos
 

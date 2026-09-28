@@ -1,15 +1,37 @@
 # Autor: Prof. Joao Miguel Roehe (@professorjoaomiguel)
 # SPDX-License-Identifier: MIT
+"""Testes do scripts/gerar_indice.py.
+
+COMO RODAR
+    Na raiz do repositório:
+
+        python -m unittest scripts/test_gerar_indice.py -v
+
+O QUE É TESTADO
+    - Leitura do front matter (titulo, tipo, tags, comentários no fim da
+      linha, tags vazias e bloco sem `---` de fechamento).
+    - Descoberta dos itens em boards/ e shields/.
+    - Montagem do INDEX.md (tabela geral e seções por tag).
+    - Ajuda de linha de comando (--help).
+
+Cada teste cria os arquivos que precisa numa pasta temporária, então
+nenhum teste lê ou altera os itens reais do repositório.
+"""
+import contextlib
+import io
 import sys
 import tempfile
 import unittest
 from pathlib import Path
 
+# Permite importar gerar_indice.py, que está na mesma pasta deste arquivo.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import gerar_indice as gi
 
 
 class TestParseFrontMatter(unittest.TestCase):
+    """Leitura básica do front matter: titulo, tipo e tags."""
+
     def test_parses_titulo_tipo_e_tags(self):
         with tempfile.TemporaryDirectory() as tmp:
             readme = Path(tmp) / "README.md"
@@ -29,6 +51,8 @@ class TestParseFrontMatter(unittest.TestCase):
 
 
 class TestFindItems(unittest.TestCase):
+    """Descoberta dos itens nas pastas boards/ e shields/."""
+
     def test_encontra_itens_em_boards_e_shields(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -89,6 +113,8 @@ class TestFindItems(unittest.TestCase):
 
 
 class TestGenerateIndex(unittest.TestCase):
+    """Montagem do texto do INDEX.md."""
+
     def test_agrupa_itens_por_tag(self):
         items = [
             {
@@ -118,6 +144,8 @@ class TestGenerateIndex(unittest.TestCase):
 
 
 class TestFrontMatterComentarioInline(unittest.TestCase):
+    """Comentários `# ...` no fim da linha não entram no valor."""
+
     def test_remove_comentario_inline_do_valor_de_tipo(self):
         with tempfile.TemporaryDirectory() as tmp:
             readme = Path(tmp) / "README.md"
@@ -135,6 +163,8 @@ class TestFrontMatterComentarioInline(unittest.TestCase):
 
 
 class TestParseFrontMatterErroDeFechamento(unittest.TestCase):
+    """Front matter sem `---` de fechamento gera erro claro."""
+
     def test_levanta_erro_sem_delimitador_de_fechamento(self):
         with tempfile.TemporaryDirectory() as tmp:
             readme = Path(tmp) / "README.md"
@@ -147,6 +177,8 @@ class TestParseFrontMatterErroDeFechamento(unittest.TestCase):
 
 
 class TestItemSemTags(unittest.TestCase):
+    """Itens sem tags não quebram a leitura nem o índice."""
+
     def test_tags_ausentes_ou_vazias_viram_lista_vazia(self):
         with tempfile.TemporaryDirectory() as tmp:
             readme = Path(tmp) / "README.md"
@@ -171,6 +203,18 @@ class TestItemSemTags(unittest.TestCase):
             "| Sem tags | placa |  | [boards/sem-tags/README.md](boards/sem-tags/README.md) |",
             content,
         )
+
+
+class TestAjudaDeLinhaDeComando(unittest.TestCase):
+    """`--help` mostra a ajuda e sai sem gerar o INDEX.md."""
+
+    def test_help_mostra_uso_e_sai_com_codigo_zero(self):
+        saida = io.StringIO()
+        with contextlib.redirect_stdout(saida):
+            with self.assertRaises(SystemExit) as ctx:
+                gi.main(["--help"])
+        self.assertEqual(ctx.exception.code, 0)
+        self.assertIn("INDEX.md", saida.getvalue())
 
 
 if __name__ == "__main__":
