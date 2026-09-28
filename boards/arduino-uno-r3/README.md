@@ -1,6 +1,7 @@
 ---
 titulo: "Arduino UNO R3"
 tipo: placa
+autor: "Prof. Joao Miguel Roehe (@professorjoaomiguel)"
 tags: [arduino, uno, uno-r3, avr, atmega328p, usb-b, 5v]
 ---
 
@@ -98,3 +99,7 @@ ICSP de 6 pinos perto dele. O CH340 é um chip retangular com a marcação
   https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf
 - Página oficial do Arduino (especificações, tutoriais, downloads):
   https://docs.arduino.cc/hardware/uno-rev3/
+
+---
+
+**Autor:** Prof. Joao Miguel Roehe ([@professorjoaomiguel](https://github.com/professorjoaomiguel)). Documentação sob licença [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.pt-br); código em `code/` sob licença MIT. Veja como citar no [README principal](../../README.md).

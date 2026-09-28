@@ -1,6 +1,7 @@
 ---
 titulo: "Shield Multifunção 9 em 1 (UNO)"
 tipo: shield
+autor: "Prof. Joao Miguel Roehe (@professorjoaomiguel)"
 tags: [arduino, uno, uno-r3, uno-r4, 5v, dht11, lm35, ldr, infravermelho, buzzer, led-rgb, i2c]
 ---
 
@@ -140,3 +141,7 @@ substitui a medição: clones podem trocar componentes. Confirme com o teste.
   (o exemplo do DHT11 usa a biblioteca `DHT sensor library` da Adafruit)
 - Pinagem levantada a partir da serigrafia da placa e das imagens em
   `imagens/`.
+
+---
+
+**Autor:** Prof. Joao Miguel Roehe ([@professorjoaomiguel](https://github.com/professorjoaomiguel)). Documentação sob licença [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.pt-br); código em `code/` sob licença MIT. Veja como citar no [README principal](../../README.md).

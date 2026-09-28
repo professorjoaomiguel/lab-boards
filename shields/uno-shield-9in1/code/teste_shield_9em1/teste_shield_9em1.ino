@@ -3,6 +3,9 @@
  *  Teste dos periféricos do Shield Multifunção 9 em 1 (formato UNO)
  * =============================================================================
  *
+ *  Autor: Prof. Joao Miguel Roehe (@professorjoaomiguel)
+ *  Licença: MIT (SPDX-License-Identifier: MIT) — ver LICENSE-CODE na raiz
+ *
  *  Placas suportadas: Arduino UNO R3 e Arduino UNO R4 (Minima e WiFi).
  *  NÃO use este shield em placas de 3,3V (ex: ESP32): ele é de 5V e pode
  *  queimar as portas do microcontrolador. Ver ../../README.md.

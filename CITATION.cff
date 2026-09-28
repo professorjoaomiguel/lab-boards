@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "Se usar este material, cite-o conforme abaixo."
+title: "Lab Boards: documentação de placas de desenvolvimento e shields para aula"
+authors:
+  - given-names: "Joao Miguel"
+    family-names: "Roehe"
+    alias: "professorjoaomiguel"
+repository-code: "https://github.com/professorjoaomiguel/lab-boards"
+url: "https://github.com/professorjoaomiguel/lab-boards"
+license:
+  - CC-BY-NC-4.0
+  - MIT
+keywords:
+  - arduino
+  - esp32
+  - shields
+  - educação
+  - eletrônica

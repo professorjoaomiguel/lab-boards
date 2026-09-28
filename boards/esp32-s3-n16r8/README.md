@@ -1,6 +1,7 @@
 ---
 titulo: "ESP32-S3 N16R8 DevKit"
 tipo: placa
+autor: "Prof. Joao Miguel Roehe (@professorjoaomiguel)"
 tags: [esp32, esp32-s3, wifi, bluetooth, devkit, usb-c, 3v3]
 ---
 
@@ -58,3 +59,7 @@ referenciar aqui com `![esquemático](imagens/nome-do-arquivo.png)`._
 - Datasheet do módulo ESP32-S3-WROOM-1 (Espressif):
   https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf
 - Produto: https://makerselectronics.com/product/esp32-s3-n16r8-development-board-2
+
+---
+
+**Autor:** Prof. Joao Miguel Roehe ([@professorjoaomiguel](https://github.com/professorjoaomiguel)). Documentação sob licença [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.pt-br); código em `code/` sob licença MIT. Veja como citar no [README principal](../../README.md).

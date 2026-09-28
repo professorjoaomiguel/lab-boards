@@ -28,6 +28,10 @@ estrutural.
   e agentes de IA) e dois modos de acesso (local e direto pelo GitHub).
   `AGENTS.md` na raiz é a entrada para agentes que consultam o repositório.
   As regras ficam em `.ai/CONVENTIONS.md`, seção "Diretiva do repositório".
+- Licença e autoria (2026-09-28): documentação sob CC BY-NC 4.0 (`LICENSE`),
+  código sob MIT (`LICENSE-CODE`), citação em `CITATION.cff`. Autor
+  identificado como Prof. Joao Miguel Roehe (@professorjoaomiguel), sem
+  e-mail público.
 
 ## Próximos passos
 

@@ -1,6 +1,7 @@
 ---
 titulo: "Arduino UNO R4 (Minima / WiFi)"
 tipo: placa
+autor: "Prof. Joao Miguel Roehe (@professorjoaomiguel)"
 tags: [arduino, uno, uno-r4, renesas, ra4m1, usb-c, wifi, bluetooth, 5v]
 ---
 
@@ -112,3 +113,7 @@ Em nenhuma das versões os pinos D0/D1 estão ligados à USB: eles formam o
   https://docs.arduino.cc/hardware/uno-r4-minima/
 - Página oficial do Arduino — UNO R4 WiFi:
   https://docs.arduino.cc/hardware/uno-r4-wifi/
+
+---
+
+**Autor:** Prof. Joao Miguel Roehe ([@professorjoaomiguel](https://github.com/professorjoaomiguel)). Documentação sob licença [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.pt-br); código em `code/` sob licença MIT. Veja como citar no [README principal](../../README.md).

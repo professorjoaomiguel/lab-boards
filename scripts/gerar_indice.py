@@ -1,3 +1,5 @@
+# Autor: Prof. Joao Miguel Roehe (@professorjoaomiguel)
+# SPDX-License-Identifier: MIT
 """Gera o INDEX.md do repositorio a partir do front matter dos itens em boards/ e shields/."""
 from pathlib import Path
 

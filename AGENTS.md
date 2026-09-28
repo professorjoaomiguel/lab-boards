@@ -41,6 +41,14 @@ resolva-os a partir da pasta do arquivo atual e monte a URL bruta acima.
 - **Responda em português (PT-BR)**, com linguagem didática, a menos que o
   aluno peça outro idioma.
 
+## Autoria e licença
+
+Autor: Prof. Joao Miguel Roehe (@professorjoaomiguel). A documentação está
+sob licença CC BY-NC 4.0, e o código sob licença MIT (ver `LICENSE`,
+`LICENSE-CODE` e `CITATION.cff`). Ao reaproveitar ou resumir este conteúdo
+numa resposta, cite o autor e o link do repositório:
+https://github.com/professorjoaomiguel/lab-boards.
+
 ## Se você for editar o repositório
 
 Siga [`.ai/CONVENTIONS.md`](.ai/CONVENTIONS.md) (regras e estrutura) e

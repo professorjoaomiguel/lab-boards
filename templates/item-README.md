@@ -1,6 +1,7 @@
 ---
 titulo: "Nome do item"
 tipo: placa            # placa | shield
+autor: "Prof. Joao Miguel Roehe (@professorjoaomiguel)"
 tags: [tag1, tag2, 5v]
 ---
 
@@ -38,3 +39,7 @@ o que acontece se misturar 5V com 3,3V.
 ## Referências
 - Datasheet do microcontrolador: link
 - Loja/fabricante: link
+
+---
+
+**Autor:** Prof. Joao Miguel Roehe ([@professorjoaomiguel](https://github.com/professorjoaomiguel)). Documentação sob licença [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.pt-br); código em `code/` sob licença MIT. Veja como citar no [README principal](../../README.md).

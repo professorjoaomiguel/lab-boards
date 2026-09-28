@@ -50,6 +50,14 @@ O ponto de entrada para agentes que **consultam** o repositório é o
 [`AGENTS.md`](../AGENTS.md) da raiz. Este arquivo (`.ai/CONVENTIONS.md`) é
 para agentes que **constroem** o repositório.
 
+8. **Autoria e licença em todo item.** O front matter leva
+   `autor: "Prof. Joao Miguel Roehe (@professorjoaomiguel)"`, e o README
+   termina com o rodapé de autoria e licença do template. Arquivos de
+   código começam com um comentário de cabeçalho com o autor e
+   `SPDX-License-Identifier: MIT`. Documentação: CC BY-NC 4.0 (`LICENSE`).
+   Código: MIT (`LICENSE-CODE`). Citação: `CITATION.cff`. Nunca publique o
+   e-mail do autor; use apenas o identificador `@professorjoaomiguel`.
+
 ## Estrutura do repositório
 
 - `boards/<slug>/` — placas de desenvolvimento (ESP32, Arduino, etc.)

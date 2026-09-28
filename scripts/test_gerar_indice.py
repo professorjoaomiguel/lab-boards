@@ -1,3 +1,5 @@
+# Autor: Prof. Joao Miguel Roehe (@professorjoaomiguel)
+# SPDX-License-Identifier: MIT
 import sys
 import tempfile
 import unittest

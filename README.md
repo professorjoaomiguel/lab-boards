@@ -51,3 +51,30 @@ Para o guia completo de convenções (formato exato do front matter,
 convenção de slugs, testes do script de índice), veja
 [`.ai/CONVENTIONS.md`](.ai/CONVENTIONS.md) — é a referência usada por
 agentes de IA que constroem este repositório.
+
+## Autor, licença e como citar
+
+**Autor:** Prof. Joao Miguel Roehe —
+[@professorjoaomiguel](https://github.com/professorjoaomiguel) (GitHub,
+Instagram e Facebook).
+
+**Licença:**
+
+- **Documentação** (textos, tabelas, imagens próprias): licença
+  [Creative Commons Atribuição-NãoComercial 4.0 Internacional (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/deed.pt-br).
+  Você pode copiar, adaptar e compartilhar, desde que cite o autor e não
+  use para fins comerciais. Texto completo em [`LICENSE`](LICENSE).
+- **Código** (sketches em `code/` e scripts em `scripts/`): licença MIT. Texto
+  completo em [`LICENSE-CODE`](LICENSE-CODE).
+
+Datasheets e materiais de fabricantes são apenas referenciados por link e
+continuam sob a licença de seus próprios autores.
+
+**Como citar:**
+
+> ROEHE, Joao Miguel. *Lab Boards: documentação de placas de
+> desenvolvimento e shields para aula*. GitHub, 2026. Disponível em:
+> https://github.com/professorjoaomiguel/lab-boards. Licença CC BY-NC 4.0.
+
+Na página do repositório no GitHub, o botão **"Cite this repository"** gera
+a citação em APA e BibTeX a partir do arquivo [`CITATION.cff`](CITATION.cff).
