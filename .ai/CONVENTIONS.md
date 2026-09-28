@@ -3,6 +3,53 @@
 Guia de referência para qualquer agente de IA (Claude, Antigravity,
 Copilot, etc.) que for adicionar ou editar conteúdo neste repositório.
 
+## Diretiva do repositório
+
+Este repositório é **público** e tem **dois públicos**, com o mesmo peso:
+
+- **Alunos**, que leem a documentação para usar as placas e shields em aula.
+- **Agentes de IA**, que consultam a documentação para responder perguntas
+  ou gerar código para essas placas.
+
+E **dois modos de acesso**, que precisam funcionar igualmente bem:
+
+- **Local**, com o repositório clonado (arquivos lidos direto do disco).
+- **Direto pelo GitHub**, sem clonar: navegando em
+  `https://github.com/professorjoaomiguel/lab-boards` ou lendo o arquivo
+  bruto em
+  `https://raw.githubusercontent.com/professorjoaomiguel/lab-boards/main/<caminho>`.
+
+Todo conteúdo novo ou editado deve respeitar estas regras:
+
+1. **Markdown puro e links relativos.** Nada de conteúdo que só aparece
+   depois de rodar uma ferramenta, nem links absolutos para o próprio
+   repositório. O link relativo funciona no disco e no GitHub.
+2. **README do item autossuficiente.** Quem abrir só o `README.md` de um
+   item (ex: pela URL bruta) precisa achar ali tudo o que importa: tensão,
+   pinagem, componentes, compatibilidade e como testar.
+3. **Dados em texto, não só em imagem.** Pinagem, ligações e valores vão em
+   tabelas. A foto ou o diagrama complementa, mas não substitui, porque um
+   agente pode não enxergar a imagem. Toda imagem tem texto alternativo
+   descritivo.
+4. **Separar o que foi confirmado do que é suposição.** Deixe claro o que
+   veio do fabricante, o que foi testado na placa real e o que ainda está
+   "a confirmar". Um agente não deve tratar um indício como fato.
+5. **Front matter e `INDEX.md` sempre em dia.** São a porta de entrada
+   estruturada para agentes: `INDEX.md` lista tudo, e o front matter de cada
+   item traz `titulo`, `tipo` e `tags`.
+6. **Linguagem didática em português (PT-BR).** O texto é escrito para o
+   aluno entender; termos técnicos são explicados na primeira vez em que
+   aparecem.
+7. **Público significa sem segredo.** Nunca commitar senhas de Wi-Fi,
+   tokens, chaves de API ou dados pessoais de alunos. Em sketches, use
+   placeholders (ex: `"SUA_REDE"`). Arquivos de terceiros (datasheets,
+   imagens de fabricante) entram como link, a menos que a licença permita
+   redistribuir.
+
+O ponto de entrada para agentes que **consultam** o repositório é o
+[`AGENTS.md`](../AGENTS.md) da raiz. Este arquivo (`.ai/CONVENTIONS.md`) é
+para agentes que **constroem** o repositório.
+
 ## Estrutura do repositório
 
 - `boards/<slug>/` — placas de desenvolvimento (ESP32, Arduino, etc.)

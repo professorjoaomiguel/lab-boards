@@ -6,6 +6,18 @@ item traz fotos, diagrama esquemático, lista de componentes e
 funcionalidades e, quando disponível, código de teste/validação dos
 periféricos.
 
+## Para quem é este repositório
+
+Este repositório é público e serve a dois públicos:
+
+- **Alunos:** leia pelo GitHub ou clone o repositório e comece pelo
+  [`INDEX.md`](INDEX.md).
+- **Agentes de IA** (Claude, Copilot, Gemini, etc.): o ponto de entrada é o
+  [`AGENTS.md`](AGENTS.md), que explica como achar a informação, com o
+  repositório clonado ou direto pelo GitHub. Você pode passar ao seu agente
+  o link
+  `https://raw.githubusercontent.com/professorjoaomiguel/lab-boards/main/AGENTS.md`.
+
 ## Como navegar
 
 - [`INDEX.md`](INDEX.md) — lista todos os itens, com uma tabela geral e uma

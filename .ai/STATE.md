@@ -24,6 +24,10 @@ estrutural.
   diferentes (2026-09-24). Ver `.ai/CONVENTIONS.md`.
 - `.ai/` como SSoT para agentes de IA: ver o adendo no spec acima
   (2026-07-23).
+- Diretiva do repositório (2026-09-28): público, com dois públicos (alunos
+  e agentes de IA) e dois modos de acesso (local e direto pelo GitHub).
+  `AGENTS.md` na raiz é a entrada para agentes que consultam o repositório.
+  As regras ficam em `.ai/CONVENTIONS.md`, seção "Diretiva do repositório".
 
 ## Próximos passos
 
