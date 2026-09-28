@@ -10,6 +10,7 @@ estrutural.
 |------|------|--------|
 | [ESP32-S3 N16R8 DevKit](../boards/esp32-s3-n16r8/README.md) | placa | Estrutura completa; fotos e diagrama ainda pendentes |
 | [ESP32-S3 UNO (TZT D1 ESP32-S3 N16R8)](../boards/esp32-s3-uno/README.md) | placa | Pinagem completa e sketch de teste; foto própria e itens "a confirmar" pendentes |
+| [ESP32-C3 SuperMini](../boards/esp32-c3-supermini/README.md) | placa | Pinagem, comparação com o XIAO e testes nos dois formatos; sketch sem compilar (compilador RISC-V bloqueado), foto e "a confirmar" pendentes |
 | [Arduino UNO R3](../boards/arduino-uno-r3/README.md) | placa | Estrutura e datasheets completos; fotos pendentes |
 | [Arduino UNO R4 (Minima / WiFi)](../boards/arduino-uno-r4/README.md) | placa | Estrutura e datasheets completos; fotos pendentes |
 | [Shield Multifunção 9 em 1 (UNO)](../shields/uno-shield-9in1/README.md) | shield | Completo, com sketch de teste; itens "a confirmar" pendentes de teste na placa |
@@ -47,6 +48,18 @@ estrutural.
   (Arduino C/C++ e MicroPython) para levantar informações da placa e
   conferir a pinagem; identificar o módulo com o ESPConnect.
 - Definir o produto de referência do ESP32-S3 N16R8 DevKit.
+- **Pendente: compilador RISC-V bloqueado pelo Windows (2026-09-28).** O
+  Controle de Aplicativo do Windows ("Uma política de Controle de
+  Aplicativo bloqueou este arquivo") impede a execução de
+  `C:\arduino-data\Arduino15\packages\esp32\tools\esp-rv32\2601\libexec\gcc\riscv32-esp-elf\14.2.0\cc1plus.exe`.
+  Sem ele, nada compila para ESP32-C3 (e outros chips RISC-V: C6, H2); o
+  ESP32-S3 (Xtensa) compila normalmente. Decidir com o administrador da
+  máquina como liberar o pacote esp32 na política de segurança, verificar
+  se os computadores do laboratório têm o mesmo bloqueio, e então compilar
+  `boards/esp32-c3-supermini/code/teste_esp32_c3_supermini`.
+- ESP32-C3 SuperMini: testar numa placa real (LED ativo em LOW ou HIGH,
+  botão BOOT, Wi-Fi com e sem `WIFI_POWER_8_5dBm`, firmware MicroPython) e
+  preencher a tabela "A confirmar".
 - Documentar mais placas e shields conforme forem usados em aula.
 - Rodar o sketch de teste do shield 9 em 1 em uma placa real e preencher a
   tabela "A confirmar" do README do shield.

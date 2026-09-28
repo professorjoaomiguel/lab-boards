@@ -8,6 +8,7 @@ Gerado automaticamente por `scripts/gerar_indice.py`. Não editar à mão.
 |------|------|------|------|
 | Arduino UNO R3 | placa | arduino, uno, uno-r3, avr, atmega328p, usb-b, 5v | [boards/arduino-uno-r3/README.md](boards/arduino-uno-r3/README.md) |
 | Arduino UNO R4 (Minima / WiFi) | placa | arduino, uno, uno-r4, renesas, ra4m1, usb-c, wifi, bluetooth, 5v | [boards/arduino-uno-r4/README.md](boards/arduino-uno-r4/README.md) |
+| ESP32-C3 SuperMini | placa | esp32, esp32-c3, supermini, risc-v, wifi, bluetooth, usb-c, usb-nativo, micropython, 3v3 | [boards/esp32-c3-supermini/README.md](boards/esp32-c3-supermini/README.md) |
 | ESP32-S3 N16R8 DevKit | placa | esp32, esp32-s3, wifi, bluetooth, devkit, usb-c, 3v3 | [boards/esp32-s3-n16r8/README.md](boards/esp32-s3-n16r8/README.md) |
 | ESP32-S3 UNO (TZT D1 ESP32-S3 N16R8) | placa | esp32, esp32-s3, formato-uno, wifi, bluetooth, usb-c, ch340, ws2812, psram, micropython, 3v3 | [boards/esp32-s3-uno/README.md](boards/esp32-s3-uno/README.md) |
 | Shield Multifunção 9 em 1 (UNO) | shield | arduino, uno, uno-r3, uno-r4, 5v, dht11, lm35, ldr, infravermelho, buzzer, led-rgb, i2c | [shields/uno-shield-9in1/README.md](shields/uno-shield-9in1/README.md) |
@@ -16,6 +17,7 @@ Gerado automaticamente por `scripts/gerar_indice.py`. Não editar à mão.
 
 ### 3v3
 
+- [ESP32-C3 SuperMini](boards/esp32-c3-supermini/README.md)
 - [ESP32-S3 N16R8 DevKit](boards/esp32-s3-n16r8/README.md)
 - [ESP32-S3 UNO (TZT D1 ESP32-S3 N16R8)](boards/esp32-s3-uno/README.md)
 
@@ -42,6 +44,7 @@ Gerado automaticamente por `scripts/gerar_indice.py`. Não editar à mão.
 ### bluetooth
 
 - [Arduino UNO R4 (Minima / WiFi)](boards/arduino-uno-r4/README.md)
+- [ESP32-C3 SuperMini](boards/esp32-c3-supermini/README.md)
 - [ESP32-S3 N16R8 DevKit](boards/esp32-s3-n16r8/README.md)
 - [ESP32-S3 UNO (TZT D1 ESP32-S3 N16R8)](boards/esp32-s3-uno/README.md)
 
@@ -63,8 +66,13 @@ Gerado automaticamente por `scripts/gerar_indice.py`. Não editar à mão.
 
 ### esp32
 
+- [ESP32-C3 SuperMini](boards/esp32-c3-supermini/README.md)
 - [ESP32-S3 N16R8 DevKit](boards/esp32-s3-n16r8/README.md)
 - [ESP32-S3 UNO (TZT D1 ESP32-S3 N16R8)](boards/esp32-s3-uno/README.md)
+
+### esp32-c3
+
+- [ESP32-C3 SuperMini](boards/esp32-c3-supermini/README.md)
 
 ### esp32-s3
 
@@ -97,6 +105,7 @@ Gerado automaticamente por `scripts/gerar_indice.py`. Não editar à mão.
 
 ### micropython
 
+- [ESP32-C3 SuperMini](boards/esp32-c3-supermini/README.md)
 - [ESP32-S3 UNO (TZT D1 ESP32-S3 N16R8)](boards/esp32-s3-uno/README.md)
 
 ### psram
@@ -110,6 +119,14 @@ Gerado automaticamente por `scripts/gerar_indice.py`. Não editar à mão.
 ### renesas
 
 - [Arduino UNO R4 (Minima / WiFi)](boards/arduino-uno-r4/README.md)
+
+### risc-v
+
+- [ESP32-C3 SuperMini](boards/esp32-c3-supermini/README.md)
+
+### supermini
+
+- [ESP32-C3 SuperMini](boards/esp32-c3-supermini/README.md)
 
 ### uno
 
@@ -134,12 +151,18 @@ Gerado automaticamente por `scripts/gerar_indice.py`. Não editar à mão.
 ### usb-c
 
 - [Arduino UNO R4 (Minima / WiFi)](boards/arduino-uno-r4/README.md)
+- [ESP32-C3 SuperMini](boards/esp32-c3-supermini/README.md)
 - [ESP32-S3 N16R8 DevKit](boards/esp32-s3-n16r8/README.md)
 - [ESP32-S3 UNO (TZT D1 ESP32-S3 N16R8)](boards/esp32-s3-uno/README.md)
+
+### usb-nativo
+
+- [ESP32-C3 SuperMini](boards/esp32-c3-supermini/README.md)
 
 ### wifi
 
 - [Arduino UNO R4 (Minima / WiFi)](boards/arduino-uno-r4/README.md)
+- [ESP32-C3 SuperMini](boards/esp32-c3-supermini/README.md)
 - [ESP32-S3 N16R8 DevKit](boards/esp32-s3-n16r8/README.md)
 - [ESP32-S3 UNO (TZT D1 ESP32-S3 N16R8)](boards/esp32-s3-uno/README.md)
 
