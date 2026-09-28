@@ -9,6 +9,7 @@ estrutural.
 | Item | Tipo | Status |
 |------|------|--------|
 | [ESP32-S3 N16R8 DevKit](../boards/esp32-s3-n16r8/README.md) | placa | Estrutura completa; fotos e diagrama ainda pendentes |
+| [ESP32-S3 UNO (TZT D1 ESP32-S3 N16R8)](../boards/esp32-s3-uno/README.md) | placa | Pinagem completa e sketch de teste; foto própria e itens "a confirmar" pendentes |
 | [Arduino UNO R3](../boards/arduino-uno-r3/README.md) | placa | Estrutura e datasheets completos; fotos pendentes |
 | [Arduino UNO R4 (Minima / WiFi)](../boards/arduino-uno-r4/README.md) | placa | Estrutura e datasheets completos; fotos pendentes |
 | [Shield Multifunção 9 em 1 (UNO)](../shields/uno-shield-9in1/README.md) | shield | Completo, com sketch de teste; itens "a confirmar" pendentes de teste na placa |
@@ -40,6 +41,12 @@ estrutural.
 
 - Adicionar fotos de `boards/arduino-uno-r3/` e `boards/arduino-uno-r4/`.
 - Adicionar fotos e diagrama esquemático reais de `boards/esp32-s3-n16r8/`.
+- Testar o ESP32-S3 UNO numa placa real (variante do módulo, LED RGB,
+  gravação sem jumper) e preencher a tabela "A confirmar" do README.
+- ESP32-S3 UNO: escrever um código de verificação nos dois formatos
+  (Arduino C/C++ e MicroPython) para levantar informações da placa e
+  conferir a pinagem; identificar o módulo com o ESPConnect.
+- Definir o produto de referência do ESP32-S3 N16R8 DevKit.
 - Documentar mais placas e shields conforme forem usados em aula.
 - Rodar o sketch de teste do shield 9 em 1 em uma placa real e preencher a
   tabela "A confirmar" do README do shield.

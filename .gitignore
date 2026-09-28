@@ -12,3 +12,10 @@ __pycache__/
 # OS cruft
 .DS_Store
 Thumbs.db
+
+# Material de pesquisa local (links e imagens de fabricantes/lojas).
+# Não publicar: direitos de terceiros. Ver .ai/CONVENTIONS.md, regra 7.
+docs/*.url
+docs/*.jpg
+docs/*.jpeg
+docs/*.png

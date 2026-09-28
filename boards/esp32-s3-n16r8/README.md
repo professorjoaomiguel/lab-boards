@@ -28,7 +28,11 @@ simultâneos.
 > ligar módulos de 5V, use um conversor de nível lógico (level shifter) ou
 > um divisor resistivo nas entradas.
 
-Produto de referência: https://makerselectronics.com/product/esp32-s3-n16r8-development-board-2
+Produto de referência: _a definir_ (modelo e fabricante exatos ainda não
+registrados).
+
+Não confundir com o [ESP32-S3 UNO](../esp32-s3-uno/README.md), que usa o
+mesmo módulo N16R8 mas tem o formato do Arduino UNO.
 
 ## Fotos
 _Foto ainda não adicionada — colocar o arquivo em `imagens/` e referenciar
@@ -58,7 +62,6 @@ referenciar aqui com `![esquemático](imagens/nome-do-arquivo.png)`._
   https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf
 - Datasheet do módulo ESP32-S3-WROOM-1 (Espressif):
   https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf
-- Produto: https://makerselectronics.com/product/esp32-s3-n16r8-development-board-2
 
 ---
 
