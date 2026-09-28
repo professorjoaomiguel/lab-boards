@@ -5,7 +5,7 @@
 O QUE FAZ
     1. Mostra no Shell do Thonny a frequência da CPU, o tamanho da memória
        flash e a memória RAM livre. Com a PSRAM ativa, a RAM livre passa
-       de alguns megabytes; sem ela, fica perto de 300 KB. Serve para
+       de alguns megabytes; sem ela, fica perto de 200 KB. Serve para
        confirmar a variante da placa (N16R8 ou N8R2) e o firmware certo.
     2. Faz o LED RGB endereçável (WS2812) da placa, no GPIO48, trocar de
        cor a cada segundo: vermelho, verde, azul, branco e apagado.
@@ -20,8 +20,9 @@ COMO USAR (Thonny)
 
 O QUE OBSERVAR
     - "Flash: 16 MB" e "RAM livre" de vários MB (versão N16R8).
-      "RAM livre" perto de 300 KB -> o firmware gravado não tem suporte à
-      PSRAM da placa; grave a variante com PSRAM octal (SPIRAM_OCT).
+      "RAM livre" perto de 0.2 MB -> o firmware gravado não liga a PSRAM
+      octal da placa (no boot aparece "quad_psram: PSRAM chip is not
+      connected"). Grave a variante SPIRAM_OCT do firmware ESP32_GENERIC_S3.
     - O LED RGB trocando de cor na ordem mostrada no Shell. Se as cores
       saírem trocadas, anote no README da placa.
 

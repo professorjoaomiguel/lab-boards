@@ -212,6 +212,31 @@ e sem gravar nenhum programa. É o jeito mais rápido de saber qual variante
 > **Device Info**. Apagar a flash remove o programa ou o MicroPython
 > gravado na placa.
 
+### Qual configuração usar depende do módulo
+
+A PSRAM (memória RAM extra) fica dentro do módulo ESP32-S3, e **nem todo
+módulo tem PSRAM, nem toda PSRAM é igual**. O firmware do MicroPython e a
+opção PSRAM da Arduino IDE precisam combinar com o módulo que está na sua
+placa. Por isso, **identifique o módulo antes** (ESPConnect ou gravação na
+tampa metálica).
+
+O nome do módulo diz tudo: `N` = flash em MB, `R` = PSRAM em MB.
+
+| Módulo (gravação) | PSRAM | Firmware MicroPython (`ESP32_GENERIC_S3`) | Arduino IDE: PSRAM | Arduino IDE: Flash Size |
+|---|---|---|---|---|
+| N16R8, N8R8, N4R8 | 8 MB **octal** (OPI) | variante **`SPIRAM_OCT`** | OPI PSRAM (`PSRAM=opi`) | 16MB / 8MB / 4MB |
+| N16R2, N8R2, N4R2 | 2 MB **quad** (QSPI) | variante padrão | QSPI PSRAM (`PSRAM=enabled`) | 16MB / 8MB / 4MB |
+| N16, N8, N4 | **sem PSRAM** | variante padrão | Disabled (`PSRAM=disabled`) | 16MB / 8MB / 4MB |
+
+Usar a configuração de PSRAM octal num módulo sem PSRAM octal faz o
+programa travar ou reiniciar no boot. O contrário (configuração padrão
+num módulo octal) funciona, mas deixa a PSRAM desligada.
+
+No ESPConnect, a PSRAM aparece nos recursos (*features*) do chip: 8 MB
+indica octal, 2 MB indica quad, e nenhuma menção indica módulo sem PSRAM.
+O texto exato que o ESPConnect mostra ainda está **a confirmar** nesta
+placa.
+
 ### Arduino (C/C++): Arduino IDE
 
 Instale o pacote **esp32** (Espressif Systems) no Gerenciador de Placas e
@@ -220,8 +245,8 @@ use no menu **Ferramentas**:
 | Opção | Valor |
 |---|---|
 | Placa | **ESP32S3 Dev Module** |
-| Flash Size | 16MB (128Mb) — na N8R2, 8MB (64Mb) |
-| PSRAM | **OPI PSRAM** — na N8R2, QSPI PSRAM |
+| Flash Size | conforme o módulo (tabela acima); 16MB (128Mb) na N16R8 |
+| PSRAM | conforme o módulo (tabela acima); **OPI PSRAM** na N16R8 |
 | USB CDC On Boot | Disabled (o USB-C passa pelo CH340) |
 | Upload Mode | UART0 / Hardware CDC |
 | Porta | a porta COM do CH340 |
@@ -250,28 +275,76 @@ arduino-cli upload  --fqbn esp32:esp32:esp32s3:FlashSize=16M,PSRAM=opi -p COM5 b
 arduino-cli monitor -p COM5 -c baudrate=115200
 ```
 
-Na versão N8R2, use `FlashSize=8M,PSRAM=enabled` (QSPI PSRAM).
+Para outro módulo, troque `FlashSize` e `PSRAM` conforme a tabela acima
+(ex: N8R2 → `FlashSize=8M,PSRAM=enabled`).
 
 ### MicroPython: Thonny
 
+**Qual firmware gravar:** o firmware oficial `ESP32_GENERIC_S3`
+(https://micropython.org/download/ESP32_GENERIC_S3/), release estável
+mais recente, na variante que combina com a PSRAM do módulo (tabela
+**Qual configuração usar depende do módulo**, acima). Para a **N16R8**
+(PSRAM octal) é a variante **`SPIRAM_OCT`**: em 2026-09 era a v1.29.0,
+arquivo `ESP32_GENERIC_S3-SPIRAM_OCT-20260824-v1.29.0.bin`.
+
+A variante **padrão** (sem `SPIRAM_OCT`) grava e roda, mas **não liga a
+PSRAM de 8 MB** da N16R8, porque ela procura uma PSRAM *quad* e a da placa
+é *octal*. Sinais de variante errada, observados nesta placa em aula
+(2026-09-24):
+
+```
+E (307) quad_psram: PSRAM chip is not connected, or wrong PSRAM line mode
+...
+Failed to init external RAM; continuing without it
+```
+
+e `gc.mem_free()` perto de 200 KB (foi 218 704) em vez de vários MB. Em
+módulos com PSRAM quad (R2) ou sem PSRAM, a variante padrão é a certa.
+
+**Passo a passo:**
+
 1. Instale o **Thonny** (https://thonny.org) e ligue a placa no USB.
-2. Em **Ferramentas > Opções > Interpretador**, escolha
-   **MicroPython (ESP32)** e a porta COM do CH340.
-3. Clique em **Instalar ou atualizar MicroPython (esptool)** e escolha:
-   - família **ESP32-S3**;
-   - variante com **PSRAM octal** (Octal-SPIRAM, `SPIRAM_OCT`) na N16R8,
-     ou a variante genérica na N8R2.
+2. Descubra a porta COM do CH340 no **Gerenciador de Dispositivos >
+   Portas (COM e LPT)**: é a que aparece como "USB-SERIAL CH340" e some
+   ao desligar a placa. Cuidado com portas "Serial padrão por link
+   Bluetooth" (ex: de um fone pareado): elas aparecem na lista do Thonny
+   e fazem a gravação falhar por tempo esgotado.
+3. Identifique o módulo (ESPConnect) e baixe o `.bin` da variante
+   certa no site do MicroPython (`SPIRAM_OCT` para a N16R8).
+4. Grave o firmware por um dos dois métodos:
+   - **Pelo Thonny:** em **Ferramentas > Opções > Interpretador**,
+     escolha **MicroPython (ESP32)** e a porta do CH340, e clique em
+     **Instalar ou atualizar MicroPython (esptool)**. A lista de
+     variantes da família ESP32-S3 **não tem** a opção octal genérica (só
+     "Espressif • ESP32-S3", que é a padrão, e placas de outros
+     fabricantes). Use o menu **≡** da janela do instalador para escolher
+     o arquivo `.bin` baixado. Nesse menu também dá para subir a
+     velocidade para 460 800 baud: o padrão de 115 200 leva ~105 s.
+   - **Pela linha de comando (`esptool`):**
 
-   O firmware oficial fica em
-   https://micropython.org/download/ESP32_GENERIC_S3/. Se a gravação
-   falhar, use o jumper IO0–GND descrito acima.
-4. Depois de gravar, o **Shell** do Thonny mostra o prompt `>>>`. Teste
-   com `print("ola")`.
-5. Para usar os pinos, use o **número do GPIO**:
+     ```sh
+     esptool --chip esp32s3 --port COM6 erase_flash
+     esptool --chip esp32s3 --port COM6 --baud 460800 write_flash 0 ESP32_GENERIC_S3-SPIRAM_OCT-20260824-v1.29.0.bin
+     ```
+
+     Troque `COM6` pela sua porta. Se falhar no meio, rode de novo sem o
+     `--baud 460800`. O `esptool` que vem com o Thonny pode ser chamado
+     com `python -m esptool`, usando o `python.exe` da pasta do Thonny.
+
+   Antes de gravar, feche o Shell do Thonny (**Executar > Desconectar**)
+   e desconecte o ESPConnect no navegador: os dois prendem a porta COM.
+   Se a gravação não começar, use o jumper IO0–GND descrito acima.
+5. Depois de gravar, o **Shell** do Thonny mostra o prompt `>>>`. Confira:
+
+   ```python
+   import os, esp, gc
+   os.uname()          # versão do MicroPython
+   esp.flash_size()    # 16777216 (16 MB) na N16R8
+   gc.mem_free()       # vários milhões com a PSRAM ativa
+   ```
+
+6. Para usar os pinos, use o **número do GPIO**:
    `machine.Pin(18, machine.Pin.OUT)`.
-
-Se o firmware sem suporte a PSRAM octal for gravado numa N16R8, a placa
-funciona, mas com só ~300 KB de RAM. O script de teste mostra isso.
 
 ## Código de teste e validação
 
@@ -292,10 +365,11 @@ MicroPython teve só a sintaxe verificada, e ainda não rodou numa placa.
 
 | Item | Indício (fabricante / serigrafia) | Resultado do teste |
 |---|---|---|
-| Variante do módulo (ESPConnect, aba Device Info) | N16R8 no anúncio; algumas fotos mostram N8R2 | — |
+| Variante do módulo (ESPConnect, aba Device Info) | N16R8 no anúncio; algumas fotos mostram N8R2 | Flash de **16 MB** confirmada (`esp.flash_size()` = 16 777 216, 2026-09-24); PSRAM pendente |
 | LED RGB no GPIO48 | Serigrafia "SW2812 (IO48)" | — |
 | Ordem das cores do LED RGB | Padrão WS2812 (GRB), tratado pelo `rgbLedWrite` e pelo `neopixel` | — |
-| Script MicroPython roda na placa | Firmware `ESP32_GENERIC_S3` variante `SPIRAM_OCT` | — |
+| PSRAM de 8 MB ativa no MicroPython | Firmware `ESP32_GENERIC_S3` variante `SPIRAM_OCT` | Variante padrão: **sem PSRAM** (`quad_psram` no boot, `gc.mem_free()` = 218 704). `SPIRAM_OCT`: pendente |
+| Script MicroPython roda na placa | — | — |
 | Gravação automática (sem jumper no IO0) | CH340 com circuito de reset automático | — |
 | Faixa do conector DC | 5 a 18V (anúncio) | não testar acima de 12V sem medir |
 | Corrente disponível nos pinos 5V e 3V3 | não informada | medir |
@@ -315,6 +389,8 @@ MicroPython teve só a sintaxe verificada, e ainda não rodou numa placa.
   https://pt.aliexpress.com/item/1005007217207543.html
 - Página do produto (Makers Electronics):
   https://makerselectronics.com/product/esp32-s3-n16r8-development-board-2/
+- Firmware MicroPython para ESP32-S3 (oficial):
+  https://micropython.org/download/ESP32_GENERIC_S3/
 - Artigo introdutório (Blog Saravati):
   https://blog.saravati.com.br/esp32-s3-uno-evolucao-arduino-ia/
 - Página na Cirkit Designer (genérica; a tabela de pinos de lá **não**

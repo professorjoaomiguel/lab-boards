@@ -31,6 +31,9 @@
  *    Placa ........... ESP32S3 Dev Module   (pacote "esp32" da Espressif)
  *    Flash Size ...... 16MB (128Mb)
  *    PSRAM ........... OPI PSRAM
+ *      (Flash Size e PSRAM acima valem para o módulo N16R8. Para outro
+ *      módulo, veja a tabela "Qual configuração usar depende do módulo"
+ *      no README da placa.)
  *    USB CDC On Boot . Disabled   (a porta USB-C passa pelo chip CH340,
  *                                  ligado na UART0: TXD=GPIO43, RXD=GPIO44)
  *    Monitor Serial .. 115200 baud
