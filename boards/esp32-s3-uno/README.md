@@ -212,6 +212,54 @@ e sem gravar nenhum programa. É o jeito mais rápido de saber qual variante
 > **Device Info**. Apagar a flash remove o programa ou o MicroPython
 > gravado na placa.
 
+### Identificar cada placa (MAC e inventário)
+
+Placas do mesmo modelo são iguais por fora, mas cada chip ESP32-S3
+sai de fábrica com identificadores próprios, gravados em **eFuse** (uma
+memória que só pode ser escrita uma vez). Eles **não mudam** ao apagar a
+flash ou regravar o firmware, por isso servem para saber qual placa é qual.
+
+| Identificador | Como ler | Observação |
+|---|---|---|
+| **Endereço MAC** (6 bytes) | ESPConnect, aba **Device Info**; ou no MicroPython (abaixo); ou `esptool --port COM6 read-mac` | Único por chip. É a chave do inventário. |
+| **ID único de 128 bits** | `espefuse --chip esp32s3 --port COM6 summary`, campo `OPTIONAL_UNIQUE_ID` | Registro complementar. É opcional e pode vir zerado em outros lotes. |
+
+No Shell do Thonny, com o MicroPython gravado:
+
+```python
+import machine, binascii
+binascii.hexlify(machine.unique_id(), ':')   # ex: b'e0:72:a1:d4:1e:20'
+```
+
+No ESP32-S3, `machine.unique_id()` devolve o próprio MAC. O `esptool` e o
+`espefuse` que vêm com o Thonny podem ser chamados com
+`python -m esptool` e `python -m espefuse`, usando o `python.exe` da pasta do
+Thonny. Os dois só **leem** as informações e não apagam nada, mas precisam
+da porta livre (Thonny desconectado, ESPConnect fechado).
+
+**O que não serve para identificar a placa:** o CH340 não tem número de
+série, e o código que o Windows mostra para ele (`USB\VID_1A86&PID_7523\...`)
+muda conforme a porta USB do computador. O número da porta COM também muda.
+
+**Inventário:** as placas registradas ficam em
+[`inventario.csv`](inventario.csv), uma linha por placa física. A
+**etiqueta** colada na placa são os dois últimos bytes do MAC (ex: `1e:20`).
+Colunas:
+
+| Coluna | Conteúdo |
+|---|---|
+| `etiqueta` | Dois últimos bytes do MAC, o que vai na etiqueta física |
+| `mac` | MAC completo |
+| `unique_id_128` | ID único de 128 bits (hexadecimal, sem espaços) |
+| `chip_rev` | Revisão do chip (`esptool flash-id`) |
+| `flash_mb`, `psram_mb`, `psram_modo` | Tamanho da flash, da PSRAM e modo da PSRAM (`octal` / `quad` / `nenhuma`) |
+| `firmware` | Último firmware conhecido na placa, quando conferido |
+| `registrado_em` | Data do registro (AAAA-MM-DD) |
+| `obs` | Observações (defeitos, testes feitos) |
+
+O inventário não guarda dados pessoais: quem está com cada placa não entra
+neste repositório público.
+
 ### Qual configuração usar depende do módulo
 
 A PSRAM (memória RAM extra) fica dentro do módulo ESP32-S3, e **nem todo
@@ -328,7 +376,10 @@ módulos com PSRAM quad (R2) ou sem PSRAM, a variante padrão é a certa.
      ```
 
      Troque `COM6` pela sua porta. Se falhar no meio, rode de novo sem o
-     `--baud 460800`. O `esptool` que vem com o Thonny pode ser chamado
+     `--baud 460800`. No `esptool` 5 os comandos também se escrevem com
+     hífen (`erase-flash`, `write-flash`); a forma com sublinhado continua
+     aceita. Testado em 2026-09-29 com o `esptool` 5.2.0 do Thonny: apagar
+     levou 3 s e gravar a 460 800 baud levou 28 s. O `esptool` que vem com o Thonny pode ser chamado
      com `python -m esptool`, usando o `python.exe` da pasta do Thonny.
 
    Antes de gravar, feche o Shell do Thonny (**Executar > Desconectar**)
@@ -365,12 +416,12 @@ MicroPython teve só a sintaxe verificada, e ainda não rodou numa placa.
 
 | Item | Indício (fabricante / serigrafia) | Resultado do teste |
 |---|---|---|
-| Variante do módulo (ESPConnect, aba Device Info) | N16R8 no anúncio; algumas fotos mostram N8R2 | Flash de **16 MB** confirmada (`esp.flash_size()` = 16 777 216, 2026-09-24); PSRAM pendente |
+| Variante do módulo (ESPConnect, aba Device Info) | N16R8 no anúncio; algumas fotos mostram N8R2 | **N16R8 confirmada** (2026-09-29, placa `1e:20`): `esptool flash-id` mostra `Embedded PSRAM 8MB (AP_3v3)` e flash de 16 MB; eFuse `PSRAM_CAP` = 8M. Flash de 16 MB também na 1ª placa (2026-09-24) |
 | LED RGB no GPIO48 | Serigrafia "SW2812 (IO48)" | — |
 | Ordem das cores do LED RGB | Padrão WS2812 (GRB), tratado pelo `rgbLedWrite` e pelo `neopixel` | — |
-| PSRAM de 8 MB ativa no MicroPython | Firmware `ESP32_GENERIC_S3` variante `SPIRAM_OCT` | Variante padrão: **sem PSRAM** (`quad_psram` no boot, `gc.mem_free()` = 218 704). `SPIRAM_OCT`: pendente |
+| PSRAM de 8 MB ativa no MicroPython | Firmware `ESP32_GENERIC_S3` variante `SPIRAM_OCT` | Variante padrão: **sem PSRAM** (`quad_psram` no boot, `gc.mem_free()` = 218 704). **`SPIRAM_OCT`: PSRAM ativa** (2026-09-29, v1.29.0): boot sem `quad_psram`, `gc.mem_free()` = 8 319 216, `bytearray` de 4 MB alocado |
 | Script MicroPython roda na placa | — | — |
-| Gravação automática (sem jumper no IO0) | CH340 com circuito de reset automático | — |
+| Gravação automática (sem jumper no IO0) | CH340 com circuito de reset automático | **Funciona** (2026-09-29): `esptool` apagou e gravou sem jumper e sem apertar botões |
 | Faixa do conector DC | 5 a 18V (anúncio) | não testar acima de 12V sem medir |
 | Corrente disponível nos pinos 5V e 3V3 | não informada | medir |
 

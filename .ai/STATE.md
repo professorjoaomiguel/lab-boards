@@ -9,7 +9,7 @@ estrutural.
 | Item | Tipo | Status |
 |------|------|--------|
 | [ESP32-S3 N16R8 DevKit](../boards/esp32-s3-n16r8/README.md) | placa | Estrutura completa; fotos e diagrama ainda pendentes |
-| [ESP32-S3 UNO (TZT D1 ESP32-S3 N16R8)](../boards/esp32-s3-uno/README.md) | placa | Pinagem completa e sketch de teste; foto própria e itens "a confirmar" pendentes |
+| [ESP32-S3 UNO (TZT D1 ESP32-S3 N16R8)](../boards/esp32-s3-uno/README.md) | placa | Pinagem completa, sketch de teste e inventário por MAC; N16R8 e PSRAM octal confirmadas; foto própria e parte dos itens "a confirmar" pendentes |
 | [ESP32-C3 SuperMini](../boards/esp32-c3-supermini/README.md) | placa | Pinagem, comparação com o XIAO e testes nos dois formatos; sketch sem compilar (compilador RISC-V bloqueado), foto e "a confirmar" pendentes |
 | [Arduino UNO R3](../boards/arduino-uno-r3/README.md) | placa | Estrutura e datasheets completos; fotos pendentes |
 | [Arduino UNO R4 (Minima / WiFi)](../boards/arduino-uno-r4/README.md) | placa | Estrutura e datasheets completos; fotos pendentes |
@@ -42,8 +42,12 @@ estrutural.
 
 - Adicionar fotos de `boards/arduino-uno-r3/` e `boards/arduino-uno-r4/`.
 - Adicionar fotos e diagrama esquemático reais de `boards/esp32-s3-n16r8/`.
-- Testar o ESP32-S3 UNO numa placa real (variante do módulo, LED RGB,
-  gravação sem jumper) e preencher a tabela "A confirmar" do README.
+- ESP32-S3 UNO: variante N16R8, PSRAM com `SPIRAM_OCT` e gravação sem
+  jumper já confirmadas (2026-09-29). Faltam o LED RGB, a ordem das cores,
+  o script MicroPython na placa e as medições da tabela "A confirmar".
+- ESP32-S3 UNO: registrar cada placa nova em `inventario.csv` (MAC, ID de
+  128 bits, flash e PSRAM). Registrar não exige regravar o firmware. A 1ª
+  placa usada em aula (2026-09-24) ainda não foi registrada.
 - ESP32-S3 UNO: escrever um código de verificação nos dois formatos
   (Arduino C/C++ e MicroPython) para levantar informações da placa e
   conferir a pinagem; identificar o módulo com o ESPConnect.

@@ -1,0 +1,2 @@
+etiqueta,mac,unique_id_128,chip_rev,flash_mb,psram_mb,psram_modo,firmware,registrado_em,obs
+1e:20,e0:72:a1:d4:1e:20,463d6322b85566f090219db93fc8246d,v0.2,16,8,octal,MicroPython v1.29.0 SPIRAM_OCT,2026-09-29,PSRAM ativa validada (gc.mem_free() = 8319216)
