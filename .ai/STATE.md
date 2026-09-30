@@ -67,5 +67,28 @@ estrutural.
 - Documentar mais placas e shields conforme forem usados em aula.
 - Rodar o sketch de teste do shield 9 em 1 em uma placa real e preencher a
   tabela "A confirmar" do README do shield.
+- **Shield 9 em 1 na ESP32-S3 UNO (2026-09-29): compatibilidade em
+  análise.** Os READMEs dizem "não compatível" porque o `VCC` do shield
+  viria do pino 5V do header. O shield não gera 5V, mas a S3 UNO fornece 5V
+  nesse pino, e os pull-ups, o DHT11, o IR, o potenciômetro e o LDR levariam
+  esses 5V aos GPIOs. Nada foi medido ainda. Medições:
+  1. Shield solto, continuidade: `VCC` das barras ↔ 5V, ↔ 3V3 e ↔ IOREF.
+     5V ↔ 3V3 **não pode** dar continuidade (se der, é curto entre os
+     reguladores da S3 UNO).
+  2. Resistência de D2, D3, D4, D6, A0 e A1 até `VCC` e até GND (pull-up
+     ou pull-down, resistor em série). Código SMD do transistor do buzzer
+     (NPN ou PNP) e qual terminal vai ao `VCC`.
+  3. Shield num Arduino UNO ligado: `VCC`-GND; D2/D3 com o botão solto e
+     apertado; A0 nos dois extremos; A1 com luz forte.
+  Com os resultados, atualizar a compatibilidade nos dois READMEs. Se
+  `VCC` = 3V3, é quase todo compatível: o LM35 exige ≥4V, e um buzzer PNP
+  pode não desligar com 3,3V. Se `VCC` = 5V, é preciso um conversor de
+  nível ou alterar o hardware. Opcional: procurar o esquemático do KS0183.
+  A análise por periférico é hipótese e não entra no README como fato.
+- **Fora deste repositório: lab-iot.** O passo 6 da seção 5.2 da
+  especificação diz "segure o BOOT", mas a ESP32-S3 UNO não tem botão
+  BOOT. Corrigir: a gravação é automática pelo CH340 (confirmada em
+  2026-09-29). Só se ela falhar, usar o jumper IO0 → GND + RST (ver
+  "Gravação" em `boards/esp32-s3-uno/README.md`).
 - Preencher `code/` de cada item com código de teste/validação de
   periféricos, quando disponível.
