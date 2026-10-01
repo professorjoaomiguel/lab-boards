@@ -27,16 +27,40 @@ isso a [documentação da Keyestudio](https://wiki.keyestudio.com/Ks0183_keyestu
 | | |
 |---|---|
 | Tensão lógica | **5V** |
-| Alimentação | pino 5V do header da placa (não tem alimentação própria) |
+| Alimentação | pino 5V do header da placa, o que fica ao lado do 3,3V (não tem alimentação própria). ✅ Medido |
+| Pino 3,3V do header | passa pelo shield, mas **não está ligado a nenhum componente**. ✅ Medido |
+| Pino IOREF do header | **não está ligado a nada**. ✅ Medido |
 | Sensores que exigem 5V | LM35 (opera de 4V a 30V; não funciona em 3,3V) |
 
 > ⚠️ **Shield de 5V.** Use apenas em placas cuja lógica seja 5V. Em uma
-> placa de 3,3V, as entradas do microcontrolador recebem 5V (botões,
-> DHT11, receptor IR) e podem queimar.
->
-> **A confirmar com multímetro:** que o `VCC` das barras de pinos do
-> shield está ligado ao pino 5V (e não ao 3,3V) do header. Meça entre
-> `VCC` e `GND` com o shield encaixado em uma placa ligada.
+> placa de 3,3V, as entradas do microcontrolador recebem 5V e podem
+> queimar. As medições abaixo mostram por onde o 5V chega a cada pino.
+
+### Medições do circuito (2026-10-01)
+
+Feitas com multímetro, com o **shield solto e sem alimentação**. As
+resistências foram medidas com os componentes na placa, então somam
+caminhos em paralelo: são aproximadas. O valor nominal de cada resistor
+não foi lido.
+
+**Barramento `VCC`:** o pino 5V do header tem continuidade com o `VCC` de
+todas as barras de expansão (D7, D8, A3, I2C e serial TTL), com o LDR, com
+o LM35 e com o potenciômetro. Não há continuidade entre 5V e 3,3V. A
+resistência entre 5V e GND fica entre ≈5 e 10 kΩ e varia com a luz sobre o
+LDR (5,2 kΩ com luz e 6,2 kΩ com o LDR coberto, numa mesma rodada).
+
+| Pino | Periférico | Circuito encontrado | Como foi medido |
+|------|------------|---------------------|-----------------|
+| D2, D3 | Botões SW1, SW2 | **Pull-up de ≈10 kΩ para o 5V.** O botão liga o pino ao GND: **ativo em LOW** | Pino↔5V: 10 kΩ solto. Pino↔GND: 0 Ω apertado |
+| D4 | DHT11 | **Pull-up de ≈3,3 kΩ para o 5V** | D4↔5V: 3,2 kΩ |
+| D5 | Buzzer | Base de um transistor **NPN** (por resistor). Montagem exata (emissor no GND ou seguidor de emissor) não determinada | Modo diodo, ponta vermelha no D5: conduz para o GND (1,79V) e para o 5V (1,15V); inverso aberto. Código SMD do transistor ilegível |
+| D6 | Receptor IR | **Pull-up de ≈10 kΩ para o 5V** (na placa ou dentro do receptor) | D6↔5V: 10 kΩ |
+| A0 | Potenciômetro | Divisor entre 5V e GND. **Todo para a esquerda, A0 fica ligado direto ao 5V**; todo para a direita, ao GND | A0↔5V: 0,6 Ω (esquerda). A0↔GND: 0,5 Ω (direita) |
+| A1 | LDR | LDR entre o 5V e o A1: **a tensão em A1 sobe com a luz** | A1↔5V: 1,4 kΩ com luz, 5,5 kΩ coberto |
+
+**A confirmar com o shield ligado** (num Arduino UNO): tensão no 5V, em
+D2/D3 (solto e apertado), D4 e D6 em repouso, A0 nos dois extremos, A1
+coberto e com luz forte, e o nível (HIGH ou LOW) que faz o buzzer tocar.
 
 ## Compatibilidade com placas
 
@@ -45,7 +69,27 @@ isso a [documentação da Keyestudio](https://wiki.keyestudio.com/Ks0183_keyestu
 | [Arduino UNO R3](../../boards/arduino-uno-r3/README.md) (ATmega328P) | 5V | ✅ Sim | Placa-alvo original do shield. Até 20 mA por pino. ADC de 10 bits. |
 | [Arduino UNO R4 Minima / WiFi](../../boards/arduino-uno-r4/README.md) (Renesas RA4M1) | 5V | ✅ Sim | Mesmo formato e pinagem. **Corrente máxima de 8 mA por pino** (menor que a do R3). ADC de 10 bits por padrão, configurável até 14 bits com `analogReadResolution()`. |
 | Arduino Mega 2560 | 5V | ✅ Segundo a Keyestudio | Não testado aqui. Os pinos D2–D13 e A0–A3 coincidem com os do UNO. |
+| [ESP32-S3 UNO](../../boards/esp32-s3-uno/README.md) | 3,3V | ❌ Não, sem modificação | Encaixa perfeitamente, mas o shield leva 5V aos GPIOs: pelos pull-ups em D2, D3, D4 e D6 e **direto** pelo potenciômetro em A0 (ver "Medições do circuito"). Modificação em estudo, ver abaixo. |
 | ESP32-S3 N16R8 DevKit e outras placas de 3,3V | 3,3V | ❌ Não | Risco de queimar os GPIOs. Ver [ESP32-S3 N16R8](../../boards/esp32-s3-n16r8/README.md). |
+
+### Modificação para 3,3V (em estudo, não testada)
+
+Ideia: desligar o pino 5V do header do shield e ligar o barramento `VCC` ao
+pino 3,3V do header. Assim, todos os pull-ups e divisores passam a ir para
+3,3V. É viável porque o pino 3,3V do shield não está ligado a nada e não há
+curto entre 5V e 3,3V (medido). Consequências previstas:
+
+- O **LM35 deixa de funcionar** (exige ≥4V).
+- O **receptor IR** precisa aceitar 3,3V. Depende do modelo, que ainda não
+  foi identificado: o VS1838B aceita de 2,7 a 5,5V.
+- O DHT11 aceita 3,3V. O buzzer e o LED de alimentação devem ficar mais
+  fracos.
+- O shield modificado deixa de ser um shield de 5V: etiquete-o. Prefira
+  uma forma reversível (dessoldar o pino 5V, ou um jumper seletor 5V/3,3V)
+  a cortar o pino.
+
+Antes de fazer, verificar se o pino **AREF** do shield está ligado a algo:
+na ESP32-S3 UNO, a posição AREF está ligada ao reset da placa.
 
 ## Fotos
 ![frente e verso](imagens/frente-verso.jpg)
@@ -124,10 +168,10 @@ substitui a medição: clones podem trocar componentes. Confirme com o teste.
 | LEDs D12 e D13: nível que acende | Teste 1 | HIGH acende (Keyestudio e RoboticX) | ✅ Ativos em HIGH (confirmado na placa) |
 | LED RGB: cátodo ou ânodo comum | Teste 2, parte B | Cátodo comum: a cor acende com o pino em HIGH (Keyestudio e RoboticX) | ✅ Ativo em HIGH, cátodo comum (confirmado na placa) |
 | Cor ligada a D9, D10 e D11 | Teste 2, parte A | D9 = vermelho, D10 = verde, D11 = azul (Keyestudio e RoboticX) | ✅ **D9 = vermelho, D10 = azul, D11 = verde** (confirmado na placa; **difere** da documentação dos fabricantes) |
-| Buzzer: ativo ou passivo, e nível que liga | Teste 4 | **Passivo, liga em LOW** (Keyestudio: "passive buzzer"; no código, LOW = som e HIGH = silêncio, o que indica transistor PNP) | _a preencher_ |
-| Botões: pull-up ou pull-down | Teste 3 (nível de repouso) | Pull-down: o exemplo da RoboticX trata o botão apertado como HIGH. O da Keyestudio usa interrupção por borda de descida, que funciona nos dois casos e não confirma nada | _a preencher_ |
-| LDR: leitura sobe ou desce com mais luz | Teste 6 | **Sobe com a luz** (Keyestudio: "the stronger the light is, the greater the value is") | _a preencher_ |
-| `VCC` das barras de pinos = 5V | Multímetro | Não indicado | _a preencher_ |
+| Buzzer: ativo ou passivo, e nível que liga | Teste 4 | **Passivo, liga em LOW** (Keyestudio: "passive buzzer"; no código, LOW = som e HIGH = silêncio, o que indica transistor PNP) | ⚠️ Multímetro (2026-10-01): transistor **NPN**, o que **diverge** do indício de PNP. Nível que liga: _a preencher_ (Teste 4) |
+| Botões: pull-up ou pull-down | Teste 3 (nível de repouso) | Pull-down: o exemplo da RoboticX trata o botão apertado como HIGH. O da Keyestudio usa interrupção por borda de descida, que funciona nos dois casos e não confirma nada | ✅ **Pull-up de ≈10 kΩ, ativo em LOW** (multímetro, 2026-10-01; **difere** do exemplo da RoboticX). Falta ver no Teste 3 |
+| LDR: leitura sobe ou desce com mais luz | Teste 6 | **Sobe com a luz** (Keyestudio: "the stronger the light is, the greater the value is") | Multímetro indica que **sobe** (LDR entre 5V e A1). Falta ver no Teste 6 |
+| `VCC` das barras de pinos = 5V | Multímetro | Não indicado | ✅ Ligado ao pino 5V do header (continuidade, 2026-10-01). Falta medir a tensão com o shield ligado |
 
 ## Referências
 - Placas compatíveis (com datasheets dos microcontroladores):

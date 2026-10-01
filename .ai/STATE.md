@@ -67,24 +67,24 @@ estrutural.
 - Documentar mais placas e shields conforme forem usados em aula.
 - Rodar o sketch de teste do shield 9 em 1 em uma placa real e preencher a
   tabela "A confirmar" do README do shield.
-- **Shield 9 em 1 na ESP32-S3 UNO (2026-09-29): compatibilidade em
-  análise.** Os READMEs dizem "não compatível" porque o `VCC` do shield
-  viria do pino 5V do header. O shield não gera 5V, mas a S3 UNO fornece 5V
-  nesse pino, e os pull-ups, o DHT11, o IR, o potenciômetro e o LDR levariam
-  esses 5V aos GPIOs. Nada foi medido ainda. Medições:
-  1. Shield solto, continuidade: `VCC` das barras ↔ 5V, ↔ 3V3 e ↔ IOREF.
-     5V ↔ 3V3 **não pode** dar continuidade (se der, é curto entre os
-     reguladores da S3 UNO).
-  2. Resistência de D2, D3, D4, D6, A0 e A1 até `VCC` e até GND (pull-up
-     ou pull-down, resistor em série). Código SMD do transistor do buzzer
-     (NPN ou PNP) e qual terminal vai ao `VCC`.
-  3. Shield num Arduino UNO ligado: `VCC`-GND; D2/D3 com o botão solto e
-     apertado; A0 nos dois extremos; A1 com luz forte.
-  Com os resultados, atualizar a compatibilidade nos dois READMEs. Se
-  `VCC` = 3V3, é quase todo compatível: o LM35 exige ≥4V, e um buzzer PNP
-  pode não desligar com 3,3V. Se `VCC` = 5V, é preciso um conversor de
-  nível ou alterar o hardware. Opcional: procurar o esquemático do KS0183.
-  A análise por periférico é hipótese e não entra no README como fato.
+- **Shield 9 em 1 na ESP32-S3 UNO: não compatível sem modificação
+  (medido em 2026-10-01).** O `VCC` do shield é o pino 5V do header; o 3V3
+  e o IOREF não estão ligados a nada; não há curto 5V↔3V3. Os GPIOs recebem
+  5V por pull-ups (D2/D3 ≈10k, D4 ≈3,3k, D6 ≈10k) e **direto** pelo
+  potenciômetro (A0). Detalhes em "Medições do circuito" no README do
+  shield. Pendente:
+  1. Bloco 7, com o shield num **Arduino UNO** ligado (V DC, preta no GND):
+     5V; D2 solto/apertado; D4 e D6 em repouso; A0 nos dois extremos; A1
+     coberto e com lanterna; nível que liga o buzzer (Teste 4 do sketch).
+     Buzzer medido como NPN, divergindo da Keyestudio (PNP).
+  2. Antes da modificação: continuidade do **AREF** do shield com qualquer
+     coisa (na S3 UNO o AREF vai ao RST) e o código do **receptor IR**
+     (precisa aceitar 3,3V).
+  3. Modificação proposta pelo usuário: desligar o pino 5V do shield e
+     ligar o `VCC` ao 3V3 (preferir forma reversível; etiquetar). Perde o
+     LM35. Depois: conferir 5V↔VCC aberto, 3V3↔VCC ≈0 Ω, 3V3↔GND sem
+     curto; repetir o bloco 7 na própria S3 (tudo ≤3,3V); atualizar a
+     compatibilidade nos READMEs do shield e da S3 UNO.
 - **Fora deste repositório: lab-iot.** O passo 6 da seção 5.2 da
   especificação diz "segure o BOOT", mas a ESP32-S3 UNO não tem botão
   BOOT. Corrigir: a gravação é automática pelo CH340 (confirmada em
