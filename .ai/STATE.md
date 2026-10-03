@@ -109,11 +109,13 @@ estrutural.
   SW2 do shield, mas trocando os shields entre o R3 e o R4 o defeito
   ficou na placa (os dois shields estão bons). Confirmado sem shield: o
   teste da placa acusa só o D3 (`gpio`). Anotado no inventário.
-- **LM35 no R4 com o potenciômetro todo girado (A0 = 5 V)**: o ADC leu
-  ~180 mV (com descarga) e ~480 mV (sem), e o multímetro mediu 19 mV no
-  A2 (2026-10-03, valor estranho). Com o potenciômetro no meio, os dois
-  shields leram certo nas duas placas. Investigar se a posição do
-  potenciômetro afeta o LM35.
+- **LM35 instável nos dois shields** (2026-10-03): a saída muda sozinha
+  com o tempo (multímetro no A2: 12 mV a 0,50 V; ADC: 23,3 → 39,8 °C em um
+  minuto com o DHT11 estável), em R4, R3-01 e R3-02; não é mau contato.
+  Hipótese: o LM35 oscila (sem amortecimento na saída). Pendente: medir
+  com osciloscópio; testar o RC do datasheet (75 Ω em série + 1 µF ao GND)
+  ou 1–2 kΩ em série num shield. Até lá, usar o DHT11 como referência.
+  A correção ADDISCR do R4 continua, mas não resolve isto.
 - **Menus do shield aceitam qualquer final de linha** (2026-10-03): os
   pontos de "continuar"/"voltar ao menu" pedem `c` (com "Sem final de
   linha", o Enter vazio não envia nada). Validado no R3 e no R4. Na mesma

@@ -192,7 +192,7 @@ substitui a medição: clones podem trocar componentes. Confirme com o teste.
 | Botões: pull-up ou pull-down | Teste 3 (nível de repouso) | Pull-down: o exemplo da RoboticX trata o botão apertado como HIGH. O da Keyestudio usa interrupção por borda de descida, que funciona nos dois casos e não confirma nada | ✅ **Pull-up de ≈10 kΩ, ativo em LOW** (multímetro, 2026-10-01; **difere** do exemplo da RoboticX). Falta ver no Teste 3 |
 | LDR: leitura sobe ou desce com mais luz | Teste 6 | **Sobe com a luz** (Keyestudio: "the stronger the light is, the greater the value is") | Multímetro indica que **sobe** (LDR entre 5V e A1). Falta ver no Teste 6 |
 | `VCC` das barras de pinos = 5V | Multímetro | Não indicado | ✅ Ligado ao pino 5V do header (continuidade, 2026-10-01). Falta medir a tensão com o shield ligado |
-| LM35: temperatura coerente | Teste automático do UNO R4; multímetro entre A2 e GND | 10 mV/°C, 0,25 V a 25 °C | ✅ **No UNO R4, só com a descarga do ADC ligada** (2026-10-03): sem ela, o ADC lia até 0,77 V com 0,253 V reais no multímetro, porque o LM35 não absorve corrente e o capacitor de amostragem chega carregado do pino anterior. Com a descarga: 26,0 °C, com o DHT11 em 23,0 °C. Ver [ADC do UNO R4](../../boards/arduino-uno-r4/README.md#adc-leitura-errada-de-sensores-que-não-absorvem-corrente). O 1º shield testado mediu **0,47 V no multímetro** (com o ADC parado) e foi trocado: provável defeito real, a reconferir com o sketch corrigido |
+| LM35: temperatura coerente | Teste automático (opção `a`); multímetro entre A2 e GND | 10 mV/°C, 0,25 V a 25 °C | ⚠️ **Instável nos dois shields testados** (2026-10-03): a saída do LM35 muda sozinha com o tempo, sem mexer em nada, em três placas (R4, R3-01, R3-02). Multímetro no A2: 12 mV, 19 mV, 0,25 V, 0,47 V e 0,50 V em momentos diferentes; não pulou ao pressionar o sensor (não é mau contato). Pelo ADC, o mesmo sensor foi de 23,3 °C a 39,8 °C em um minuto, com o DHT11 estável em 28,4 °C. Hipótese: **o LM35 oscila** (o datasheet avisa que ele oscila com carga capacitiva; a saída vai direto ao A2). Não tem correção por software. Ver "LM35 instável" abaixo |
 | DHT11: 1ª leitura depois de ligar | Teste automático do UNO R4 | Não indicado | ✅ Vem **zerada** (0 °C, 0 %) e passa na soma de verificação (0+0+0+0 = 0). Os sketches descartam essa leitura (2026-10-03) |
 
 ### Faixa de frequência do buzzer (2026-10-03)
@@ -218,7 +218,28 @@ melodia do teste 4), mas o timbre sai misturado com o apito próprio. Em
 oscilador interno. Ainda não foi medida a frequência do apito natural (dá
 para medir com um app de afinador ou analisador de espectro no celular).
 
-## Referências
+### LM35 instável (2026-10-03)
+
+**Para aulas: use o DHT11 como referência de temperatura.** O LM35 dos
+shields testados não é confiável: a leitura muda sozinha de alguns graus
+até ~50 °C, e o multímetro confirma que é a tensão de saída do próprio
+sensor que muda (não é erro do código nem da placa).
+
+Como confirmar e corrigir (a fazer):
+
+- **Osciloscópio na saída do LM35** (pino do meio): uma oscilação de
+  alta frequência confirma a hipótese.
+- **Correção de hardware sugerida pelo datasheet** para cargas
+  capacitivas: um amortecedor RC na saída (resistor de 75 Ω em série e
+  capacitor de 1 µF até o GND) ou um resistor em série de 1 a 2 kΩ entre a
+  saída e o A2. Testar num shield antes de modificar os outros.
+
+A descarga do capacitor do ADC no UNO R4 (ver
+[ADC do UNO R4](../../boards/arduino-uno-r4/README.md#adc-leitura-errada-de-sensores-que-não-absorvem-corrente))
+continua no código, porque o efeito que ela trata existe, mas ela **não
+resolve** esta instabilidade.
+
+## Referências## Referências
 - Placas compatíveis (com datasheets dos microcontroladores):
   [UNO R3](../../boards/arduino-uno-r3/README.md) e
   [UNO R4](../../boards/arduino-uno-r4/README.md)
