@@ -63,11 +63,14 @@ para agentes que **constroem** o repositório.
 - `boards/<slug>/` — placas de desenvolvimento (ESP32, Arduino, etc.)
 - `shields/<slug>/` — shields e módulos que acoplam nas placas (teclado,
   display, etc.)
+- `inventario/` — inventário das unidades físicas (placas e shields): quais
+  existem, etiqueta, dono (professor ou SENAI) e o que se sabe de cada uma.
+  Fica separado do código de teste. Ver `inventario/README.md`.
 - `templates/item-README.md` — template a ser copiado para criar um item novo.
 - `scripts/gerar_indice.py` — gera `INDEX.md` a partir do front matter de
   todos os itens.
 - `scripts/serial_placa.py` — lista as placas ligadas, roda os sketches de
-  teste pela serial e registra placas no inventário (`--help`).
+  teste pela serial e registra placas em `inventario/` (`--help`).
 - `docs/superpowers/specs/` e `docs/superpowers/plans/` — histórico de
   design e planos de implementação deste repositório.
 

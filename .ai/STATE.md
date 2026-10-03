@@ -11,11 +11,23 @@ estrutural.
 | [ESP32-S3 N16R8 DevKit](../boards/esp32-s3-n16r8/README.md) | placa | Estrutura completa; fotos e diagrama ainda pendentes |
 | [ESP32-S3 UNO (TZT D1 ESP32-S3 N16R8)](../boards/esp32-s3-uno/README.md) | placa | Pinagem completa, sketch de teste e inventário por MAC; N16R8 e PSRAM octal confirmadas; foto própria e parte dos itens "a confirmar" pendentes |
 | [ESP32-C3 SuperMini](../boards/esp32-c3-supermini/README.md) | placa | Pinagem, comparação com o XIAO e testes nos dois formatos; sketch sem compilar (compilador RISC-V bloqueado), foto e "a confirmar" pendentes |
-| [Arduino UNO R3](../boards/arduino-uno-r3/README.md) | placa | Teste automático dedicado, inventário pelo número de série USB (R3-01 registrada), cuidados do ADC documentados; fotos e "a confirmar" pendentes |
-| [Arduino UNO R4 (Minima / WiFi)](../boards/arduino-uno-r4/README.md) | placa | Testes automático e interativo (com Shield 9 em 1), inventário por ID único (R4M-01 registrada); fotos e parte dos "a confirmar" pendentes |
+| [Arduino UNO R3](../boards/arduino-uno-r3/README.md) | placa | Teste da placa (automático) e teste conjunto com o shield; cuidados do ADC documentados; R3-01 (D3 com defeito) e R3-02 no inventário; fotos e "a confirmar" pendentes |
+| [Arduino UNO R4 (Minima / WiFi)](../boards/arduino-uno-r4/README.md) | placa | Teste da placa (automático) e teste conjunto com o shield; R4M-01 no inventário; fotos e parte dos "a confirmar" pendentes |
 | [Shield Multifunção 9 em 1 (UNO)](../shields/uno-shield-9in1/README.md) | shield | Completo, com sketch de teste; itens "a confirmar" pendentes de teste na placa |
 
 ## Decisões tomadas
+
+- **Inventário separado do código de teste** (2026-10-03, decisão do
+  usuário): `inventario/` com um CSV por tipo de placa e um de shields,
+  colunas `etiqueta_colada` e `dono` (professor / SENAI / a confirmar) e,
+  no R3, `variante` (ATmega16U2 ou CH340). Placas do professor: o
+  ESP32-S3 UNO e o UNO R4 Minima; há R3 do professor (16U2 e CH340) e do
+  SENAI (2 ou 3 tipos); shields 9 em 1 do professor e do SENAI. A cada
+  placa conectada, registrar o número de série (lista de conhecidas ×
+  desconhecidas).
+- **Rotinas de teste encerradas nesta etapa** (2026-10-03): o usuário vai
+  definir depois uma rotina mais clara e objetiva de teste e identificação
+  das placas. Não ampliar os testes até lá; só corrigir defeitos.
 
 - Estrutura do repositório, template de item, sistema de tags e script de
   índice: ver `docs/superpowers/specs/2026-07-23-repositorio-documentacao-placas-design.md`.
@@ -65,11 +77,22 @@ estrutural.
 
 ## Próximos passos
 
+- **Inventário (em andamento):** colar as etiquetas físicas (nenhuma foi
+  colada ainda) e preencher `dono` de cada unidade (R3-01, R3-02 e os
+  shields S9-01 a S9-05 estão "a confirmar"). Registrar cada placa nova
+  que for conectada. S9-05 não foi testado.
+- **Shield S9-04 no R4: LM35 incoerente** (2026-10-03): o ADC leu ~203 mV
+  (20,3 °C, estável, 7 °C abaixo do DHT11) e o multímetro mediu 28 mV no
+  A2. Hoje também, com o S9-02 no R4, o ADC leu 180/480 mV e o multímetro
+  19 mV. Ou o multímetro mede outra coisa nesses casos, ou a leitura do R4
+  com a descarga (ADDISCR) está errada. Investigar junto com o LM35
+  instável (abaixo), de preferência com osciloscópio.
+
 - Adicionar fotos de `boards/arduino-uno-r3/` e `boards/arduino-uno-r4/`.
 - **UNO R4: registrar as outras placas, uma de cada vez** (o laboratório
   só tem uma USB livre). Para cada uma: `python scripts/serial_placa.py
   auto --gravar --registrar`, colar a etiqueta `R4M-NN` que o script
-  indicar e commitar o `inventario.csv`. Comparar os IDs entre placas para
+  indicar e commitar `inventario/arduino-uno-r4.csv`. Comparar os IDs entre placas para
   confirmar quais trechos mudam (lote/wafer).
 - UNO R4: rodar o teste da placa **sem shield** (`gpio` e `dac`) e com
   jumper D0↔D1 (`serial1`); rodar o teste conjunto novo (`auto --shield`;
@@ -129,7 +152,7 @@ estrutural.
 - ESP32-S3 UNO: variante N16R8, PSRAM com `SPIRAM_OCT` e gravação sem
   jumper já confirmadas (2026-09-29). Faltam o LED RGB, a ordem das cores,
   o script MicroPython na placa e as medições da tabela "A confirmar".
-- ESP32-S3 UNO: registrar cada placa nova em `inventario.csv` (MAC, ID de
+- ESP32-S3 UNO: registrar cada placa nova em `inventario/esp32-s3-uno.csv` (MAC, ID de
   128 bits, flash e PSRAM). Registrar não exige regravar o firmware. A 1ª
   placa usada em aula (2026-09-24) ainda não foi registrada.
 - ESP32-S3 UNO: escrever um código de verificação nos dois formatos

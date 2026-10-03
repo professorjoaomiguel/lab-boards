@@ -25,6 +25,10 @@ resolva-os a partir da pasta do arquivo atual e monte a URL bruta acima.
    tensão de operação, pinagem, componentes, compatibilidade e referências.
 3. Código de teste, quando existe, fica em `code/` dentro da pasta do item.
    Fotos e diagramas ficam em `imagens/`.
+4. As unidades físicas do laboratório (cada placa e cada shield, com
+   etiqueta, dono e defeitos conhecidos) ficam em
+   [`inventario/`](inventario/README.md), separado do código. Antes de
+   culpar o código por um defeito, veja se a unidade já tem algo anotado lá.
 
 ## Regras ao usar este conteúdo
 
