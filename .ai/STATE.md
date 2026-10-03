@@ -105,9 +105,15 @@ estrutural.
   depois de `analogReference(INTERNAL)`, ~0,5 s até firmar (capacitor de
   100 nF no AREF). Documentado no README do R3. O AREF do shield **não**
   está ligado a nada (medido sem alimentação).
-- **Shield usado com o UNO R3-01: SW2 (D3) preso em LOW** (2026-10-03).
-  Medir D3↔GND com o shield solto (SW2 solto deveria ser aberto) e, se
-  for defeito, consertar ou separar o shield.
+- **UNO R3-01: pino D3 preso em LOW** (2026-10-03). Primeiro parecia o
+  SW2 do shield, mas trocando os shields entre o R3 e o R4 o defeito
+  ficou na placa (os dois shields estão bons). Confirmar com o teste da
+  placa sem shield (`gpio` deve acusar o D3) e anotar no inventário.
+- **LM35 no R4 com o potenciômetro todo girado (A0 = 5 V)**: o ADC leu
+  ~180 mV (com descarga) e ~480 mV (sem), e o multímetro mediu 19 mV no
+  A2 (2026-10-03, valor estranho). Com o potenciômetro no meio, os dois
+  shields leram certo nas duas placas. Investigar se a posição do
+  potenciômetro afeta o LM35.
 - **Menus do shield aceitam qualquer final de linha** (2026-10-03): os
   pontos de "continuar"/"voltar ao menu" pedem `c` (com "Sem final de
   linha", o Enter vazio não envia nada). Validado no R3 e no R4. Na mesma

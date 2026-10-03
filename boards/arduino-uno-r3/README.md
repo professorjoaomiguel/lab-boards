@@ -183,17 +183,19 @@ Placa original (ATmega16U2), Vcc de 4,87–4,89 V na USB.
 
 - **Teste da placa com o shield encaixado:** chip, relógio, EEPROM e Vcc
   OK; `gpio` corretamente **pulado** ("ligado: D2 D4 D6 A1").
-- **Teste conjunto (opção `a`):** `ok=7 aviso=1`. LM35 em 23,9 °C e
-  DHT11 em 28,8 °C. O aviso foi do **shield**: o botão **SW2 (D3) fica em
-  LOW sem ninguém apertar**. O D3 lê LOW mesmo com o pull-up interno
-  ligado, o que indica botão travado ou curto com o GND no shield (ver o
-  README do shield).
+- **Teste conjunto (opção `a`):** `ok=7 aviso=1`, com os dois shields
+  (LM35 em 23,9 °C nos dois; DHT11 em 28,3–28,8 °C). O aviso **é da placa**:
+  o **pino D3 da R3-01 fica em LOW** sem ninguém apertar o SW2, mesmo com o
+  pull-up interno do chip ligado. Trocando os shields entre o R3 e o R4, o
+  defeito ficou no R3 e sumiu no R4. Causa provável: a porta D3 do
+  ATmega328P danificada ou um curto do D3 com o GND na placa. **Não use o
+  D3 desta placa.**
 
 ### A confirmar na placa real
 
 | Item | Como | Situação |
 |------|------|----------|
-| Teste `gpio` completo (D2–D12, A1–A5) | Teste da placa **sem** o shield | A rodar |
+| Teste `gpio` completo (D2–D12, A1–A5) | Teste da placa **sem** o shield (deve acusar o D3 da R3-01) | A rodar |
 | Vcc com multímetro | Comparar com o valor do teste `vcc` | A medir |
 | Clone com CH340 | Os mesmos testes; o inventário precisa de registro à mão (sem número de série USB) | Sem placa testada |
 

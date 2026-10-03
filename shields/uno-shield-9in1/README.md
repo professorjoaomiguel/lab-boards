@@ -183,7 +183,7 @@ substitui a medição: clones podem trocar componentes. Confirme com o teste.
 
 | Item | Como descobrir | Indício (documentação dos fabricantes) | Resultado |
 |------|----------------|----------------------------------------|-----------|
-| Botões: algum preso em LOW? | Teste automático do UNO R3/R4 (`botoes`) | Não se aplica | ⚠️ No shield usado com o **UNO R3-01** (2026-10-03), o **SW2 (D3) fica em LOW sem ninguém apertar**: o D3 lê LOW mesmo com o pull-up interno, ou seja, algo o liga ao GND (botão travado ou curto de solda). Conferir: shield solto, resistência D3↔GND com o SW2 solto (deveria ser aberto) |
+| Botões: algum preso em LOW? | Teste automático (`botoes`) e troca de shields entre placas | Não se aplica | ✅ **Os dois shields testados estão bons.** O "SW2 preso em LOW" visto no UNO R3-01 **é da placa**: trocando os shields entre o R3 e o R4 (2026-10-03), o defeito ficou no R3-01 (D3 em LOW com qualquer shield) e sumiu no R4. Ver o README do UNO R3 |
 | LEDs D12 e D13: nível que acende | Teste 1 | HIGH acende (Keyestudio e RoboticX) | ✅ Ativos em HIGH (confirmado na placa) |
 | LEDs D12 e D13: cor de cada um | Teste 1 | D12 vermelho, D13 azul (Keyestudio) | ✅ **D12 vermelho, D13 azul** (padrão, confirmado nos shields testados, 2026-10-03). ⚠️ Pode haver variação de montagem entre lotes |
 | LED RGB: cátodo ou ânodo comum | Teste 2, parte B | Cátodo comum: a cor acende com o pino em HIGH (Keyestudio e RoboticX) | ✅ Ativo em HIGH, cátodo comum (confirmado na placa) |
