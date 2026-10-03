@@ -348,6 +348,13 @@ uint8_t lerDht11(float &umidade, float &temperatura) {
     return DHT_ERRO_CHECKSUM;
   }
 
+  // O DHT11 responde com a medição ANTERIOR. Na 1ª leitura depois de ligar
+  // ainda não há medição, e ele envia 5 bytes zerados, que "passam" na soma
+  // de verificação (0+0+0+0 = 0). Visto num UNO R4: tratar como erro.
+  if (dados[0] == 0 && dados[2] == 0 && dados[4] == 0) {
+    return DHT_ERRO_LEITURA;
+  }
+
   umidade = dados[0] + dados[1] * 0.1;
   // No byte [3], o bit 7 indica temperatura negativa e os bits 0–3 são o
   // décimo de grau (usado pelas versões mais novas do DHT11).

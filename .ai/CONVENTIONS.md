@@ -66,6 +66,8 @@ para agentes que **constroem** o repositório.
 - `templates/item-README.md` — template a ser copiado para criar um item novo.
 - `scripts/gerar_indice.py` — gera `INDEX.md` a partir do front matter de
   todos os itens.
+- `scripts/serial_placa.py` — lista as placas ligadas, roda os sketches de
+  teste pela serial e registra placas no inventário (`--help`).
 - `docs/superpowers/specs/` e `docs/superpowers/plans/` — histórico de
   design e planos de implementação deste repositório.
 
@@ -184,6 +186,8 @@ Todo script deve ter:
 ## Testes
 
 `scripts/gerar_indice.py` tem testes em `scripts/test_gerar_indice.py`,
-rodados com `python -m unittest scripts/test_gerar_indice.py -v`. Qualquer
+rodados com `python -m unittest scripts/test_gerar_indice.py -v`.
+`scripts/serial_placa.py` (testes de placa pela serial e inventário) tem
+testes em `scripts/test_serial_placa.py`, que não precisam de placa ligada. Qualquer
 mudança no script deve manter esses testes passando e seguir TDD (teste
 antes da implementação).

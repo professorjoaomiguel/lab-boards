@@ -89,6 +89,8 @@ certo de cada constante:
 | DHT11: "não respondeu" | Shield mal encaixado ou sensor com defeito. |
 | DHT11: erro de checksum de vez em quando | Normal em leituras isoladas; seguidos indicam mau contato. |
 | LM35 marca 2–3 °C a mais que o DHT11 | Referência do ADC abaixo de 5V (comum na USB): ajuste `TENSAO_REFERENCIA`. |
+| LM35 marca ~20 °C a mais que o DHT11 (≈45–50 °C) | Visto num UNO R4 (2026-10-03), ainda sem causa confirmada: meça a tensão entre A2 e GND com multímetro (25 °C = 0,25 V). Ver "A confirmar" no [README do shield](../README.md#a-confirmar-com-o-shield-em-mãos). |
+| DHT11 mostra 0 °C e 0 % logo depois de ligar | 1ª leitura do sensor vem zerada; o sketch agora a descarta como erro. A próxima leitura já vem certa. |
 | IR: "sinal recebido, mas não é NEC" | O controle usa outro protocolo (Sony, RC5, TV). O receptor está funcionando. |
 
 ## Registro dos resultados

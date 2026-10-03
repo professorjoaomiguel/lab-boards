@@ -12,7 +12,7 @@ estrutural.
 | [ESP32-S3 UNO (TZT D1 ESP32-S3 N16R8)](../boards/esp32-s3-uno/README.md) | placa | Pinagem completa, sketch de teste e inventário por MAC; N16R8 e PSRAM octal confirmadas; foto própria e parte dos itens "a confirmar" pendentes |
 | [ESP32-C3 SuperMini](../boards/esp32-c3-supermini/README.md) | placa | Pinagem, comparação com o XIAO e testes nos dois formatos; sketch sem compilar (compilador RISC-V bloqueado), foto e "a confirmar" pendentes |
 | [Arduino UNO R3](../boards/arduino-uno-r3/README.md) | placa | Estrutura e datasheets completos; fotos pendentes |
-| [Arduino UNO R4 (Minima / WiFi)](../boards/arduino-uno-r4/README.md) | placa | Estrutura e datasheets completos; fotos pendentes |
+| [Arduino UNO R4 (Minima / WiFi)](../boards/arduino-uno-r4/README.md) | placa | Testes automático e interativo (com Shield 9 em 1), inventário por ID único (R4M-01 registrada); fotos e parte dos "a confirmar" pendentes |
 | [Shield Multifunção 9 em 1 (UNO)](../shields/uno-shield-9in1/README.md) | shield | Completo, com sketch de teste; itens "a confirmar" pendentes de teste na placa |
 
 ## Decisões tomadas
@@ -34,6 +34,15 @@ estrutural.
   código sob MIT (`LICENSE-CODE`), citação em `CITATION.cff`. Autor
   identificado como Prof. Joao Miguel Roehe (@professorjoaomiguel), sem
   e-mail público.
+- Código de teste dedicado por placa (2026-10-03): cada placa tem os
+  próprios sketches, em vez de um sketch genérico com `#ifdef` para várias
+  placas (preferência do usuário). Cada placa tem dois formatos: automático
+  (sem interação, saída `RESULTADO;...`/`FIM;...` lida por
+  `scripts/serial_placa.py`) e interativo (guiado, respostas s/n/p).
+- Inventário do UNO R4 (2026-10-03): a chave é o ID único de 128 bits do
+  RA4M1, que no Minima é também o número de série USB. A etiqueta física é
+  sequencial (`R4M-NN`, `R4W-NN`), não um pedaço do ID: trechos do ID se
+  repetem entre chips do mesmo lote.
 - Scripts documentados no próprio arquivo (2026-09-28): Python com docstrings
   e `--help` via argparse; PowerShell com ajuda baseada em comentários
   (`Get-Help`). Ver `.ai/CONVENTIONS.md`, seção "Scripts".
@@ -41,6 +50,24 @@ estrutural.
 ## Próximos passos
 
 - Adicionar fotos de `boards/arduino-uno-r3/` e `boards/arduino-uno-r4/`.
+- **UNO R4: registrar as outras placas, uma de cada vez** (o laboratório
+  só tem uma USB livre). Para cada uma: `python scripts/serial_placa.py
+  auto --gravar --registrar`, colar a etiqueta `R4M-NN` que o script
+  indicar e commitar o `inventario.csv`. Comparar os IDs entre placas para
+  confirmar quais trechos mudam (lote/wafer).
+- UNO R4: rodar o teste automático **sem shield** (testes `dac` e `gpio`
+  completo) e com jumper D0↔D1 (`serial1`); rodar o teste interativo
+  respondendo de verdade; medir o pino 5V. Preencher "A confirmar" no
+  README do R4. Nenhuma UNO R4 WiFi testada ainda.
+- **LM35 do Shield 9 em 1 lê ~45–49 °C** no UNO R4 com o DHT11 em 26 °C
+  (2026-10-03). A ligação foi conferida visualmente. Medir a tensão entre
+  A2 e GND com multímetro: ~0,27 V = sensor bom (oscilação/erro de leitura);
+  ~0,45 V = sensor com defeito ou não é LM35. Detalhes no README do shield.
+- **UNO R3: teste automático dedicado adiado** (2026-10-03), para quando
+  houver um UNO R3 ligado. Criar `boards/arduino-uno-r3/code/teste_uno_r3_automatico`
+  no mesmo formato de saída do R4 (sem RTC, DAC, Serial1 nem ID único; dá
+  para medir o Vcc pela referência interna de 1,1V) e preencher
+  `sketch_auto` de `uno-r3` em `scripts/serial_placa.py`.
 - Adicionar fotos e diagrama esquemático reais de `boards/esp32-s3-n16r8/`.
 - ESP32-S3 UNO: variante N16R8, PSRAM com `SPIRAM_OCT` e gravação sem
   jumper já confirmadas (2026-09-29). Faltam o LED RGB, a ordem das cores,
