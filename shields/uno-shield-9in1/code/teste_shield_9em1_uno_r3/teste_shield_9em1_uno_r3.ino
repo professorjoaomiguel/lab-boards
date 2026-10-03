@@ -121,14 +121,17 @@ const unsigned long VELOCIDADE_SERIAL = 9600;
 const bool RGB_ANODO_COMUM = false;
 
 // Nível do pino D5 que liga o transistor do buzzer:
-//   LOW  = transistor PNP (ex: S8550). É o caso deste shield segundo a
-//          Keyestudio, fabricante do projeto original: no código dela,
-//          digitalWrite(buzzer, LOW) = som e HIGH = silêncio.
-//   HIGH = transistor NPN (ou buzzer ligado direto no pino).
+//   HIGH = transistor NPN. É o caso deste shield: o multímetro mostrou um
+//          NPN (2026-10-01), e com LOW como "ligado" um shield apitou sem
+//          parar, porque o sketch deixava o D5 em HIGH para "desligar"
+//          (UNO R4, 2026-10-03).
+//   LOW  = transistor PNP (ex: S8550). É o que diz a Keyestudio, fabricante
+//          do projeto original (no código dela, LOW = som), mas não bate
+//          com os shields medidos aqui.
 // Com o valor errado, o transistor fica conduzindo o tempo todo: um buzzer
 // ativo apita sem parar, e um passivo fica com corrente contínua passando
 // pela bobina (esquenta à toa). O teste 4 ajuda a confirmar.
-const uint8_t BUZZER_NIVEL_LIGADO = LOW;
+const uint8_t BUZZER_NIVEL_LIGADO = HIGH;
 
 // Tensão de referência do conversor analógico-digital (ADC), em volts.
 // Por padrão é a tensão de alimentação da placa (5V). Na prática ela varia:
@@ -655,7 +658,8 @@ void testeBotoes() {
 // =============================================================================
 //
 //  Existem dois tipos de buzzer, e o teste ajuda a identificar qual está no
-//  shield (segundo a Keyestudio, este shield usa um PASSIVO):
+//  shield. A Keyestudio diz PASSIVO, mas o shield testado em 2026-10-03
+//  tinha um ATIVO (apitou sem parar com o D5 fixo em HIGH):
 //    - ATIVO: tem um oscilador interno. Basta ligá-lo (nível fixo) para
 //      apitar, sempre na mesma frequência.
 //    - PASSIVO: é só um alto-falante pequeno. Com nível fixo ele não apita
@@ -664,8 +668,36 @@ void testeBotoes() {
 //  O buzzer é acionado por um transistor. Dependendo do transistor (NPN ou
 //  PNP), ele liga com o pino em HIGH ou em LOW. Com buzzer ativo, a parte A
 //  mostra o nível que liga. Com buzzer passivo, nenhum nível fixo apita
-//  (só dá um clique na troca); nesse caso vale o que diz o fabricante:
-//  LOW liga (transistor PNP).
+//  (só dá um clique na troca); nesse caso vale o transistor medido com
+//  multímetro neste shield: NPN, HIGH liga.
+
+// =============================================================================
+//  MELODIA: "Nokia Tune"
+// =============================================================================
+//
+//  Trecho da "Gran Vals" de Francisco Tárrega (1902, domínio público), o
+//  toque famoso dos celulares Nokia. Cada nota é uma frequência (Hz) e uma
+//  duração em colcheias (1 = colcheia, 2 = semínima, 4 = mínima).
+//  Entre uma nota e outra há uma pausa curta: sem ela, duas notas seguidas
+//  soariam "grudadas".
+const unsigned int NOKIA_NOTAS[13] = {
+  659, 587, 370, 415,   // mi5 ré5 fá#4 sol#4
+  554, 494, 294, 330,   // dó#5 si4 ré4 mi4
+  494, 440, 277, 330,   // si4 lá4 dó#4 mi4
+  440                   // lá4
+};
+const uint8_t NOKIA_DURACOES[13] = {1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 4};
+const unsigned int COLCHEIA_MS = 150;  // andamento: 200 semínimas por minuto
+
+void tocarNokia(uint8_t pino) {
+  for (uint8_t i = 0; i < 13; i++) {
+    unsigned int duracao = NOKIA_DURACOES[i] * COLCHEIA_MS;
+    tone(pino, NOKIA_NOTAS[i]);
+    delay(duracao * 9 / 10);  // 90% do tempo soando...
+    noTone(pino);
+    delay(duracao / 10);      // ...e 10% de silêncio entre as notas
+  }
+}
 
 void testeBuzzer() {
   imprimirTitulo(F("TESTE 4: Buzzer (D5)"));
@@ -680,10 +712,11 @@ void testeBuzzer() {
   buzzerLigar(false);
 
   Serial.println(F("   Em qual nível o buzzer apitou?"));
-  Serial.println(F("   - HIGH: use BUZZER_NIVEL_LIGADO = HIGH (é um buzzer ATIVO)."));
+  Serial.println(F("   - HIGH: use BUZZER_NIVEL_LIGADO = HIGH (é um buzzer ATIVO;"));
+  Serial.println(F("     foi o caso no shield testado)."));
   Serial.println(F("   - LOW : use BUZZER_NIVEL_LIGADO = LOW  (é um buzzer ATIVO)."));
-  Serial.println(F("   - Só um clique nos dois: é um buzzer PASSIVO (o esperado neste"));
-  Serial.println(F("     shield). Mantenha BUZZER_NIVEL_LIGADO = LOW."));
+  Serial.println(F("   - Só um clique nos dois: é um buzzer PASSIVO. Mantenha"));
+  Serial.println(F("     BUZZER_NIVEL_LIGADO = HIGH (transistor NPN medido)."));
   Serial.print(F("   Valor atual no código: BUZZER_NIVEL_LIGADO = "));
   Serial.println(BUZZER_NIVEL_LIGADO == HIGH ? F("HIGH") : F("LOW"));
   esperarEnter();
@@ -702,6 +735,13 @@ void testeBuzzer() {
 
   Serial.println(F("   Buzzer PASSIVO: as notas soam claramente diferentes."));
   Serial.println(F("   Buzzer ATIVO: som rouco, quase igual em todas as notas."));
+  // Parte C: uma melodia conhecida. No buzzer passivo, as notas saem
+  // limpas. No ativo, o tone() só liga e desliga o apito interno dele: o
+  // ritmo aparece, mas as notas saem misturadas com o apito próprio.
+  Serial.println(F("Parte C: melodia \"Nokia Tune\" (Tárrega, Gran Vals)."));
+  tocarNokia(PINO_BUZZER);
+  buzzerLigar(false);
+
   Serial.println(F("Resultado: registre no README do shield se o buzzer é ativo ou"));
   Serial.println(F("passivo e em qual nível ele liga."));
 }

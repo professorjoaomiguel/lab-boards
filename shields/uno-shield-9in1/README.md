@@ -133,7 +133,8 @@ na ESP32-S3 UNO, a posição AREF está ligada ao reset da placa.
 - 2 LEDs de 3 mm (vermelho e azul)
 - 1 LED RGB SMD
 - Sensor de temperatura e umidade DHT11
-- Buzzer passivo, acionado por transistor (segundo a Keyestudio)
+- Buzzer **ativo** (com oscilador interno), acionado por transistor NPN: liga
+  com o D5 em HIGH (testado em 2026-10-03; a Keyestudio diz passivo)
 - Receptor infravermelho (IR)
 - Potenciômetro (trimpot)
 - LDR (fotoresistor)
@@ -174,12 +175,35 @@ substitui a medição: clones podem trocar componentes. Confirme com o teste.
 | LEDs D12 e D13: nível que acende | Teste 1 | HIGH acende (Keyestudio e RoboticX) | ✅ Ativos em HIGH (confirmado na placa) |
 | LED RGB: cátodo ou ânodo comum | Teste 2, parte B | Cátodo comum: a cor acende com o pino em HIGH (Keyestudio e RoboticX) | ✅ Ativo em HIGH, cátodo comum (confirmado na placa) |
 | Cor ligada a D9, D10 e D11 | Teste 2, parte A | D9 = vermelho, D10 = verde, D11 = azul (Keyestudio e RoboticX) | ✅ **D9 = vermelho, D10 = azul, D11 = verde** (confirmado na placa; **difere** da documentação dos fabricantes) |
-| Buzzer: ativo ou passivo, e nível que liga | Teste 4 | **Passivo, liga em LOW** (Keyestudio: "passive buzzer"; no código, LOW = som e HIGH = silêncio, o que indica transistor PNP) | ⚠️ Multímetro (2026-10-01): transistor **NPN**, o que **diverge** do indício de PNP. Nível que liga: _a preencher_ (Teste 4) |
+| Buzzer: ativo ou passivo, e nível que liga | Teste 4 | **Passivo, liga em LOW** (Keyestudio: "passive buzzer"; no código, LOW = som e HIGH = silêncio, o que indica transistor PNP) | ✅ **Ativo, liga em HIGH** (shield nº 2 no UNO R4, 2026-10-03; **difere** da Keyestudio). Transistor NPN (multímetro, 2026-10-01). Com o sketch antigo (`LOW` = ligado), o D5 ficava em HIGH para "desligar" e o buzzer **apitou sem parar**: só um buzzer ativo apita com tensão constante. Pulsos de 250 ms em HIGH: 3 bipes nítidos. Ver "Faixa de frequência do buzzer" abaixo |
 | Botões: pull-up ou pull-down | Teste 3 (nível de repouso) | Pull-down: o exemplo da RoboticX trata o botão apertado como HIGH. O da Keyestudio usa interrupção por borda de descida, que funciona nos dois casos e não confirma nada | ✅ **Pull-up de ≈10 kΩ, ativo em LOW** (multímetro, 2026-10-01; **difere** do exemplo da RoboticX). Falta ver no Teste 3 |
 | LDR: leitura sobe ou desce com mais luz | Teste 6 | **Sobe com a luz** (Keyestudio: "the stronger the light is, the greater the value is") | Multímetro indica que **sobe** (LDR entre 5V e A1). Falta ver no Teste 6 |
 | `VCC` das barras de pinos = 5V | Multímetro | Não indicado | ✅ Ligado ao pino 5V do header (continuidade, 2026-10-01). Falta medir a tensão com o shield ligado |
 | LM35: temperatura coerente | Teste automático do UNO R4; multímetro entre A2 e GND | 10 mV/°C, 0,25 V a 25 °C | ✅ **No UNO R4, só com a descarga do ADC ligada** (2026-10-03): sem ela, o ADC lia até 0,77 V com 0,253 V reais no multímetro, porque o LM35 não absorve corrente e o capacitor de amostragem chega carregado do pino anterior. Com a descarga: 26,0 °C, com o DHT11 em 23,0 °C. Ver [ADC do UNO R4](../../boards/arduino-uno-r4/README.md#adc-leitura-errada-de-sensores-que-não-absorvem-corrente). O 1º shield testado mediu **0,47 V no multímetro** (com o ADC parado) e foi trocado: provável defeito real, a reconferir com o sketch corrigido |
 | DHT11: 1ª leitura depois de ligar | Teste automático do UNO R4 | Não indicado | ✅ Vem **zerada** (0 °C, 0 %) e passa na soma de verificação (0+0+0+0 = 0). Os sketches descartam essa leitura (2026-10-03) |
+
+### Faixa de frequência do buzzer (2026-10-03)
+
+Teste de ouvido com o shield nº 2 num UNO R4: `tone(5, f)` por 1,5 s, de
+grave para agudo. Como o buzzer é **ativo**, a frequência pedida não é
+"a nota" do buzzer: o `tone()` liga e desliga o apito interno dele.
+
+| Frequência pedida | O que se ouviu |
+|---|---|
+| D5 fixo em HIGH (sem `tone()`) | Apito contínuo: o som natural do buzzer |
+| 20 a 315 Hz | Som em todos. Um **agudo picotado**: o apito interno ligando e desligando, no ritmo da frequência |
+| 500 Hz | Som **rouco** |
+| 200 Hz × 2000 Hz | Diferença de tom perceptível |
+| Natural × 1000 Hz, alternados | Natural **limpo**; 1000 Hz **"fibrilando"** (batimento entre o liga-desliga do `tone()` e o oscilador interno) e **um pouco mais grave**: o apito natural fica acima de 1 kHz (buzzers ativos costumam ficar perto de 2,3 kHz; não medido) |
+| 1 a 16 kHz | Som em todos |
+| 20 kHz | Muito baixo. Acima de ~16 kHz o limite pode ser do ouvido, e não do buzzer |
+
+Na prática: para **bipes**, basta `digitalWrite(5, HIGH)` e
+`digitalWrite(5, LOW)`, sem `tone()`. O `tone()` funciona (escala e
+melodia do teste 4), mas o timbre sai misturado com o apito próprio. Em
+1000 Hz, por exemplo, o som "treme": é o batimento entre o `tone()` e o
+oscilador interno. Ainda não foi medida a frequência do apito natural (dá
+para medir com um app de afinador ou analisador de espectro no celular).
 
 ## Referências
 - Placas compatíveis (com datasheets dos microcontroladores):

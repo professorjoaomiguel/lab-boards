@@ -286,16 +286,47 @@ void passoRgb() {
                     "D9 vermelho, D10 azul, D11 verde");
 }
 
+// =============================================================================
+//  MELODIA PARA O BUZZER: "Nokia Tune"
+// =============================================================================
+//
+//  Trecho da "Gran Vals" de Francisco Tárrega (1902, domínio público), o
+//  toque famoso dos celulares Nokia. Cada nota é uma frequência (Hz) e uma
+//  duração em colcheias (1 = colcheia, 2 = semínima, 4 = mínima).
+//  Entre uma nota e outra há uma pausa curta: sem ela, duas notas seguidas
+//  soariam "grudadas".
+const unsigned int NOKIA_NOTAS[13] = {
+  659, 587, 370, 415,   // mi5 ré5 fá#4 sol#4
+  554, 494, 294, 330,   // dó#5 si4 ré4 mi4
+  494, 440, 277, 330,   // si4 lá4 dó#4 mi4
+  440                   // lá4
+};
+const uint8_t NOKIA_DURACOES[13] = {1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 4};
+const unsigned int COLCHEIA_MS = 150;  // andamento: 200 semínimas por minuto
+
+void tocarNokia(uint8_t pino) {
+  for (uint8_t i = 0; i < 13; i++) {
+    unsigned int duracao = NOKIA_DURACOES[i] * COLCHEIA_MS;
+    tone(pino, NOKIA_NOTAS[i]);
+    delay(duracao * 9 / 10);  // 90% do tempo soando...
+    noTone(pino);
+    delay(duracao / 10);      // ...e 10% de silêncio entre as notas
+  }
+}
+
 void passoBuzzer() {
   titulo("6. Buzzer (D5)");
-  Serial.println("# Vai tocar a escala dó-ré-mi-fá-sol-lá-si-dó.");
+  Serial.println("# Vai tocar a escala dó-ré-mi-fá-sol-lá-si-dó e depois o \"Nokia Tune\".");
   const unsigned int notas[8] = {262, 294, 330, 349, 392, 440, 494, 523};
   for (uint8_t i = 0; i < 8; i++) {
     tone(PINO_BUZZER, notas[i]);
     delay(250);
   }
   noTone(PINO_BUZZER);
-  registrarResposta("buzzer", perguntar("Ouviu 8 notas diferentes?"), "escala com tone()");
+  delay(500);
+  tocarNokia(PINO_BUZZER);
+  registrarResposta("buzzer", perguntar("Ouviu a escala com 8 notas diferentes e reconheceu a melodia?"),
+                    "escala e Nokia Tune com tone()");
 }
 
 void passoLdr() {

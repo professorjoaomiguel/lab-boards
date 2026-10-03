@@ -62,7 +62,7 @@ Para o UNO R4, use a pasta `teste_shield_9em1_uno_r4` e o `--fqbn`
 | 1 | LEDs D12 e D13 | Só observar | Vermelho pisca 3×, azul pisca 3×, os dois juntos |
 | 2 | LED RGB D9–D11 | Conferir a cor de cada pino | D9 vermelho, D10 azul, D11 verde; as três juntas formam o branco; brilho varia suave |
 | 3 | Botões SW1 e SW2 | Apertar e soltar | Cada aperto conta 1 e acende um LED (SW1 = vermelho, SW2 = azul) |
-| 4 | Buzzer D5 | Ouvir | Buzzer passivo: só um clique nos níveis fixos, e a escala sai com notas distintas |
+| 4 | Buzzer D5 | Ouvir | Buzzer ativo (o testado): apita no nível HIGH; escala e melodia "Nokia Tune" com o ritmo certo, timbre misturado com o apito próprio |
 | 5 | Potenciômetro A0 | Girar de ponta a ponta | Leitura vai de ~0 a ~1023; brilho do vermelho do LED RGB acompanha |
 | 6 | LDR A1 | Cobrir e iluminar | Leitura sobe com a luz; diferença de centenas entre escuro e claro |
 | 7 | LM35 A2 | Segurar entre os dedos | Temperatura ambiente, subindo com o calor da mão |
@@ -82,7 +82,7 @@ certo de cada constante:
 | Constante | Padrão | Quando mudar | Teste que mostra |
 |-----------|--------|--------------|------------------|
 | `RGB_ANODO_COMUM` | `false` | Não precisa mudar: cátodo comum (ativo em HIGH) confirmado na placa | 2 |
-| `BUZZER_NIVEL_LIGADO` | `LOW` | Só se o seu lote tiver buzzer ativo que apita sem parar quando a placa liga (o padrão segue a Keyestudio: passivo, liga em LOW) | 4 |
+| `BUZZER_NIVEL_LIGADO` | `HIGH` | Só se o buzzer do seu shield apitar sem parar com a placa parada no menu: troque para `LOW` (transistor PNP). O padrão segue o transistor NPN medido | 4 |
 | `TENSAO_REFERENCIA` | `5.0` | Temperatura do LM35 acima da real (meça o pino 5V com multímetro) | 7 |
 
 ## Problemas comuns

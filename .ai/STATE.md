@@ -69,6 +69,12 @@ estrutural.
   o LM35 no UNO R3 para ver se o efeito existe lá; (4) reconferir o 1º
   shield (multímetro marcou 0,47 V no A2 com o ADC parado: provável
   defeito real) com o sketch corrigido.
+- **Buzzer do Shield 9 em 1: ativo, liga em HIGH** (2026-10-03, shield
+  nº 2 no UNO R4). Com o padrão antigo (`LOW` = ligado), o buzzer apitava
+  sem parar no menu; os dois sketches do shield agora usam `HIGH`. Faixa
+  de frequência explorada de ouvido (tabela no README do shield). Pendente:
+  medir a frequência do apito natural (app de afinador) e conferir o
+  buzzer do shield nº 1 (pode ser de outro tipo).
 - Sketch do Shield 9 em 1 separado por placa (2026-10-03):
   `teste_shield_9em1_uno_r3` e `teste_shield_9em1_uno_r4` (só a versão R4
   liga a descarga do ADC).
