@@ -155,104 +155,101 @@ Em nenhuma das versões os pinos D0/D1 estão ligados à USB: eles formam o
 
 ## Código de teste e validação
 
-Dois sketches dedicados ao UNO R4, que se complementam. Os dois funcionam
-com a placa sozinha ou com o
-[Shield 9 em 1](../../shields/uno-shield-9in1/README.md) encaixado (o
-shield é detectado sozinho, pelos resistores de pull-up dele em D2, D3, D4 e
-D6). Nenhum precisa de biblioteca externa.
+Há dois tipos de teste, cada um com o seu sketch:
 
-| Sketch | Quem confere | Para quê |
-|--------|--------------|----------|
-| [`code/teste_uno_r4_automatico`](code/teste_uno_r4_automatico/teste_uno_r4_automatico.ino) | o próprio sketch | Triagem rápida da placa (lote novo, placa suspeita) e registro no inventário |
-| [`code/teste_uno_r4_interativo`](code/teste_uno_r4_interativo/teste_uno_r4_interativo.ino) | o aluno, guiado pelo Monitor Serial | O que só uma pessoa vê, ouve ou mede: LED aceso, buzzer, potenciômetro, multímetro |
+| Teste | Sketch | Como é | Para quê |
+|-------|--------|--------|----------|
+| **Só a placa** | [`code/teste_uno_r4_automatico`](code/teste_uno_r4_automatico/teste_uno_r4_automatico.ino) | Automático, só pela serial, **placa sozinha** (sem shield) | Triagem rápida (lote novo, placa suspeita) e registro no inventário |
+| **Placa + Shield 9 em 1** | [`teste_shield_9em1_uno_r4`](../../shields/uno-shield-9in1/code/teste_shield_9em1_uno_r4/teste_shield_9em1_uno_r4.ino) (na pasta do shield) | Menu com testes guiados (ver, ouvir, apertar) e uma opção automática | Testar o shield e a placa juntos; informa sobre os dois |
 
-> ⚠️ **Antes do teste automático, tire tudo da placa: deixe-a sozinha ou só
-> com o Shield 9 em 1.** O teste só começa quando você envia `c` no Monitor
-> Serial (abrir a porta mostra só o aviso). Sem o shield, ele liga
-> **D2 a D13 e A1 a A5 como saída** (HIGH e LOW) e gera tensão no **A0**
-> (DAC). Um módulo, protoboard ou outro shield ligado nesses pinos pode
-> receber esses sinais e se danificar: o R4 aguenta só 8 mA por pino. Há uma
-> proteção parcial (um pino que já está sendo puxado para LOW por algo
-> externo não é acionado), mas ela não pega todos os casos.
+Nenhum precisa de biblioteca externa. Os dois usam **115200 baud** e
+aceitam qualquer opção de final de linha do Monitor Serial.
 
-### Teste automático
+**Sinal de "firmware de teste gravado":** enquanto o sketch espera um
+comando, o LED **L** (D13) pisca **duas vezes rápidas a cada 2 s**, um
+"tum-tum" diferente do Blink comum. Dá para reconhecer de longe uma placa
+com o firmware de teste.
 
-| Teste | O que confere | Precisa de |
-|-------|---------------|------------|
-| `info`, `clock` | Modelo, ID único do chip e clock de 48 MHz | — |
-| `relogio` | `millis()` e `micros()` medem 1 s corretamente | — |
-| `eeprom` | Grava, lê e **restaura** o último byte da EEPROM (8 KB) | — |
-| `rtc` | O relógio de tempo real conta os segundos | — |
-| `gpio` | Pull-up interno e saída HIGH/LOW de cada pino livre | sem shield: D2–D13 e A1–A5; com shield: D7, D8, A3–A5 |
-| `dac` | O DAC do A0 gera 25/50/75% e o ADC de 14 bits lê de volta | **sem** shield (o potenciômetro do shield fica no A0) |
-| `serial1` | O que sai pelo D1 (TX) volta pelo D0 (RX) | jumper entre D0 e D1 (no shield: TXD↔RXD) |
-| `avcc` | Tensão de referência do ADC, medida pela própria placa | — |
-| `botoes`, `ir`, `saidas`, `dht11`, `lm35`, `ldr`, `pot`, `temperatura` | Periféricos do shield | Shield 9 em 1 |
+> ⚠️ **O teste da placa é com a placa sozinha.** Ele liga **D2 a D13 e A1 a
+> A5 como saída** (HIGH e LOW) e gera tensão no **A0** (DAC). Um módulo,
+> protoboard ou shield ligado nesses pinos pode receber esses sinais e se
+> danificar: o R4 aguenta só 8 mA por pino. Proteção: antes de acionar os
+> pinos, o sketch procura resistores externos neles (como os pull-ups do
+> Shield 9 em 1). Se achar, **não aciona nenhum pino** e marca `gpio` e
+> `dac` como pulados, dizendo em quais pinos achou algo. A proteção não pega
+> todos os circuitos: tire tudo da placa antes. O teste só começa quando
+> você envia `c`.
+
+### Teste da placa (automático)
+
+| Teste | O que confere |
+|-------|---------------|
+| `info`, `clock` | Modelo, ID único do chip e clock de 48 MHz |
+| `relogio` | `millis()` e `micros()` medem 1 s corretamente |
+| `eeprom` | Grava, lê e **restaura** o último byte da EEPROM (8 KB) |
+| `rtc` | O relógio de tempo real conta os segundos |
+| `avcc` | Tensão de referência do ADC, medida pela própria placa |
+| `gpio` | Pull-up interno e saída HIGH/LOW de D2–D12 e A1–A5 (D13 só saída: o LED L puxa o pino) |
+| `dac` | O DAC do A0 gera 25/50/75% e o ADC de 14 bits lê de volta |
+| `serial1` | O que sai pelo D1 (TX) volta pelo D0 (RX), com um jumper entre D0 e D1; sem jumper, fica "pulado" |
 
 A saída tem linhas legíveis por programa (`RESULTADO;<teste>;<estado>;<detalhe>`
-e `FIM;ok=..;falha=..;aviso=..;pulado=..`). Estados: **OK**, **FALHA**
-(defeito), **AVISO** (funcionou, mas o valor é estranho), **PULADO** (não
-dava para testar nesta montagem) e **INFO** (só informação). O cabeçalho do
-sketch explica cada teste.
+e `FIM;ok=..;falha=..;aviso=..;pulado=..`) e termina com um **RESUMO**
+legível. Estados: **OK**, **FALHA** (defeito), **AVISO** (funcionou, mas o
+valor é estranho), **PULADO** (não dava para testar nesta montagem) e
+**INFO** (só informação). O cabeçalho do sketch explica cada teste.
 
-### Teste interativo (com ajuda do usuário)
+### Teste conjunto (placa + Shield 9 em 1)
 
-Envie `c` para começar. A cada passo, responda `s` (funcionou), `n` (não
-funcionou) ou `p` (pular). Alguns passos medem
-sozinhos depois que você age (apertar o botão, girar o potenciômetro, cobrir
-o LDR, soprar no DHT11, apertar o controle remoto).
-
-| Passo | O que você faz | Montagem |
-|-------|----------------|----------|
-| `led_l` | Vê o LED "L" piscar 5 vezes | sempre |
-| `tensao_5v` | Mede o pino 5V com o multímetro e digita o valor | sempre |
-| `botoes` | Aperta SW1 e depois SW2 | shield |
-| `pot_adc` | Gira o potenciômetro de ponta a ponta (mostra 10, 12 e 14 bits) | shield |
-| `rgb_pwm` | Vê as 3 cores do LED RGB variando o brilho | shield |
-| `buzzer` | Ouve a escala musical | shield |
-| `ldr` | Cobre o LDR e depois ilumina com a lanterna | shield |
-| `dht11` | Sopra no sensor: a umidade deve subir 5 pontos | shield |
-| `ir` | Aperta um botão de qualquer controle remoto | shield |
-| `dac` | Mede o A0 (metade da alimentação) e digita o valor | **sem** shield |
+Fica na pasta do shield, um sketch por placa. Ao abrir o Monitor Serial,
+ele mostra a placa (modelo, ID, AVCC) e o menu: os testes **1 a 9** são
+guiados (ver os LEDs, ouvir o buzzer, apertar os botões, girar o
+potenciômetro…) e a opção **`a`** roda um teste automático do shield com
+resumo. Detalhes em
+[Código de teste do shield](../../shields/uno-shield-9in1/code/README.md).
 
 ### Como rodar
 
-Há dois caminhos. Os dois usam os mesmos sketches. **Para os alunos, o
-caminho 1 (só a IDE) basta.** O caminho 2 é a ferramenta do professor:
-triagem de um lote de placas e registro no inventário.
+Há dois caminhos, com os mesmos sketches. **Para os alunos, o caminho 1
+(só a IDE) basta.** O caminho 2 é a ferramenta do professor: triagem de um
+lote de placas e registro no inventário.
 
 #### Caminho 1: só a IDE do Arduino (nada para instalar além da IDE)
 
 1. Em **Ferramentas > Placa**, escolha **Arduino UNO R4 Minima** (ou
    **WiFi**). Se não aparecer, instale o pacote **Arduino UNO R4 Boards**
    no Gerenciador de Placas.
-2. Abra o sketch (`teste_uno_r4_automatico` ou `teste_uno_r4_interativo`),
-   escolha a porta COM e clique em **Carregar**.
-3. Abra o **Monitor Serial**. A velocidade e a opção de final de linha
-   não importam: os sketches aceitam todas ("Nova linha", "Retorno de
-   carro", "Ambos" ou "Sem final de linha").
-4. Aparece uma mensagem de boas-vindas. **Envie `c`** para começar: digite
-   `c` na caixa de envio e tecle Enter. Nada é testado antes disso, nem
+2. Abra o sketch, escolha a porta COM e clique em **Carregar**.
+3. Abra o **Monitor Serial** em **115200 baud** (no UNO R4 a velocidade
+   nem importa, porque a serial é USB nativa). A opção de final de linha
+   também não importa.
+4. Teste da placa: aparece um aviso; **envie `c`** para começar (digite
+   `c` na caixa de envio e tecle Enter). Nada é testado antes disso, nem
    quando a IDE reabre o Monitor depois de gravar.
-5. No interativo, responda cada pergunta do mesmo jeito (`s`, `n`, `p` ou
-   um número, como `4.85`). Espere a pergunta aparecer antes de responder.
-6. No fim aparece o **RESUMO**, um teste por linha:
+   Teste conjunto: digite o número do teste do menu (ou `a`) e envie.
+5. No fim aparece o **RESUMO**, um teste por linha:
 
    ```text
-     [  OK  ] DHT11 ..................... 23.0 °C, 46 %
-     [  OK  ] LM35 ...................... 26.2 °C
-     [pulado] DAC no A0 ................. A0 ocupado (potenciômetro do shield)
+     [  OK  ] Clock do processador ...... 48 MHz
+     [  OK  ] Referência do ADC ......... 4.90 V
+     [pulado] Serial1 (D0/D1) ........... nada recebido (sem jumper entre D0 e D1)
    --------------------------------------------------------------
-     OK: 13   FALHA: 0   AVISO: 0   pulados: 2
+     OK: 5   FALHA: 0   AVISO: 0   pulados: 1
      Resultado: tudo certo.
    ```
 
-   Antes do resumo aparecem linhas como `RESULTADO;dht11;OK;...`. Elas são
+   Antes do resumo aparecem linhas como `RESULTADO;clock;OK;...`. Elas são
    para o script do caminho 2 e podem ser ignoradas. Envie `c` para rodar
    de novo.
 
 > **Sem final de linha:** só o Enter, com a caixa vazia, não envia nada.
 > Por isso o comando para começar é a letra `c`, e não só o Enter.
+
+**Se a gravação falhar** ("No DFU capable USB device" ou "LIBUSB_ERROR"),
+aperte o **RESET duas vezes rápido**: o LED L passa a pulsar devagar (modo
+bootloader) e a gravação volta a funcionar. Se ainda falhar, desconecte e
+reconecte o cabo USB. Visto na placa real depois de várias gravações
+seguidas.
 
 #### Caminho 2: pelo terminal, com o script `serial_placa.py`
 
@@ -279,30 +276,19 @@ registra a placa no inventário.
 
    Ele mostra `OK`, `AVISO` ou `FALHA` para o Python, o pyserial, o
    arduino-cli, os pacotes de placa e as placas ligadas, e diz como
-   corrigir o que faltar. Exemplo:
-
-   ```text
-   OK     python                       3.14.6
-   OK     pyserial                     3.5
-   OK     arduino-cli                  arduino-cli  Version: 1.5.1 ...
-   OK     pacote arduino:avr           instalado
-   OK     pacote arduino:renesas_uno   instalado
-
-   OK     placa em COM8                 UNO R4 Minima
-   ```
+   corrigir o que faltar.
 
 **Testar:**
 
 ```bash
-python scripts/serial_placa.py auto --gravar --registrar   # grava, testa e registra no inventário
-python scripts/serial_placa.py interativo --gravar         # teste com ajuda do usuário
+python scripts/serial_placa.py auto --gravar --registrar   # placa sozinha: grava, testa e registra
+python scripts/serial_placa.py auto --gravar --shield      # placa + shield: opção "a" do menu
+python scripts/serial_placa.py interativo --gravar         # placa + shield: menu de testes guiados
 ```
 
 - Sem `--gravar`, o script usa o sketch que já está na placa.
-- No **interativo**, o que a placa envia aparece no terminal. Digite a
-  resposta (`s`, `n`, `p` ou um número, como `4.85`) e tecle **Enter**.
-  Envie `c` para começar (e para recomeçar) e **Ctrl+C** para sair. No
-  modo `auto`, o script envia o `c` sozinho.
+- No **interativo**, o que a placa envia aparece no terminal: digite a
+  opção do menu ou a resposta e tecle **Enter**. **Ctrl+C** sai.
 - Com mais de uma placa ligada, indique qual com `--porta COM8`
   (`python scripts/serial_placa.py listar` mostra as portas).
 - Ajuda completa: `python scripts/serial_placa.py --help`.
@@ -310,18 +296,19 @@ python scripts/serial_placa.py interativo --gravar         # teste com ajuda do 
 **Feche o Monitor Serial da IDE antes de usar o script:** só um programa
 por vez usa a porta. Se aparecer `não foi possível abrir COM8`, é isso.
 
-### Resultado na placa real (2026-10-03, R4M-01 + Shield 9 em 1)
+### Resultados na placa real (2026-10-03, R4M-01)
 
-Com o shield trocado e a correção do ADC (ver
-[ADC: leitura errada de sensores que não absorvem corrente](#adc-leitura-errada-de-sensores-que-não-absorvem-corrente)):
-`ok=13 falha=0 aviso=0 pulado=2`. Os pulados são esperados com o shield:
-`dac` (A0 ocupado pelo potenciômetro) e `serial1` (sem jumper). LM35 em
-26,0 °C e DHT11 em 23,0 °C (diferença de 3 °C, dentro da tolerância dos
-dois sensores).
+- **Teste da placa com o shield encaixado:** `ok=5`, com `gpio` e `dac`
+  corretamente **pulados** ("algo ligado em D2 D3 D4 D6 A1 A4 A5") e
+  `serial1` pulado (sem jumper). AVCC de 4,90 V.
+- **Teste conjunto (opção `a`, shield nº 2):** LM35 em 27,2 °C e DHT11 em
+  25,0 °C (diferença de 2,2 °C), botões e IR em repouso corretos. Com a
+  correção do ADC (ver
+  [ADC: leitura errada de sensores que não absorvem corrente](#adc-leitura-errada-de-sensores-que-não-absorvem-corrente)).
 
-Observações feitas durante o teste:
+Observações feitas durante os testes:
 
-- **AVCC na USB: 4,78 V** (medida pela própria placa com
+- **AVCC na USB: 4,78 a 4,93 V** (medida pela própria placa com
   `analogReference()`), e não 5,0 V. Os sketches usam esse valor nas contas
   do ADC.
 - **A 1ª leitura do DHT11 depois de ligar vem zerada** (0 °C, 0 %) e passa
@@ -330,15 +317,19 @@ Observações feitas durante o teste:
 - No R4, `digitalRead()` leva ≈1,2 µs. A leitura do DHT11 por contagem de
   voltas do laço (sem biblioteca) funciona: LOW de 50 µs ≈ 42 voltas, bit 0
   ≈ 17 e bit 1 ≈ 54.
+- **Depois de um `analogWrite()`, o `digitalWrite()` não controla mais o
+  pino** no R4: o pino fica com o timer do PWM. Para voltar a usá-lo como
+  saída digital, chame `pinMode(pino, OUTPUT)` de novo. (No UNO R3,
+  `analogWrite(pino, 0)` vira um simples `digitalWrite(LOW)`, por isso o
+  mesmo código não mostra o problema.)
 
 ### A confirmar na placa real
 
 | Item | Como | Situação |
 |------|------|----------|
-| Teste `dac` (DAC → ADC no A0) | Teste automático **sem** o shield | A rodar |
-| Teste `serial1` | Teste automático com jumper D0↔D1 | A rodar |
-| Teste interativo completo | `serial_placa.py interativo` com o shield | Roteiro validado (tudo pulado); falta rodar respondendo |
-| Pino 5V medido com multímetro | Passo `tensao_5v` | A medir (a placa mede 4,78 V de AVCC) |
+| Testes `gpio` e `dac` | Teste da placa **sem** o shield | A rodar |
+| Teste `serial1` | Teste da placa com jumper D0↔D1 | A rodar |
+| Teste conjunto, versão nova | `serial_placa.py auto --shield` no R4 | A rodar (a gravação falhou por LIBUSB no dia; a versão anterior passou) |
 | UNO R4 WiFi | Os mesmos sketches (compilam para `unor4wifi`) | Sem placa testada |
 
 ## Inventário (identificar cada placa)
@@ -373,7 +364,7 @@ trechos que parecem texto ASCII (ex: `5A323839` = "Z289"), provavelmente
 lote e wafer. Os últimos dígitos podem se repetir entre chips do mesmo lote.
 Por isso o ID completo é a chave, e a etiqueta é só um apelido curto.
 
-Para registrar: `python scripts/serial_placa.py auto --gravar --registrar`,
+Para registrar (placa sozinha): `python scripts/serial_placa.py auto --gravar --registrar`,
 **uma placa por vez**. Uma placa nova ganha a próxima etiqueta; uma já
 registrada só tem o último teste atualizado. O inventário não guarda dados
 pessoais: quem está com cada placa não entra neste repositório público.
