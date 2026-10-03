@@ -96,7 +96,7 @@ PLACAS = {
         "fqbn": "arduino:renesas_uno:minima",
         "sketch_auto": "boards/arduino-uno-r4/code/teste_uno_r4_automatico",
         "sketch_shield": "shields/uno-shield-9in1/code/teste_shield_9em1_uno_r4",
-        "inventario": "boards/arduino-uno-r4/inventario.csv",
+        "inventario": "inventario/arduino-uno-r4.csv",
     },
     "uno-r4-wifi": {
         "nome": "UNO R4 WiFi",
@@ -104,7 +104,7 @@ PLACAS = {
         "fqbn": "arduino:renesas_uno:unor4wifi",
         "sketch_auto": "boards/arduino-uno-r4/code/teste_uno_r4_automatico",
         "sketch_shield": "shields/uno-shield-9in1/code/teste_shield_9em1_uno_r4",
-        "inventario": "boards/arduino-uno-r4/inventario.csv",
+        "inventario": "inventario/arduino-uno-r4.csv",
     },
     "uno-r3": {
         "nome": "UNO R3",
@@ -112,7 +112,7 @@ PLACAS = {
         "fqbn": "arduino:avr:uno",
         "sketch_auto": "boards/arduino-uno-r3/code/teste_uno_r3_automatico",
         "sketch_shield": "shields/uno-shield-9in1/code/teste_shield_9em1_uno_r3",
-        "inventario": "boards/arduino-uno-r3/inventario.csv",
+        "inventario": "inventario/arduino-uno-r3.csv",
         # O ATmega328P não tem ID único. No UNO R3 original, o chip da USB
         # (ATmega16U2) tem um número de série gravado pela Arduino, único
         # por placa: ele vira o ID do inventário. Clones com CH340 não têm.
@@ -123,8 +123,20 @@ PLACAS = {
 # Prefixo da etiqueta física de cada modelo no inventário (ex: R4M-01).
 PREFIXO_ETIQUETA = {"UNO R4 Minima": "R4M", "UNO R4 WiFi": "R4W", "UNO R3": "R3"}
 
-COLUNAS_INVENTARIO = ["etiqueta", "modelo", "id_unico", "registrado_em",
-                      "ultimo_teste", "resultado", "obs"]
+# Colunas dos inventários de placas Arduino (pasta inventario/, separada do
+# código de teste). "dono" é preenchido à mão: professor, SENAI ou
+# "a confirmar". "etiqueta_colada" diz se a etiqueta física já está na placa.
+COLUNAS_INVENTARIO = ["etiqueta", "etiqueta_colada", "modelo", "variante", "dono",
+                      "id_unico", "registrado_em", "ultimo_teste", "resultado", "obs"]
+
+# Variante pela ponte USB-serial (VID:PID). Importa no UNO R3: o original
+# usa o ATmega16U2 (tem número de série); os clones, o CH340 (não tem).
+VARIANTES_USB = {
+    (0x2341, 0x0043): "ATmega16U2",
+    (0x2341, 0x0001): "ATmega16U2",
+    (0x2A03, 0x0043): "ATmega16U2",
+    (0x1A86, 0x7523): "CH340",
+}
 
 # No R4, a velocidade é ignorada (USB nativa). 1200 baud NÃO pode ser usado:
 # abrir a porta em 1200 baud faz as placas Arduino entrarem no bootloader.
@@ -252,6 +264,19 @@ def escolher_porta(portas, porta=None, placa=None):
     return p, placa or chaves[0]
 
 
+def variante_usb(vid, pid):
+    """Diz a variante da placa pela ponte USB-serial.
+
+    Args:
+        vid: Vendor ID (int) ou None.
+        pid: Product ID (int) ou None.
+
+    Returns:
+        "ATmega16U2", "CH340" ou "" (sem variante relevante, ex: UNO R4).
+    """
+    return VARIANTES_USB.get((vid, pid), "")
+
+
 def resumir(resultados):
     """Conta os resultados por estado (INFO não conta).
 
@@ -281,7 +306,7 @@ def texto_resumo(contagem):
     return " ".join(f"{k}={contagem[k]}" for k in ("ok", "falha", "aviso", "pulado"))
 
 
-def atualizar_inventario(caminho, id_unico, modelo, resultado, data):
+def atualizar_inventario(caminho, id_unico, modelo, resultado, data, variante=""):
     """Registra uma placa no inventário CSV, ou atualiza o último teste dela.
 
     Uma placa nova ganha a próxima etiqueta do modelo (R4M-01, R4M-02...).
@@ -296,6 +321,7 @@ def atualizar_inventario(caminho, id_unico, modelo, resultado, data):
         modelo: nome do modelo (ex: "UNO R4 Minima").
         resultado: texto do resumo do teste (ex: "ok=10 falha=0 ...").
         data: data do teste, no formato AAAA-MM-DD.
+        variante: variante da placa (ex: "ATmega16U2" ou "CH340" no UNO R3).
 
     Returns:
         Tupla (etiqueta, nova), em que nova é True se a placa foi incluída.
@@ -317,7 +343,9 @@ def atualizar_inventario(caminho, id_unico, modelo, resultado, data):
         prefixo = PREFIXO_ETIQUETA.get(modelo, "PLACA")
         mesmo_modelo = [l for l in linhas if l["etiqueta"].startswith(prefixo + "-")]
         etiqueta = f"{prefixo}-{len(mesmo_modelo) + 1:02d}"
-        linhas.append({"etiqueta": etiqueta, "modelo": modelo, "id_unico": id_unico,
+        # Placa nova: o dono e a etiqueta física são conferidos à mão depois.
+        linhas.append({"etiqueta": etiqueta, "etiqueta_colada": "não", "modelo": modelo,
+                       "variante": variante, "dono": "a confirmar", "id_unico": id_unico,
                        "registrado_em": data, "ultimo_teste": data,
                        "resultado": resultado, "obs": ""})
         nova = True
@@ -669,7 +697,7 @@ def _cmd_auto(args):
             hoje = datetime.date.today().isoformat()
             etiqueta, nova = atualizar_inventario(
                 os.path.join(RAIZ, caminho), id_unico, PLACAS[chave]["nome"],
-                texto_resumo(contagem), hoje)
+                texto_resumo(contagem), hoje, variante_usb(porta.vid, porta.pid))
             if nova:
                 print(f"# Placa NOVA registrada como {etiqueta}: cole essa etiqueta nela.")
             else:

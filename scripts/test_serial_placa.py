@@ -126,6 +126,15 @@ class TestInventario(unittest.TestCase):
         self.assertEqual(linhas[0]["registrado_em"], "2026-10-03")
         self.assertEqual(linhas[0]["ultimo_teste"], "2026-10-03")
 
+    def test_placa_nova_entra_sem_dono_e_sem_etiqueta_colada(self):
+        sp.atualizar_inventario(self.csv, "AAA", "UNO R3", "", "2026-10-03",
+                                variante="ATmega16U2")
+        linha = self.ler()[0]
+        self.assertEqual(linha["etiqueta"], "R3-01")
+        self.assertEqual(linha["variante"], "ATmega16U2")
+        self.assertEqual(linha["dono"], "a confirmar")
+        self.assertEqual(linha["etiqueta_colada"], "não")
+
     def test_numera_em_sequencia_por_modelo(self):
         sp.atualizar_inventario(self.csv, "AAA", "UNO R4 Minima", "", "2026-10-03")
         sp.atualizar_inventario(self.csv, "BBB", "UNO R4 WiFi", "", "2026-10-03")
@@ -154,6 +163,13 @@ class TestInventario(unittest.TestCase):
             w.writerows(linhas)
         sp.atualizar_inventario(self.csv, "AAA", "UNO R4 Minima", "ok=3", "2026-10-04")
         self.assertEqual(self.ler()[0]["obs"], "pino D7 torto")
+
+
+class TestVarianteUsb(unittest.TestCase):
+    def test_r3_original_e_clone(self):
+        self.assertEqual(sp.variante_usb(0x2341, 0x0043), "ATmega16U2")
+        self.assertEqual(sp.variante_usb(0x1A86, 0x7523), "CH340")
+        self.assertEqual(sp.variante_usb(0x2341, 0x0069), "")
 
 
 class TestResumo(unittest.TestCase):
