@@ -40,9 +40,11 @@ PWM do D11 e o `tone()` do buzzer).
 4. Grave o sketch (botão **Carregar**).
 5. Abra o **Monitor Serial** e configure:
    - velocidade: **9600 baud**
-   - final de linha: **Nova linha** (Newline). Com "Sem final de linha",
-     o Enter sozinho não envia nada e os testes ficam parados.
-6. Digite o número do teste e pressione Enter.
+   - final de linha: **qualquer opção** funciona.
+6. Digite o número do teste e envie. Quando o teste pedir para continuar
+   ou voltar ao menu, **envie `c`**. (Com "Nova linha", só o Enter também
+   serve; com "Sem final de linha", o Enter com a caixa vazia não envia
+   nada, por isso o teste pede a letra `c`.)
 
 Pela linha de comando (`arduino-cli`):
 
@@ -59,9 +61,9 @@ Para o UNO R4, use a pasta `teste_shield_9em1_uno_r4` e o `--fqbn`
 
 | Opção | Teste | O que fazer | Resultado esperado |
 |-------|-------|-------------|--------------------|
-| 1 | LEDs D12 e D13 | Só observar | Vermelho pisca 3×, azul pisca 3×, os dois juntos |
+| 1 | LEDs D12 e D13 | Só observar e anotar a cor | O do D12 pisca 3×, o do D13 pisca 3×, os dois juntos. A cor de cada um muda conforme a versão do shield |
 | 2 | LED RGB D9–D11 | Conferir a cor de cada pino | D9 vermelho, D10 azul, D11 verde; as três juntas formam o branco; brilho varia suave |
-| 3 | Botões SW1 e SW2 | Apertar e soltar | Cada aperto conta 1 e acende um LED (SW1 = vermelho, SW2 = azul) |
+| 3 | Botões SW1 e SW2 | Apertar e soltar | Cada aperto conta 1. O LED acende na hora e fica aceso enquanto o botão estiver apertado: SW1 → LED do D12, SW2 → LED do D13. Botão em LOW no repouso é avisado (travado ou em curto) |
 | 4 | Buzzer D5 | Ouvir | Buzzer ativo (o testado): apita no nível HIGH; escala e melodia "Nokia Tune" com o ritmo certo, timbre misturado com o apito próprio |
 | 5 | Potenciômetro A0 | Girar de ponta a ponta | Leitura vai de ~0 a ~1023; brilho do vermelho do LED RGB acompanha |
 | 6 | LDR A1 | Cobrir e iluminar | Leitura sobe com a luz; diferença de centenas entre escuro e claro |
@@ -71,8 +73,8 @@ Para o UNO R4, use a pasta `teste_shield_9em1_uno_r4` e o `--fqbn`
 | 0 | Todos | Seguir as instruções | Roda os testes 1 a 9 em sequência |
 | p | Painel ao vivo | Mexer em tudo | Todas as entradas em uma linha, a cada 0,5 s |
 
-Nos testes contínuos (3, 5, 6, 7, 8, 9 e o painel), pressione Enter para
-voltar ao menu.
+Nos testes contínuos (3, 5, 6, 7, 8, 9 e o painel), envie `c` para voltar
+ao menu.
 
 ## Ajustes no início do código
 
@@ -90,7 +92,7 @@ certo de cada constante:
 | Sintoma | Causa provável |
 |---------|----------------|
 | Nada aparece no Monitor Serial | Velocidade diferente de 9600 ou porta COM errada. No UNO R3 clone, falta o driver do CH340 (ver [ponte USB-serial](../../../boards/arduino-uno-r3/README.md#ponte-usb-serial)). |
-| Menu aparece, mas o Enter não faz nada | Final de linha em "Sem final de linha": mude para "Nova linha". |
+| O teste pede para continuar e o Enter não faz nada | Com "Sem final de linha", o Enter com a caixa vazia não envia nada: digite `c` e envie. |
 | Buzzer apita sem parar | `BUZZER_NIVEL_LIGADO` trocado (rode o teste 4). |
 | DHT11: "não respondeu" | Shield mal encaixado ou sensor com defeito. |
 | DHT11: erro de checksum de vez em quando | Normal em leituras isoladas; seguidos indicam mau contato. |

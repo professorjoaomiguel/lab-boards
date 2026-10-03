@@ -102,8 +102,10 @@ const uint8_t PINO_IR           = 6;
 const uint8_t PINO_RGB_VERMELHO = 9;
 const uint8_t PINO_RGB_AZUL     = 10;
 const uint8_t PINO_RGB_VERDE    = 11;
-const uint8_t PINO_LED_VERMELHO = 12;
-const uint8_t PINO_LED_AZUL     = 13;
+// LEDs de 3 mm: a COR muda conforme a versão do shield (numa, D12 é
+// vermelho e D13 azul; noutra, o contrário). Por isso o nome é o pino.
+const uint8_t PINO_LED_D12      = 12;
+const uint8_t PINO_LED_D13      = 13;
 const uint8_t PINO_POT          = A0;
 const uint8_t PINO_LDR          = A1;
 const uint8_t PINO_LM35         = A2;
@@ -718,7 +720,7 @@ void testeShieldRepouso() {
 void testeShieldSaidas() {
   Serial.println("# Shield: saídas D9-D13 (os LEDs piscam rapidamente)");
   const uint8_t pinos[5] = {PINO_RGB_VERMELHO, PINO_RGB_AZUL, PINO_RGB_VERDE,
-                            PINO_LED_VERMELHO, PINO_LED_AZUL};
+                            PINO_LED_D12, PINO_LED_D13};
   String falhas;
   for (uint8_t i = 0; i < 5; i++) {
     pinMode(pinos[i], OUTPUT);

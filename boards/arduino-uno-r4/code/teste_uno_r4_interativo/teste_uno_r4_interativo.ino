@@ -63,8 +63,10 @@ const uint8_t PINO_IR           = 6;
 const uint8_t PINO_RGB_VERMELHO = 9;
 const uint8_t PINO_RGB_AZUL     = 10;
 const uint8_t PINO_RGB_VERDE    = 11;
-const uint8_t PINO_LED_VERMELHO = 12;
-const uint8_t PINO_LED_AZUL     = 13;
+// LEDs de 3 mm: a COR muda conforme a versão do shield (numa, D12 é
+// vermelho e D13 azul; noutra, o contrário). Por isso o nome é o pino.
+const uint8_t PINO_LED_D12      = 12;
+const uint8_t PINO_LED_D13      = 13;
 const uint8_t PINO_POT          = A0;
 const uint8_t PINO_LDR          = A1;
 
@@ -337,7 +339,7 @@ bool prontoParaComecar() {
 void passoLedL() {
   titulo("1. LED L da placa (D13)");
   Serial.println("# O LED 'L' (perto do conector USB) vai piscar 5 vezes.");
-  Serial.println("# Com o shield, o LED azul de 3 mm do shield pisca junto.");
+  Serial.println("# Com o shield, o LED de 3 mm do D13 do shield pisca junto.");
   pinMode(LED_BUILTIN, OUTPUT);
   for (uint8_t i = 0; i < 5; i++) {
     digitalWrite(LED_BUILTIN, HIGH);
@@ -632,9 +634,9 @@ void passoIr() {
     }
   }
   if (recebeu) {
-    digitalWrite(PINO_LED_AZUL, HIGH);
+    digitalWrite(PINO_LED_D13, HIGH);
     delay(300);
-    digitalWrite(PINO_LED_AZUL, LOW);
+    digitalWrite(PINO_LED_D13, LOW);
   }
   resultado("ir", recebeu ? "OK" : "FALHA",
             recebeu ? "sinal recebido" : "nenhum sinal em 15 s (pilha do controle?)");
@@ -710,7 +712,7 @@ void rodarTestes() {
 
   if (comShield && confirma != 'p') {
     pinMode(PINO_BUZZER, OUTPUT);
-    pinMode(PINO_LED_VERMELHO, OUTPUT);
+    pinMode(PINO_LED_D12, OUTPUT);
     passoBotoes();
     passoPotenciometro();
     passoRgb();

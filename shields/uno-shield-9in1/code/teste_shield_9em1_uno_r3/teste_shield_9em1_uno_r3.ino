@@ -27,8 +27,8 @@
  *    D9   | LED RGB — vermelho
  *    D10  | LED RGB — azul
  *    D11  | LED RGB — verde
- *    D12  | LED vermelho de 3 mm (LED2 na placa)
- *    D13  | LED azul de 3 mm (LED1 na placa) — também é o LED_BUILTIN
+ *    D12  | LED de 3 mm (LED2 na placa) — vermelho ou azul, conforme a versão
+ *    D13  | LED de 3 mm (LED1 na placa) — a outra cor; também é o LED_BUILTIN
  *    A0   | Potenciômetro
  *    A1   | LDR (sensor de luminosidade)
  *    A2   | Sensor de temperatura LM35
@@ -40,10 +40,11 @@
  *     porta COM, e grave este sketch.
  *  3. Abra o Monitor Serial e configure:
  *       - velocidade: 9600 baud
- *       - final de linha: "Nova linha" (Newline)
- *     O final de linha importa: vários testes pedem "pressione Enter", e com
- *     "Sem final de linha" o Enter sozinho não envia nada para a placa.
- *  4. Digite o número do teste e pressione Enter.
+ *       - final de linha: qualquer opção funciona
+ *  4. Digite o número do teste e envie. Quando um teste pedir para
+ *     continuar ou voltar ao menu, envie "c". Com "Nova linha", só o Enter
+ *     também serve; com "Sem final de linha", o Enter com a caixa vazia
+ *     não envia nada, por isso as instruções pedem a letra "c".
  *
  *  NENHUMA BIBLIOTECA EXTERNA É NECESSÁRIA
  *  ---------------------------------------
@@ -89,8 +90,10 @@ const uint8_t PINO_IR           = 6;
 const uint8_t PINO_RGB_VERMELHO = 9;
 const uint8_t PINO_RGB_AZUL     = 10;
 const uint8_t PINO_RGB_VERDE    = 11;
-const uint8_t PINO_LED_VERMELHO = 12;
-const uint8_t PINO_LED_AZUL     = 13;
+// LEDs de 3 mm: a COR muda conforme a versão do shield (numa, D12 é
+// vermelho e D13 azul; noutra, o contrário). Por isso o nome é o pino.
+const uint8_t PINO_LED_D12      = 12;
+const uint8_t PINO_LED_D13      = 13;
 const uint8_t PINO_POT          = A0;
 const uint8_t PINO_LDR          = A1;
 const uint8_t PINO_LM35         = A2;
@@ -158,8 +161,12 @@ const float ADC_MAXIMO = 1023.0;
 
 // Descarta tudo o que chegou pela serial (por exemplo, o '\n' do Enter).
 // O pequeno atraso dá tempo para o resto da linha digitada chegar.
+//
+// Funciona com qualquer opção de final de linha do Monitor Serial: os 20 ms
+// de espera bastam para chegar o resto da mensagem, inclusive o "\r\n" da
+// opção "Ambos, NL e CR" (a 9600 baud, cada caractere leva ~1 ms).
 void limparSerial() {
-  delay(10);
+  delay(20);
   while (Serial.available() > 0) {
     Serial.read();
   }
@@ -175,9 +182,9 @@ bool usuarioPediuParar() {
   return false;
 }
 
-// Fica parado até o usuário pressionar Enter no Monitor Serial.
-void esperarEnter() {
-  Serial.println(F("   (pressione Enter para continuar)"));
+// Fica parado até o usuário enviar qualquer coisa pelo Monitor Serial.
+void esperarContinuar() {
+  Serial.println(F("   (envie c para continuar)"));
   while (Serial.available() == 0) {
     // espera
   }
@@ -231,8 +238,8 @@ void desligarTudo() {
   noTone(PINO_BUZZER);   // noTone() deixa o pino em LOW...
   buzzerLigar(false);    // ...então ele é recolocado no nível "desligado".
   rgbApagar();
-  digitalWrite(PINO_LED_VERMELHO, LOW);
-  digitalWrite(PINO_LED_AZUL, LOW);
+  digitalWrite(PINO_LED_D12, LOW);
+  digitalWrite(PINO_LED_D13, LOW);
 }
 
 // =============================================================================
@@ -479,34 +486,36 @@ uint8_t lerIr(uint32_t &codigo, unsigned long &tempoLider) {
 //  TESTE 1: LEDs de 3 mm (D12 vermelho, D13 azul)
 // =============================================================================
 void testeLeds() {
-  imprimirTitulo(F("TESTE 1: LEDs vermelho (D12) e azul (D13)"));
+  imprimirTitulo(F("TESTE 1: LEDs de 3 mm (D12 e D13)"));
   Serial.println(F("O que observar: cada LED deve piscar 3 vezes, um de cada vez,"));
   Serial.println(F("e depois os dois juntos."));
-  Serial.println(F("Obs.: o LED azul (D13) também é o LED embutido da placa"));
+  Serial.println(F("Anote a COR de cada um: ela muda conforme a versão do shield"));
+  Serial.println(F("(numa, D12 é vermelho e D13 azul; noutra, o contrário)."));
+  Serial.println(F("Obs.: o LED do D13 também é o LED embutido da placa"));
   Serial.println(F("(LED_BUILTIN), então o LED 'L' da placa pisca junto com ele."));
 
-  Serial.println(F("-> LED vermelho (D12) piscando..."));
+  Serial.println(F("-> LED do D12 piscando..."));
   for (uint8_t i = 0; i < 3; i++) {
-    digitalWrite(PINO_LED_VERMELHO, HIGH);
+    digitalWrite(PINO_LED_D12, HIGH);
     delay(300);
-    digitalWrite(PINO_LED_VERMELHO, LOW);
+    digitalWrite(PINO_LED_D12, LOW);
     delay(300);
   }
 
-  Serial.println(F("-> LED azul (D13) piscando..."));
+  Serial.println(F("-> LED do D13 piscando..."));
   for (uint8_t i = 0; i < 3; i++) {
-    digitalWrite(PINO_LED_AZUL, HIGH);
+    digitalWrite(PINO_LED_D13, HIGH);
     delay(300);
-    digitalWrite(PINO_LED_AZUL, LOW);
+    digitalWrite(PINO_LED_D13, LOW);
     delay(300);
   }
 
   Serial.println(F("-> Os dois juntos por 1 segundo..."));
-  digitalWrite(PINO_LED_VERMELHO, HIGH);
-  digitalWrite(PINO_LED_AZUL, HIGH);
+  digitalWrite(PINO_LED_D12, HIGH);
+  digitalWrite(PINO_LED_D13, HIGH);
   delay(1000);
-  digitalWrite(PINO_LED_VERMELHO, LOW);
-  digitalWrite(PINO_LED_AZUL, LOW);
+  digitalWrite(PINO_LED_D12, LOW);
+  digitalWrite(PINO_LED_D13, LOW);
 
   Serial.println(F("Resultado: se algum LED não acendeu, confira se o shield está"));
   Serial.println(F("bem encaixado e se o LED não está queimado ou invertido."));
@@ -530,7 +539,7 @@ void testeRgb() {
     Serial.print(F(" aceso. Qual cor apareceu? (esperado: "));
     Serial.print(corEsperada[i]);
     Serial.println(F(")"));
-    esperarEnter();
+    esperarContinuar();
   }
 
   // Parte B: conferir se é cátodo comum ou ânodo comum.
@@ -538,14 +547,15 @@ void testeRgb() {
   Serial.println(F("Parte B: o LED RGB deve estar APAGADO agora."));
   Serial.println(F("   Se ele estiver aceso (branco), o LED é de ânodo comum:"));
   Serial.println(F("   altere RGB_ANODO_COMUM para true no início do código."));
-  esperarEnter();
+  esperarContinuar();
 
   // Parte C: todas as cores juntas formam o branco.
-  Serial.println(F("Parte C: as três cores juntas (deve ficar branco)."));
+  Serial.println(F("Parte C: as três cores juntas. O LED deve parecer branco"));
+  Serial.println(F("   (ou quase: num LED RGB barato, uma cor pode puxar mais)."));
   for (uint8_t i = 0; i < 3; i++) {
     rgbEscrever(PINOS_RGB[i], 255);
   }
-  delay(1500);
+  esperarContinuar();
   rgbApagar();
 
   // Parte D: PWM. Os pinos D9, D10 e D11 aceitam analogWrite(), que
@@ -615,19 +625,29 @@ void testeBotoes() {
     if (repouso[b] == HIGH) {
       Serial.println(F("HIGH (pull-up: apertado vai para LOW)"));
     } else {
-      Serial.println(F("LOW (pull-down: apertado vai para HIGH)"));
+      // Nos shields medidos, os botões têm pull-up: LOW sem ninguém apertar
+      // indica botão travado ou em curto com o GND (visto num shield, no
+      // SW2). Nesse caso o aperto não aparece no teste.
+      Serial.println(F("LOW. ATENÇÃO: nos shields medidos, solto = HIGH. Se você não"));
+      Serial.println(F("   está apertando, o botão está travado ou em curto com o GND."));
     }
   }
 
-  Serial.println(F("Agora aperte e solte SW1 e SW2. Cada aperto aparece aqui"));
-  Serial.println(F("e acende um LED: SW1 = vermelho, SW2 = azul."));
-  Serial.println(F("Pressione Enter para voltar ao menu."));
+  Serial.println(F("Agora aperte e solte SW1 e SW2. Cada aperto aparece aqui, e o"));
+  Serial.println(F("LED fica aceso enquanto o botão estiver apertado:"));
+  Serial.println(F("SW1 (D2) -> LED do D12   e   SW2 (D3) -> LED do D13."));
+  Serial.println(F("Envie c para voltar ao menu."));
 
-  const uint8_t leds[2] = {PINO_LED_VERMELHO, PINO_LED_AZUL};
+  const uint8_t leds[2] = {PINO_LED_D12, PINO_LED_D13};
 
   while (!usuarioPediuParar()) {
     for (uint8_t b = 0; b < 2; b++) {
       uint8_t leitura = digitalRead(pinos[b]);
+
+      // O LED segue o botão NA HORA, sem esperar o debounce: assim ele
+      // acende no instante do aperto. O debounce abaixo só serve para
+      // contar e escrever cada aperto uma vez.
+      digitalWrite(leds[b], leitura != repouso[b] ? HIGH : LOW);
 
       // Qualquer mudança reinicia o cronômetro do debounce.
       if (leitura != ultimaLeitura[b]) {
@@ -639,7 +659,6 @@ void testeBotoes() {
       if (millis() - ultimaMudanca[b] > TEMPO_DEBOUNCE && leitura != estadoEstavel[b]) {
         estadoEstavel[b] = leitura;
         bool apertado = (leitura != repouso[b]);
-        digitalWrite(leds[b], apertado ? HIGH : LOW);
 
         Serial.print(F("SW"));
         Serial.print(b + 1);
@@ -725,7 +744,7 @@ void testeBuzzer() {
   Serial.println(F("     BUZZER_NIVEL_LIGADO = HIGH (transistor NPN medido)."));
   Serial.print(F("   Valor atual no código: BUZZER_NIVEL_LIGADO = "));
   Serial.println(BUZZER_NIVEL_LIGADO == HIGH ? F("HIGH") : F("LOW"));
-  esperarEnter();
+  esperarContinuar();
 
   // Parte B: tone() gera uma onda quadrada na frequência pedida. No buzzer
   // passivo, cada frequência vira uma nota diferente. No ativo, o som sai
@@ -765,7 +784,7 @@ void testePotenciometro() {
   Serial.println(F("Gire o potenciômetro de um extremo ao outro, devagar."));
   Serial.println(F("A leitura deve ir de ~0 a ~1023, sem saltos."));
   Serial.println(F("O brilho do vermelho do LED RGB (D9) acompanha o potenciômetro."));
-  Serial.println(F("Pressione Enter para voltar ao menu."));
+  Serial.println(F("Envie c para voltar ao menu."));
 
   int minimo = 1023;
   int maximo = 0;
@@ -813,7 +832,7 @@ void testeLdr() {
   Serial.println(F("1. Deixe o LDR na luz ambiente."));
   Serial.println(F("2. Cubra o LDR com o dedo (escuro)."));
   Serial.println(F("3. Aponte a lanterna do celular para ele (claro)."));
-  Serial.println(F("Pressione Enter para voltar ao menu."));
+  Serial.println(F("Envie c para voltar ao menu."));
 
   int minimo = 1023;
   int maximo = 0;
@@ -862,7 +881,7 @@ void testeLm35() {
   Serial.print(F("TENSAO_REFERENCIA no código: "));
   Serial.print(TENSAO_REFERENCIA, 2);
   Serial.println(F(" V (meça a tensão do pino 5V e ajuste, se preciso)."));
-  Serial.println(F("Pressione Enter para voltar ao menu."));
+  Serial.println(F("Envie c para voltar ao menu."));
 
   while (!usuarioPediuParar()) {
     float leitura = lerLm35();
@@ -905,7 +924,7 @@ void testeDht11() {
   Serial.println(F("Uma leitura a cada 2 segundos (o DHT11 não aceita leituras"));
   Serial.println(F("mais rápidas que 1 por segundo)."));
   Serial.println(F("Sopre no sensor: a umidade deve subir em poucos segundos."));
-  Serial.println(F("Pressione Enter para voltar ao menu."));
+  Serial.println(F("Envie c para voltar ao menu."));
 
   unsigned long ultimaLeitura = 0;
   bool primeira = true;
@@ -939,10 +958,10 @@ void testeDht11() {
 void testeIr() {
   imprimirTitulo(F("TESTE 9: Receptor infravermelho (D6)"));
   Serial.println(F("Aponte um controle remoto para o receptor e aperte botões."));
-  Serial.println(F("Cada sinal recebido pisca o LED azul (D13)."));
+  Serial.println(F("Cada sinal recebido pisca o LED do D13."));
   Serial.println(F("Controles NEC (a maioria dos de kits Arduino) mostram o código"));
   Serial.println(F("de cada botão; outros controles mostram só 'sinal recebido'."));
-  Serial.println(F("Pressione Enter para voltar ao menu."));
+  Serial.println(F("Envie c para voltar ao menu."));
 
   while (!usuarioPediuParar()) {
     uint32_t codigo = 0;
@@ -953,7 +972,7 @@ void testeIr() {
       continue;
     }
 
-    digitalWrite(PINO_LED_AZUL, HIGH);
+    digitalWrite(PINO_LED_D13, HIGH);
 
     if (resultado == IR_NEC) {
       uint8_t endereco         = codigo & 0xFF;
@@ -991,7 +1010,7 @@ void testeIr() {
     }
 
     delay(50);
-    digitalWrite(PINO_LED_AZUL, LOW);
+    digitalWrite(PINO_LED_D13, LOW);
   }
 
   Serial.println(F("Resultado: o mesmo botão deve gerar sempre o mesmo código."));
@@ -1003,7 +1022,7 @@ void testeIr() {
 void painelAoVivo() {
   imprimirTitulo(F("PAINEL AO VIVO"));
   Serial.println(F("Todas as entradas, atualizadas a cada meio segundo."));
-  Serial.println(F("Pressione Enter para voltar ao menu."));
+  Serial.println(F("Envie c para voltar ao menu."));
   Serial.println(F("SW1  SW2  Pot   LDR   LM35(°C)  DHT11(°C)  Umid(%)"));
 
   pinMode(PINO_SW1, INPUT);
@@ -1048,7 +1067,7 @@ void painelAoVivo() {
 // =============================================================================
 void testarTodos() {
   imprimirTitulo(F("TODOS OS TESTES EM SEQUÊNCIA"));
-  Serial.println(F("Nos testes contínuos, pressione Enter para ir ao próximo."));
+  Serial.println(F("Nos testes contínuos, envie c para ir ao próximo."));
   testeLeds();
   testeRgb();
   testeBotoes();
@@ -1069,7 +1088,7 @@ void imprimirMenu() {
   Serial.println(F("============================================================"));
   Serial.println(F("  TESTE DO SHIELD MULTIFUNÇÃO 9 EM 1"));
   Serial.println(F("============================================================"));
-  Serial.println(F("  1 - LEDs vermelho (D12) e azul (D13)"));
+  Serial.println(F("  1 - LEDs de 3 mm (D12 e D13)"));
   Serial.println(F("  2 - LED RGB (D9, D10, D11)"));
   Serial.println(F("  3 - Botões SW1 (D2) e SW2 (D3)"));
   Serial.println(F("  4 - Buzzer (D5)"));
@@ -1081,7 +1100,7 @@ void imprimirMenu() {
   Serial.println(F("  0 - Todos os testes em sequência"));
   Serial.println(F("  p - Painel ao vivo (todas as entradas)"));
   Serial.println(F("------------------------------------------------------------"));
-  Serial.println(F("Digite a opção e pressione Enter:"));
+  Serial.println(F("Digite a opção e envie:"));
 }
 
 // =============================================================================
@@ -1095,8 +1114,8 @@ void setup() {
   buzzerLigar(false);
   pinMode(PINO_BUZZER, OUTPUT);
 
-  pinMode(PINO_LED_VERMELHO, OUTPUT);
-  pinMode(PINO_LED_AZUL, OUTPUT);
+  pinMode(PINO_LED_D12, OUTPUT);
+  pinMode(PINO_LED_D13, OUTPUT);
   for (uint8_t i = 0; i < 3; i++) {
     pinMode(PINOS_RGB[i], OUTPUT);
   }
