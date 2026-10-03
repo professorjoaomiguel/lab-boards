@@ -189,13 +189,14 @@ Placa original (ATmega16U2), Vcc de 4,87–4,89 V na USB.
   pull-up interno do chip ligado. Trocando os shields entre o R3 e o R4, o
   defeito ficou no R3 e sumiu no R4. Causa provável: a porta D3 do
   ATmega328P danificada ou um curto do D3 com o GND na placa. **Não use o
-  D3 desta placa.**
+  D3 desta placa.** Confirmado sem shield: o teste da placa acusa o D3
+  (`gpio`: "D3 (pull-up)") e passa todos os outros pinos.
 
 ### A confirmar na placa real
 
 | Item | Como | Situação |
 |------|------|----------|
-| Teste `gpio` completo (D2–D12, A1–A5) | Teste da placa **sem** o shield (deve acusar o D3 da R3-01) | A rodar |
+| Teste `gpio` completo (D2–D12, A1–A5) | Teste da placa **sem** o shield | ✅ Rodado na R3-01 (2026-10-03): **FALHA só no D3** (pull-up); os outros pinos passaram |
 | Vcc com multímetro | Comparar com o valor do teste `vcc` | A medir |
 | Clone com CH340 | Os mesmos testes; o inventário precisa de registro à mão (sem número de série USB) | Sem placa testada |
 

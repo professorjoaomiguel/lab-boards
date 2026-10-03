@@ -107,8 +107,8 @@ estrutural.
   está ligado a nada (medido sem alimentação).
 - **UNO R3-01: pino D3 preso em LOW** (2026-10-03). Primeiro parecia o
   SW2 do shield, mas trocando os shields entre o R3 e o R4 o defeito
-  ficou na placa (os dois shields estão bons). Confirmar com o teste da
-  placa sem shield (`gpio` deve acusar o D3) e anotar no inventário.
+  ficou na placa (os dois shields estão bons). Confirmado sem shield: o
+  teste da placa acusa só o D3 (`gpio`). Anotado no inventário.
 - **LM35 no R4 com o potenciômetro todo girado (A0 = 5 V)**: o ADC leu
   ~180 mV (com descarga) e ~480 mV (sem), e o multímetro mediu 19 mV no
   A2 (2026-10-03, valor estranho). Com o potenciômetro no meio, os dois
