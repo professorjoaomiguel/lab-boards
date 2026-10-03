@@ -108,8 +108,8 @@ estrutural.
   rodada: pausa na parte C do teste do RGB (branco); no teste 3, o LED
   segue o botão na hora (sem esperar o debounce) e um botão em LOW no
   repouso é avisado; LEDs de 3 mm chamados pelo pino (`PINO_LED_D12`,
-  `PINO_LED_D13`), porque **a cor muda entre versões do shield** (shield do
-  R3-01: D12 azul, D13 vermelho). Pendente: anotar a cor no shield nº 2.
+  `PINO_LED_D13`). **Padrão: D12 vermelho, D13 azul** (decisão do usuário),
+  com variação de montagem possível (o shield do R3-01 veio trocado).
 - Adicionar fotos e diagrama esquemático reais de `boards/esp32-s3-n16r8/`.
 - ESP32-S3 UNO: variante N16R8, PSRAM com `SPIRAM_OCT` e gravação sem
   jumper já confirmadas (2026-09-29). Faltam o LED RGB, a ordem das cores,

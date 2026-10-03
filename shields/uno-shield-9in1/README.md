@@ -109,8 +109,8 @@ placa.
 | D9 | LED RGB — vermelho | `RGB LED D9-D11` |
 | D10 | LED RGB — azul | `RGB LED D9-D11` |
 | D11 | LED RGB — verde | `RGB LED D9-D11` |
-| D12 | LED 3 mm: vermelho **ou** azul, conforme a versão (ver abaixo) | `LED2 D12` |
-| D13 | LED 3 mm: a outra cor | `LED1 D13` |
+| D12 | LED 3 mm vermelho (padrão; pode variar, ver abaixo) | `LED2 D12` |
+| D13 | LED 3 mm azul (padrão; pode variar) | `LED1 D13` |
 | A0 | Potenciômetro | `Rotation A0` |
 | A1 | LDR (sensor de luminosidade) | `Light A1` |
 | A2 | Sensor de temperatura LM35 | `LM35 A2` |
@@ -124,11 +124,10 @@ placa.
 | I2C | `GND VCC SDA SCL` |
 | Serial TTL | `TXD RXD VCC GND` |
 
-> **Versões do shield: a cor dos LEDs de 3 mm muda.** Existem lotes com
-> **D12 vermelho e D13 azul** (o da documentação da Keyestudio) e lotes com
-> **D12 azul e D13 vermelho** (o shield usado com o UNO R3-01, 2026-10-03).
-> Por isso os sketches chamam esses LEDs pelo pino ("LED do D12"), e não
-> pela cor. Confira a cor do seu com o teste 1.
+> **Cor dos LEDs de 3 mm: padrão D12 vermelho e D13 azul**, mas pode haver
+> variação de montagem: o shield usado com o UNO R3-01 veio com as cores
+> trocadas (D12 azul, D13 vermelho; 2026-10-03). Por isso os sketches
+> chamam esses LEDs pelo pino ("LED do D12"). Confira o seu com o teste 1.
 
 > **Atenção:** D13 também é o LED embutido do UNO (`LED_BUILTIN`), então o
 > LED de 3 mm do D13 acende junto com ele. D9–D11 são pinos PWM, o que permite variar
@@ -182,7 +181,7 @@ substitui a medição: clones podem trocar componentes. Confirme com o teste.
 |------|----------------|----------------------------------------|-----------|
 | Botões: algum preso em LOW? | Teste automático do UNO R3/R4 (`botoes`) | Não se aplica | ⚠️ No shield usado com o **UNO R3-01** (2026-10-03), o **SW2 (D3) fica em LOW sem ninguém apertar**: o D3 lê LOW mesmo com o pull-up interno, ou seja, algo o liga ao GND (botão travado ou curto de solda). Conferir: shield solto, resistência D3↔GND com o SW2 solto (deveria ser aberto) |
 | LEDs D12 e D13: nível que acende | Teste 1 | HIGH acende (Keyestudio e RoboticX) | ✅ Ativos em HIGH (confirmado na placa) |
-| LEDs D12 e D13: cor de cada um | Teste 1 | D12 vermelho, D13 azul (Keyestudio) | ⚠️ **Varia entre versões**: no shield do UNO R3-01, D12 azul e D13 vermelho (2026-10-03). Falta anotar a cor no shield nº 2 (UNO R4) |
+| LEDs D12 e D13: cor de cada um | Teste 1 | D12 vermelho, D13 azul (Keyestudio) | ✅ **Padrão: D12 vermelho, D13 azul** (definido em 2026-10-03). ⚠️ Pode haver variação de montagem: o shield do UNO R3-01 veio com as cores trocadas |
 | LED RGB: cátodo ou ânodo comum | Teste 2, parte B | Cátodo comum: a cor acende com o pino em HIGH (Keyestudio e RoboticX) | ✅ Ativo em HIGH, cátodo comum (confirmado na placa) |
 | Cor ligada a D9, D10 e D11 | Teste 2, parte A | D9 = vermelho, D10 = verde, D11 = azul (Keyestudio e RoboticX) | ✅ **D9 = vermelho, D10 = azul, D11 = verde** (confirmado na placa; **difere** da documentação dos fabricantes) |
 | Buzzer: ativo ou passivo, e nível que liga | Teste 4 | **Passivo, liga em LOW** (Keyestudio: "passive buzzer"; no código, LOW = som e HIGH = silêncio, o que indica transistor PNP) | ✅ **Ativo, liga em HIGH**, igual em **dois shields**: o nº 2 no UNO R4 e o do UNO R3-01 (2026-10-03; **difere** da Keyestudio). Com o padrão novo (`HIGH`), o buzzer fica mudo no menu; a escala e a melodia saem "fibriladas" nos dois. Transistor NPN (multímetro, 2026-10-01). Com o sketch antigo (`LOW` = ligado), o D5 ficava em HIGH para "desligar" e o buzzer **apitou sem parar**: só um buzzer ativo apita com tensão constante. Pulsos de 250 ms em HIGH: 3 bipes nítidos. Ver "Faixa de frequência do buzzer" abaixo |

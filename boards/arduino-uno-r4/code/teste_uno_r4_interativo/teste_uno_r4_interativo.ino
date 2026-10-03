@@ -63,8 +63,9 @@ const uint8_t PINO_IR           = 6;
 const uint8_t PINO_RGB_VERMELHO = 9;
 const uint8_t PINO_RGB_AZUL     = 10;
 const uint8_t PINO_RGB_VERDE    = 11;
-// LEDs de 3 mm: a COR muda conforme a versão do shield (numa, D12 é
-// vermelho e D13 azul; noutra, o contrário). Por isso o nome é o pino.
+// LEDs de 3 mm: no padrão, D12 é VERMELHO e D13 é AZUL. Mas há variação de
+// montagem (um shield testado veio com as cores trocadas), por isso o nome
+// é o pino, e não a cor.
 const uint8_t PINO_LED_D12      = 12;
 const uint8_t PINO_LED_D13      = 13;
 const uint8_t PINO_POT          = A0;

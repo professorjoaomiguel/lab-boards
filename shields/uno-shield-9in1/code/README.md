@@ -61,7 +61,7 @@ Para o UNO R4, use a pasta `teste_shield_9em1_uno_r4` e o `--fqbn`
 
 | Opção | Teste | O que fazer | Resultado esperado |
 |-------|-------|-------------|--------------------|
-| 1 | LEDs D12 e D13 | Só observar e anotar a cor | O do D12 pisca 3×, o do D13 pisca 3×, os dois juntos. A cor de cada um muda conforme a versão do shield |
+| 1 | LEDs D12 e D13 | Só observar e conferir a cor | O do D12 (vermelho, no padrão) pisca 3×, o do D13 (azul) pisca 3×, os dois juntos. Há variação de montagem: anote se as cores vieram trocadas |
 | 2 | LED RGB D9–D11 | Conferir a cor de cada pino | D9 vermelho, D10 azul, D11 verde; as três juntas formam o branco; brilho varia suave |
 | 3 | Botões SW1 e SW2 | Apertar e soltar | Cada aperto conta 1. O LED acende na hora e fica aceso enquanto o botão estiver apertado: SW1 → LED do D12, SW2 → LED do D13. Botão em LOW no repouso é avisado (travado ou em curto) |
 | 4 | Buzzer D5 | Ouvir | Buzzer ativo (o testado): apita no nível HIGH; escala e melodia "Nokia Tune" com o ritmo certo, timbre misturado com o apito próprio |

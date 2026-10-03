@@ -28,8 +28,8 @@
  *    D9   | LED RGB — vermelho
  *    D10  | LED RGB — azul
  *    D11  | LED RGB — verde
- *    D12  | LED de 3 mm (LED2 na placa) — vermelho ou azul, conforme a versão
- *    D13  | LED de 3 mm (LED1 na placa) — a outra cor; também é o LED_BUILTIN
+ *    D12  | LED vermelho de 3 mm (LED2 na placa) — padrão; a cor pode variar
+ *    D13  | LED azul de 3 mm (LED1 na placa) — idem; também é o LED_BUILTIN
  *    A0   | Potenciômetro
  *    A1   | LDR (sensor de luminosidade)
  *    A2   | Sensor de temperatura LM35
@@ -91,8 +91,9 @@ const uint8_t PINO_IR           = 6;
 const uint8_t PINO_RGB_VERMELHO = 9;
 const uint8_t PINO_RGB_AZUL     = 10;
 const uint8_t PINO_RGB_VERDE    = 11;
-// LEDs de 3 mm: a COR muda conforme a versão do shield (numa, D12 é
-// vermelho e D13 azul; noutra, o contrário). Por isso o nome é o pino.
+// LEDs de 3 mm: no padrão, D12 é VERMELHO e D13 é AZUL. Mas há variação de
+// montagem (um shield testado veio com as cores trocadas), por isso o nome
+// é o pino, e não a cor.
 const uint8_t PINO_LED_D12      = 12;
 const uint8_t PINO_LED_D13      = 13;
 const uint8_t PINO_POT          = A0;
@@ -492,12 +493,12 @@ void testeLeds() {
   imprimirTitulo(F("TESTE 1: LEDs de 3 mm (D12 e D13)"));
   Serial.println(F("O que observar: cada LED deve piscar 3 vezes, um de cada vez,"));
   Serial.println(F("e depois os dois juntos."));
-  Serial.println(F("Anote a COR de cada um: ela muda conforme a versão do shield"));
-  Serial.println(F("(numa, D12 é vermelho e D13 azul; noutra, o contrário)."));
+  Serial.println(F("Padrão: D12 vermelho e D13 azul. Há variação de montagem:"));
+  Serial.println(F("anote se no seu shield as cores vieram trocadas."));
   Serial.println(F("Obs.: o LED do D13 também é o LED embutido da placa"));
   Serial.println(F("(LED_BUILTIN), então o LED 'L' da placa pisca junto com ele."));
 
-  Serial.println(F("-> LED do D12 piscando..."));
+  Serial.println(F("-> LED do D12 piscando (vermelho, no padrão)..."));
   for (uint8_t i = 0; i < 3; i++) {
     digitalWrite(PINO_LED_D12, HIGH);
     delay(300);
@@ -505,7 +506,7 @@ void testeLeds() {
     delay(300);
   }
 
-  Serial.println(F("-> LED do D13 piscando..."));
+  Serial.println(F("-> LED do D13 piscando (azul, no padrão)..."));
   for (uint8_t i = 0; i < 3; i++) {
     digitalWrite(PINO_LED_D13, HIGH);
     delay(300);
