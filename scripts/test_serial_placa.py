@@ -248,6 +248,23 @@ class FalsaConexao:
 
 
 class TestExecutarAuto(unittest.TestCase):
+    def test_so_manda_comecar_depois_das_boas_vindas(self):
+        # No UNO R3, o que chega antes das boas-vindas cai no bootloader.
+        conexao = FalsaConexao(["# reiniciando\n"])
+        escrito_antes = []
+        original = conexao.readline
+
+        def readline():
+            escrito_antes.append(conexao.escrito)
+            return original()
+        conexao.readline = readline
+        conexao.linhas += ["> Envie c para começar\n".encode("utf-8"),
+                           b"FIM;ok=0;falha=0;aviso=0;pulado=0\n"]
+        with contextlib.redirect_stdout(io.StringIO()):
+            sp.executar_auto(conexao, 5)
+        self.assertEqual(escrito_antes[:2], [b"", b""])
+        self.assertEqual(conexao.escrito, b"c\n")
+
     def test_manda_comecar_e_le_ate_o_fim(self):
         conexao = FalsaConexao([
             "> Envie c para começar\n",

@@ -54,6 +54,36 @@ Pinout e esquemático oficiais (Arduino):
   (D10–D13 e ICSP)
 - Interrupções externas em D2 e D3
 
+### ADC: cuidados medidos na placa real (2026-10-03)
+
+Achados com o LM35 do
+[Shield 9 em 1](../../shields/uno-shield-9in1/README.md), um sensor cuja
+saída quase não consegue **absorver** corrente:
+
+- **Depois de trocar de pino, espere antes de ler um sensor assim.** O ADC
+  tem um capacitor interno que chega carregado com a tensão do pino lido
+  antes. Logo depois de ler um pino com tensão maior (LDR, potenciômetro ou
+  o canal interno de 1,1 V), o LM35 deu até 445 mV na 1ª leitura e ~295 mV
+  nas seguintes, contra 239 mV reais. **100 ms depois da troca**, a
+  leitura fica certa. Descartar só 1 leitura não bastou. No
+  [UNO R4](../arduino-uno-r4/README.md#adc-leitura-errada-de-sensores-que-não-absorvem-corrente)
+  o mesmo efeito não passa sozinho e precisa de um ajuste de registrador.
+
+  ```cpp
+  analogRead(A2);   // troca o canal do ADC para o A2
+  delay(100);       // espera o LM35 acertar o capacitor do ADC
+  int leitura = analogRead(A2);
+  ```
+
+- **Depois de `analogReference(INTERNAL)`, espere ~0,5 s.** O pino AREF
+  tem um capacitor de 100 nF na placa, que leva centenas de milissegundos
+  para descarregar de 5 V até 1,1 V. Medido: o LM35 (246 mV reais) leu 0 a
+  22 mV nos primeiros 20 ms, 235 mV aos 100 ms e 256 mV aos 500 ms.
+- **Medir o Vcc sem multímetro:** o ADC pode ler a referência interna de
+  1,1 V usando o Vcc como régua: Vcc = 1,1 V × 1023 / leitura. Na USB, a
+  placa testada mediu **4,87 a 4,89 V**. O valor de 1,1 V varia de 1,0 a
+  1,2 V entre chips (datasheet), então essa medida tem até ~10% de erro.
+
 ## Ponte USB-serial
 O ATmega328P não tem USB: ele só fala serial (UART, pinos D0/D1). Entre o
 conector USB e o ATmega328P existe um segundo chip, a **ponte USB-serial**,
@@ -86,7 +116,83 @@ ICSP de 6 pinos perto dele. O CH340 é um chip retangular com a marcação
   atrapalhar a gravação e o Monitor Serial.
 
 ## Código de teste e validação
-(preenchido futuramente — ver pasta `code/`)
+
+| Sketch | Quem confere | Para quê |
+|--------|--------------|----------|
+| [`code/teste_uno_r3_automatico`](code/teste_uno_r3_automatico/teste_uno_r3_automatico.ino) | o próprio sketch | Triagem rápida da placa e registro no inventário |
+| [`teste_shield_9em1_uno_r3`](../../shields/uno-shield-9in1/code/teste_shield_9em1_uno_r3/teste_shield_9em1_uno_r3.ino) (no shield) | o aluno, por um menu | Testar cada periférico do Shield 9 em 1 vendo, ouvindo e mexendo |
+
+> ⚠️ **Antes do teste automático, tire tudo da placa: deixe-a sozinha ou só
+> com o Shield 9 em 1.** Sem o shield, o teste liga **D2 a D13 e A1 a A5
+> como saída** (HIGH e LOW). Um módulo, protoboard ou outro shield ligado
+> nesses pinos pode receber esses sinais e se danificar. O teste só começa
+> quando você envia `c`.
+
+### Teste automático
+
+| Teste | O que confere |
+|-------|---------------|
+| `chip` | Assinatura do microcontrolador: `1E 95 0F` = ATmega328P (clones com ATmega328PB mostram `1E 95 16`) |
+| `relogio` | `millis()` e `micros()` medem 1 s corretamente |
+| `eeprom` | Grava, lê e **restaura** o último byte da EEPROM (1 KB) |
+| `vcc` | Tensão de alimentação, medida pela própria placa (até ~10% de erro) |
+| `gpio` | Pull-up interno e saída HIGH/LOW de cada pino livre (sem shield: D2–D13 e A1–A5; com shield: D7, D8, A3–A5) |
+| `botoes`, `ir`, `saidas`, `dht11`, `lm35`, `ldr`, `pot`, `temperatura` | Periféricos do Shield 9 em 1, quando encaixado |
+
+O UNO R3 não tem RTC, DAC, segunda serial nem ID único no chip, então esses
+testes do UNO R4 não existem aqui.
+
+**Como rodar pela IDE do Arduino:** placa **Arduino Uno**, grave o sketch,
+abra o **Monitor Serial em 115200 baud** (qualquer opção de final de
+linha) e **envie `c`**. No fim aparece o **RESUMO**, um teste por linha.
+No UNO R3, abrir o Monitor Serial **reinicia a placa** (é assim que o chip
+da USB funciona), por isso a mensagem de boas-vindas aparece de novo toda
+vez que o Monitor abre.
+
+**Pelo terminal** (ferramenta do professor; preparação do computador em
+[Como rodar, no README do UNO R4](../arduino-uno-r4/README.md#como-rodar)):
+
+```bash
+python scripts/serial_placa.py auto --porta COM10 --gravar --registrar
+```
+
+O script espera as boas-vindas antes de enviar o `c`: o que chega durante o
+~1,5 s em que o bootloader roda (logo após o reset) se perde.
+
+### Resultado na placa real (2026-10-03, R3-01 + Shield 9 em 1)
+
+`ok=11 falha=0 aviso=1 pulado=0`. Placa original (ATmega16U2), Vcc de
+4,87–4,89 V na USB, LM35 em 23,9 °C e DHT11 em 27,3 °C. O aviso foi do
+**shield**: o botão **SW2 (D3) fica em LOW sem ninguém apertar**. O D3 lê
+LOW mesmo com o pull-up interno ligado, o que indica botão travado ou
+curto com o GND no shield (ver o README do shield).
+
+### A confirmar na placa real
+
+| Item | Como | Situação |
+|------|------|----------|
+| Teste `gpio` completo (D2–D13, A1–A5) | Teste automático **sem** o shield | A rodar |
+| Vcc com multímetro | Comparar com o valor do teste `vcc` | A medir |
+| Clone com CH340 | Os mesmos testes; o inventário precisa de registro à mão (sem número de série USB) | Sem placa testada |
+
+## Inventário (identificar cada placa)
+
+O ATmega328P **não tem ID único**. No UNO R3 **original**, o chip da USB
+(ATmega16U2) tem um **número de série** gravado pela Arduino, diferente em
+cada placa, que o computador vê sem gravar nada:
+
+- `python scripts/serial_placa.py listar` → coluna `série=`;
+- na IDE: **Ferramentas > Obter informações da placa** (campo SN).
+
+As placas registradas ficam em [`inventario.csv`](inventario.csv), com as
+mesmas colunas do [inventário do UNO R4](../arduino-uno-r4/README.md#inventário-identificar-cada-placa).
+A etiqueta física é `R3-01`, `R3-02`... e a chave é o número de série USB.
+Para registrar, **uma placa por vez**:
+`python scripts/serial_placa.py auto --porta COMx --gravar --registrar`.
+
+**Clones com CH340 não têm número de série USB.** O script avisa e não
+registra: anote a placa à mão no CSV (coluna `id_unico` vazia e uma
+descrição em `obs`). O inventário não guarda dados pessoais.
 
 ## Referências
 - Datasheet do ATmega328P (Microchip):

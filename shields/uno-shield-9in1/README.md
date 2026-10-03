@@ -88,8 +88,10 @@ curto entre 5V e 3,3V (medido). Consequências previstas:
   uma forma reversível (dessoldar o pino 5V, ou um jumper seletor 5V/3,3V)
   a cortar o pino.
 
-Antes de fazer, verificar se o pino **AREF** do shield está ligado a algo:
-na ESP32-S3 UNO, a posição AREF está ligada ao reset da placa.
+O pino **AREF** do shield **não está ligado a nada** (medido sem
+alimentação, 2026-10-03: sem continuidade com o 5V nem com o 3,3V). Isso
+importa na ESP32-S3 UNO, em que a posição AREF está ligada ao reset da
+placa.
 
 ## Fotos
 ![frente e verso](imagens/frente-verso.jpg)
@@ -172,6 +174,7 @@ substitui a medição: clones podem trocar componentes. Confirme com o teste.
 
 | Item | Como descobrir | Indício (documentação dos fabricantes) | Resultado |
 |------|----------------|----------------------------------------|-----------|
+| Botões: algum preso em LOW? | Teste automático do UNO R3/R4 (`botoes`) | Não se aplica | ⚠️ No shield usado com o **UNO R3-01** (2026-10-03), o **SW2 (D3) fica em LOW sem ninguém apertar**: o D3 lê LOW mesmo com o pull-up interno, ou seja, algo o liga ao GND (botão travado ou curto de solda). Conferir: shield solto, resistência D3↔GND com o SW2 solto (deveria ser aberto) |
 | LEDs D12 e D13: nível que acende | Teste 1 | HIGH acende (Keyestudio e RoboticX) | ✅ Ativos em HIGH (confirmado na placa) |
 | LED RGB: cátodo ou ânodo comum | Teste 2, parte B | Cátodo comum: a cor acende com o pino em HIGH (Keyestudio e RoboticX) | ✅ Ativo em HIGH, cátodo comum (confirmado na placa) |
 | Cor ligada a D9, D10 e D11 | Teste 2, parte A | D9 = vermelho, D10 = verde, D11 = azul (Keyestudio e RoboticX) | ✅ **D9 = vermelho, D10 = azul, D11 = verde** (confirmado na placa; **difere** da documentação dos fabricantes) |

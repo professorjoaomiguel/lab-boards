@@ -101,14 +101,18 @@ PLACAS = {
         "nome": "UNO R3",
         "usb": [(0x2341, 0x0043), (0x2341, 0x0001), (0x2A03, 0x0043), (0x1A86, 0x7523)],
         "fqbn": "arduino:avr:uno",
-        "sketch_auto": None,
+        "sketch_auto": "boards/arduino-uno-r3/code/teste_uno_r3_automatico",
         "sketch_interativo": "shields/uno-shield-9in1/code/teste_shield_9em1_uno_r3",
-        "inventario": None,
+        "inventario": "boards/arduino-uno-r3/inventario.csv",
+        # O ATmega328P não tem ID único. No UNO R3 original, o chip da USB
+        # (ATmega16U2) tem um número de série gravado pela Arduino, único
+        # por placa: ele vira o ID do inventário. Clones com CH340 não têm.
+        "id_pela_usb": True,
     },
 }
 
 # Prefixo da etiqueta física de cada modelo no inventário (ex: R4M-01).
-PREFIXO_ETIQUETA = {"UNO R4 Minima": "R4M", "UNO R4 WiFi": "R4W"}
+PREFIXO_ETIQUETA = {"UNO R4 Minima": "R4M", "UNO R4 WiFi": "R4W", "UNO R3": "R3"}
 
 COLUNAS_INVENTARIO = ["etiqueta", "modelo", "id_unico", "registrado_em",
                       "ultimo_teste", "resultado", "obs"]
@@ -116,6 +120,10 @@ COLUNAS_INVENTARIO = ["etiqueta", "modelo", "id_unico", "registrado_em",
 # No R4, a velocidade é ignorada (USB nativa). 1200 baud NÃO pode ser usado:
 # abrir a porta em 1200 baud faz as placas Arduino entrarem no bootloader.
 BAUD_PADRAO = 115200
+
+# Segundos de espera pela mensagem de boas-vindas do sketch antes de
+# enviar o comando "c" assim mesmo (ver executar_auto).
+ESPERA_BOAS_VINDAS = 4
 
 
 class ErroPorta(Exception):
@@ -456,16 +464,28 @@ def executar_auto(conexao, tempo_limite, log=None):
     """
     resultados, fim, id_unico = [], None, None
     # O sketch espera o comando "c" antes de testar: assim ele não aciona
-    # os pinos sozinho quando a IDE abre o Monitor Serial. Se o comando
-    # chegar antes da mensagem de boas-vindas, ele fica na fila da placa e
-    # é lido logo depois.
-    conexao.write(b"c\n")
+    # os pinos sozinho quando a IDE abre o Monitor Serial. O "c" só é
+    # enviado depois da mensagem de boas-vindas (linha que começa com ">"):
+    # no UNO R3, abrir a porta reinicia a placa, e o que chega durante o
+    # ~1,5 s do bootloader se perde. Se as boas-vindas não aparecerem (por
+    # exemplo, a porta foi aberta antes e a mensagem já passou), o "c" é
+    # enviado assim mesmo depois de alguns segundos.
+    enviado = False
+    envio_forcado = time.time() + ESPERA_BOAS_VINDAS
     limite = time.time() + tempo_limite
     while time.time() < limite and fim is None:
+        if not enviado and time.time() > envio_forcado:
+            conexao.write(b"c\n")
+            enviado = True
         bruta = conexao.readline()
         if not bruta:
             continue
         linha = bruta.decode("utf-8", errors="replace").rstrip()
+        if not enviado and linha.startswith(">"):
+            print(linha)
+            conexao.write(b"c\n")
+            enviado = True
+            continue
         print(linha)
         if log:
             log.write(linha + "\n")
@@ -614,8 +634,13 @@ def _cmd_auto(args):
 
     if args.registrar:
         caminho = PLACAS[chave]["inventario"]
+        if not id_unico and PLACAS[chave].get("id_pela_usb"):
+            id_unico = porta.serie
         if not caminho:
             print(f"# {PLACAS[chave]['nome']} ainda não tem inventário: nada registrado")
+        elif not id_unico and PLACAS[chave].get("id_pela_usb"):
+            print("# a placa não tem número de série USB (clone com CH340?): nada "
+                  "registrado. Anote a placa à mão em " + caminho)
         elif not id_unico:
             print("# o sketch não enviou ID_UNICO: nada registrado")
         else:

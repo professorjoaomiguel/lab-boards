@@ -249,8 +249,14 @@ float lerAnalogicoMedio(uint8_t pino) {
   return (float)soma / AMOSTRAS;
 }
 
-// Lê o LM35 (média de 16 leituras).
+// Lê o LM35 (média de 16 leituras), 100 ms depois de trocar o canal do
+// ADC para o A2. O capacitor interno do ADC chega carregado com a tensão
+// do pino lido antes (ex: o LDR no painel ao vivo), e o LM35 quase não
+// consegue absorver corrente para descarregá-lo: no UNO R3, a leitura
+// logo após a troca saiu ~5 °C acima da real (2026-10-03).
 float lerLm35() {
+  analogRead(PINO_LM35);
+  delay(100);
   return lerAnalogicoMedio(PINO_LM35);
 }
 

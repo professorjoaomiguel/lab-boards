@@ -11,7 +11,7 @@ estrutural.
 | [ESP32-S3 N16R8 DevKit](../boards/esp32-s3-n16r8/README.md) | placa | Estrutura completa; fotos e diagrama ainda pendentes |
 | [ESP32-S3 UNO (TZT D1 ESP32-S3 N16R8)](../boards/esp32-s3-uno/README.md) | placa | Pinagem completa, sketch de teste e inventário por MAC; N16R8 e PSRAM octal confirmadas; foto própria e parte dos itens "a confirmar" pendentes |
 | [ESP32-C3 SuperMini](../boards/esp32-c3-supermini/README.md) | placa | Pinagem, comparação com o XIAO e testes nos dois formatos; sketch sem compilar (compilador RISC-V bloqueado), foto e "a confirmar" pendentes |
-| [Arduino UNO R3](../boards/arduino-uno-r3/README.md) | placa | Estrutura e datasheets completos; fotos pendentes |
+| [Arduino UNO R3](../boards/arduino-uno-r3/README.md) | placa | Teste automático dedicado, inventário pelo número de série USB (R3-01 registrada), cuidados do ADC documentados; fotos e "a confirmar" pendentes |
 | [Arduino UNO R4 (Minima / WiFi)](../boards/arduino-uno-r4/README.md) | placa | Testes automático e interativo (com Shield 9 em 1), inventário por ID único (R4M-01 registrada); fotos e parte dos "a confirmar" pendentes |
 | [Shield Multifunção 9 em 1 (UNO)](../shields/uno-shield-9in1/README.md) | shield | Completo, com sketch de teste; itens "a confirmar" pendentes de teste na placa |
 
@@ -75,8 +75,7 @@ estrutural.
   `R_ADC0->ADDISCR = 0x0F` antes das leituras. Documentado no README do R4
   ("ADC: leitura errada de sensores que não absorvem corrente"). Pendente:
   (1) entender por que o erro persiste até o reset; (2) conferir se
-  `analogReference()`/`analogReadResolution()` apagam o ADDISCR; (3) testar
-  o LM35 no UNO R3 para ver se o efeito existe lá; (4) reconferir o 1º
+  `analogReference()`/`analogReadResolution()` apagam o ADDISCR; (3) [feito: no R3 o efeito existe, mas passa em ~100 ms] (4) reconferir o 1º
   shield (multímetro marcou 0,47 V no A2 com o ADC parado: provável
   defeito real) com o sketch corrigido.
 - **Buzzer do Shield 9 em 1: ativo, liga em HIGH** (2026-10-03, shield
@@ -88,11 +87,26 @@ estrutural.
 - Sketch do Shield 9 em 1 separado por placa (2026-10-03):
   `teste_shield_9em1_uno_r3` e `teste_shield_9em1_uno_r4` (só a versão R4
   liga a descarga do ADC).
-- **UNO R3: teste automático dedicado adiado** (2026-10-03), para quando
-  houver um UNO R3 ligado. Criar `boards/arduino-uno-r3/code/teste_uno_r3_automatico`
-  no mesmo formato de saída do R4 (sem RTC, DAC, Serial1 nem ID único; dá
-  para medir o Vcc pela referência interna de 1,1V) e preencher
-  `sketch_auto` de `uno-r3` em `scripts/serial_placa.py`.
+- **UNO R3: teste automático dedicado feito** (2026-10-03),
+  `boards/arduino-uno-r3/code/teste_uno_r3_automatico`, validado na R3-01
+  com o shield. Inventário pelo número de série USB do ATmega16U2 (clones
+  com CH340 não têm: registro à mão). Pendente: rodar sem shield (`gpio`
+  completo), medir o Vcc com multímetro, testar um clone com CH340 e
+  decidir se o R3 ganha um teste interativo dedicado (hoje o sketch de
+  menu do shield faz esse papel).
+- **ADC do UNO R3** (2026-10-03): o LM35 lido logo depois de outro canal
+  sai alto (até 445 mV contra 239 mV), mas acerta 100 ms depois da troca;
+  depois de `analogReference(INTERNAL)`, ~0,5 s até firmar (capacitor de
+  100 nF no AREF). Documentado no README do R3. O AREF do shield **não**
+  está ligado a nada (medido sem alimentação).
+- **Shield usado com o UNO R3-01: SW2 (D3) preso em LOW** (2026-10-03).
+  Medir D3↔GND com o shield solto (SW2 solto deveria ser aberto) e, se
+  for defeito, consertar ou separar o shield.
+- **Menus do shield (`teste_shield_9em1_uno_r3` e `_uno_r4`) ainda exigem
+  "Nova linha" no Monitor Serial** (2026-10-03, pedido do usuário para
+  depois): aplicar a mesma leitura dos testes do R4 (fim da mensagem no
+  ``/`
+` ou após 200 ms sem caracteres).
 - Adicionar fotos e diagrama esquemático reais de `boards/esp32-s3-n16r8/`.
 - ESP32-S3 UNO: variante N16R8, PSRAM com `SPIRAM_OCT` e gravação sem
   jumper já confirmadas (2026-09-29). Faltam o LED RGB, a ordem das cores,
