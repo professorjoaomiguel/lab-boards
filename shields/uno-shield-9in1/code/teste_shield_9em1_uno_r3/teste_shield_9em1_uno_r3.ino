@@ -11,6 +11,15 @@
  *  NÃO use este shield em placas de 3,3V (ex: ESP32): ele é de 5V e pode
  *  queimar as portas do microcontrolador. Ver ../../README.md.
  *
+ *  SINAL DE FIRMWARE GRAVADO: no menu, o LED "L" (D13) pisca duas vezes
+ *  rápidas a cada 2 s.
+ *
+ *  TESTE CONJUNTO (placa + shield): informa sobre as duas. No início
+ *  mostra a placa (modelo e tensão de referência); a opção "a" do menu
+ *  roda um teste automático do shield com RESUMO, e os testes 1 a 9 são
+ *  guiados (ver, ouvir, mexer). Para testar só a placa, use os sketches da
+ *  pasta da placa (boards/.../code).
+ *
  *  O QUE ESTE SKETCH FAZ
  *  ---------------------
  *  Mostra um menu no Monitor Serial com um teste para cada periférico do
@@ -39,10 +48,11 @@
  *  2. Na IDE do Arduino, escolha a placa certa (Ferramentas > Placa) e a
  *     porta COM, e grave este sketch.
  *  3. Abra o Monitor Serial e configure:
- *       - velocidade: 9600 baud
+ *       - velocidade: 115200 baud (a mesma dos testes da placa)
  *       - final de linha: qualquer opção funciona
  *  4. Digite o número do teste e envie. Quando um teste pedir para
- *     continuar ou voltar ao menu, envie "c". Com "Nova linha", só o Enter
+ *     continuar ou voltar ao menu, envie "c" ou aperte o SW1 do shield
+ *     (exceto no teste dos botões e no painel, em que só vale o "c"). Com "Nova linha", só o Enter
  *     também serve; com "Sem final de linha", o Enter com a caixa vazia
  *     não envia nada, por isso as instruções pedem a letra "c".
  *
@@ -77,6 +87,8 @@
 #if !defined(ARDUINO_ARCH_AVR)
 #error "Esta versão é para o UNO R3. Para o UNO R4, use teste_shield_9em1_uno_r4."
 #endif
+
+#include <avr/boot.h>
 
 // =============================================================================
 //  PINOS
@@ -113,7 +125,8 @@ const uint8_t PINOS_RGB[3] = {PINO_RGB_VERMELHO, PINO_RGB_VERDE, PINO_RGB_AZUL};
 // =============================================================================
 
 // Velocidade da comunicação serial. Deve ser igual à do Monitor Serial.
-const unsigned long VELOCIDADE_SERIAL = 9600;
+const char VERSAO[] = "2";
+const unsigned long VELOCIDADE_SERIAL = 115200;
 
 // Tipo do LED RGB:
 //   false = cátodo comum: o pino em HIGH acende a cor. CONFIRMADO neste
@@ -150,6 +163,44 @@ const float TENSAO_REFERENCIA = 5.0;
 const float ADC_MAXIMO = 1023.0;
 
 // =============================================================================
+//  ENTRADA PELO SHIELD: SW1 = continuar / voltar ao menu
+// =============================================================================
+//
+//  Além do Monitor Serial, o aluno pode responder no próprio shield,
+//  apertando o SW1. A serial continua valendo sempre. Um SW1 que já está em
+//  LOW sem ninguém apertar (travado ou em curto) é desativado como entrada:
+//  senão ele "responderia" sozinho.
+bool sw1Ativo = false;
+
+void prepararBotoes() {
+  pinMode(PINO_SW1, INPUT);
+  delay(2);
+  sw1Ativo = digitalRead(PINO_SW1) == HIGH;  // solto = HIGH (pull-up do shield)
+}
+
+// Devolve true se o SW1 foi apertado E solto. Só conta depois de soltar,
+// para um aperto não valer duas vezes seguidas.
+bool sw1Clicado() {
+  if (!sw1Ativo || digitalRead(PINO_SW1) == HIGH) return false;
+  delay(30);  // debounce: confirma que continua apertado
+  if (digitalRead(PINO_SW1) == HIGH) return false;
+  while (digitalRead(PINO_SW1) == LOW) {
+    // espera soltar
+  }
+  delay(30);
+  return true;
+}
+
+// Sinal de "firmware de teste gravado": enquanto espera no menu, o LED do
+// D13 (o LED "L" da placa, e o azul do shield) pisca duas vezes rápidas a
+// cada 2 s, um "tum-tum" diferente do Blink comum (1 s aceso, 1 s apagado).
+void sinalizarEspera() {
+  unsigned long t = millis() % 2000;
+  bool aceso = t < 100 || (t >= 250 && t < 350);
+  digitalWrite(PINO_LED_D13, aceso ? HIGH : LOW);
+}
+
+// =============================================================================
 //  FUNÇÕES AUXILIARES: SERIAL
 // =============================================================================
 //
@@ -164,7 +215,7 @@ const float ADC_MAXIMO = 1023.0;
 //
 // Funciona com qualquer opção de final de linha do Monitor Serial: os 20 ms
 // de espera bastam para chegar o resto da mensagem, inclusive o "\r\n" da
-// opção "Ambos, NL e CR" (a 9600 baud, cada caractere leva ~1 ms).
+// opção "Ambos, NL e CR" (a 115200 baud, cada caractere leva ~0,1 ms).
 void limparSerial() {
   delay(20);
   while (Serial.available() > 0) {
@@ -179,16 +230,33 @@ bool usuarioPediuParar() {
     limparSerial();
     return true;
   }
+  return sw1Clicado();
+}
+
+// Igual à anterior, mas sem o SW1: para os testes em que o próprio botão
+// é o que está sendo testado (teste 3 e painel ao vivo).
+bool usuarioPediuPararSoSerial() {
+  if (Serial.available() > 0) {
+    limparSerial();
+    return true;
+  }
   return false;
 }
 
-// Fica parado até o usuário enviar qualquer coisa pelo Monitor Serial.
+void imprimirComoContinuar() {
+  if (sw1Ativo) {
+    Serial.println(F("   (envie c ou aperte SW1 para continuar)"));
+  } else {
+    Serial.println(F("   (envie c para continuar)"));
+  }
+}
+
+// Fica parado até o usuário enviar algo pelo Monitor Serial ou apertar SW1.
 void esperarContinuar() {
-  Serial.println(F("   (envie c para continuar)"));
-  while (Serial.available() == 0) {
+  imprimirComoContinuar();
+  while (!usuarioPediuParar()) {
     // espera
   }
-  limparSerial();
 }
 
 // Desenha uma barra de progresso no Monitor Serial, ex: [#######-------]
@@ -577,6 +645,20 @@ void testeRgb() {
   }
   rgbApagar();
 
+  // Parte E: o potenciômetro (A0) vira o "botão de volume" do brilho.
+  // analogRead() vai de 0 a 1023; dividir por 4 (>> 2) dá 0 a 255, a faixa
+  // do analogWrite().
+  Serial.println(F("Parte E: gire o potenciômetro (A0). O brilho das três cores"));
+  Serial.println(F("   juntas deve acompanhar o giro, de apagado a máximo."));
+  imprimirComoContinuar();
+  while (!usuarioPediuParar()) {
+    uint8_t brilho = analogRead(PINO_POT) >> 2;
+    for (uint8_t i = 0; i < 3; i++) {
+      rgbEscrever(PINOS_RGB[i], brilho);
+    }
+  }
+  rgbApagar();
+
   Serial.println(F("Resultado: registre no README do shield qual cor fica em cada pino."));
 }
 
@@ -642,7 +724,7 @@ void testeBotoes() {
   // SW1 acende o LED azul e SW2 o vermelho (no padrão: azul = D13, vermelho = D12).
   const uint8_t leds[2] = {PINO_LED_D13, PINO_LED_D12};
 
-  while (!usuarioPediuParar()) {
+  while (!usuarioPediuPararSoSerial()) {
     for (uint8_t b = 0; b < 2; b++) {
       uint8_t leitura = digitalRead(pinos[b]);
 
@@ -769,6 +851,31 @@ void testeBuzzer() {
   tocarNokia(PINO_BUZZER);
   buzzerLigar(false);
 
+  // Parte D: o potenciômetro (A0) escolhe a frequência do tone(). A nota só
+  // é trocada quando a frequência muda mais de 20 Hz: chamar tone() o tempo
+  // todo, mesmo sem mudança, faria o som "engasgar".
+  Serial.println(F("Parte D: gire o potenciômetro (A0): a frequência do tone() vai"));
+  Serial.println(F("   de 100 Hz a 5000 Hz. No buzzer passivo, a nota acompanha o giro;"));
+  Serial.println(F("   no ativo (o dos shields testados), o apito próprio sai picotado."));
+  imprimirComoContinuar();
+  unsigned int frequenciaAtual = 0;
+  unsigned long ultimoPrint = 0;
+  while (!usuarioPediuParar()) {
+    unsigned int frequencia = map(analogRead(PINO_POT), 0, 1023, 100, 5000);
+    if (abs((int)frequencia - (int)frequenciaAtual) > 20) {
+      tone(PINO_BUZZER, frequencia);
+      frequenciaAtual = frequencia;
+    }
+    if (millis() - ultimoPrint > 500) {
+      ultimoPrint = millis();
+      Serial.print(F("   "));
+      Serial.print(frequenciaAtual);
+      Serial.println(F(" Hz"));
+    }
+  }
+  noTone(PINO_BUZZER);
+  buzzerLigar(false);
+
   Serial.println(F("Resultado: registre no README do shield se o buzzer é ativo ou"));
   Serial.println(F("passivo e em qual nível ele liga."));
 }
@@ -786,7 +893,7 @@ void testePotenciometro() {
   Serial.println(F("Gire o potenciômetro de um extremo ao outro, devagar."));
   Serial.println(F("A leitura deve ir de ~0 a ~1023, sem saltos."));
   Serial.println(F("O brilho do vermelho do LED RGB (D9) acompanha o potenciômetro."));
-  Serial.println(F("Envie c para voltar ao menu."));
+  Serial.println(F("Envie c (ou aperte SW1) para voltar ao menu."));
 
   int minimo = 1023;
   int maximo = 0;
@@ -834,7 +941,7 @@ void testeLdr() {
   Serial.println(F("1. Deixe o LDR na luz ambiente."));
   Serial.println(F("2. Cubra o LDR com o dedo (escuro)."));
   Serial.println(F("3. Aponte a lanterna do celular para ele (claro)."));
-  Serial.println(F("Envie c para voltar ao menu."));
+  Serial.println(F("Envie c (ou aperte SW1) para voltar ao menu."));
 
   int minimo = 1023;
   int maximo = 0;
@@ -883,7 +990,7 @@ void testeLm35() {
   Serial.print(F("TENSAO_REFERENCIA no código: "));
   Serial.print(TENSAO_REFERENCIA, 2);
   Serial.println(F(" V (meça a tensão do pino 5V e ajuste, se preciso)."));
-  Serial.println(F("Envie c para voltar ao menu."));
+  Serial.println(F("Envie c (ou aperte SW1) para voltar ao menu."));
 
   while (!usuarioPediuParar()) {
     float leitura = lerLm35();
@@ -926,7 +1033,7 @@ void testeDht11() {
   Serial.println(F("Uma leitura a cada 2 segundos (o DHT11 não aceita leituras"));
   Serial.println(F("mais rápidas que 1 por segundo)."));
   Serial.println(F("Sopre no sensor: a umidade deve subir em poucos segundos."));
-  Serial.println(F("Envie c para voltar ao menu."));
+  Serial.println(F("Envie c (ou aperte SW1) para voltar ao menu."));
 
   unsigned long ultimaLeitura = 0;
   bool primeira = true;
@@ -963,7 +1070,7 @@ void testeIr() {
   Serial.println(F("Cada sinal recebido pisca o LED do D13."));
   Serial.println(F("Controles NEC (a maioria dos de kits Arduino) mostram o código"));
   Serial.println(F("de cada botão; outros controles mostram só 'sinal recebido'."));
-  Serial.println(F("Envie c para voltar ao menu."));
+  Serial.println(F("Envie c (ou aperte SW1) para voltar ao menu."));
 
   while (!usuarioPediuParar()) {
     uint32_t codigo = 0;
@@ -1036,7 +1143,7 @@ void painelAoVivo() {
   unsigned long ultimoDht = 0;
   bool primeiroDht = true;
 
-  while (!usuarioPediuParar()) {
+  while (!usuarioPediuPararSoSerial()) {
     // O DHT11 só pode ser lido a cada ~2 s; entre uma leitura e outra, o
     // painel mostra o último valor válido.
     if (primeiroDht || millis() - ultimoDht >= 2000) {
@@ -1062,6 +1169,313 @@ void painelAoVivo() {
     }
     delay(500);
   }
+}
+
+// =============================================================================
+//  RESULTADOS: linha para o script + resumo legível
+// =============================================================================
+const uint8_t OK = 0, FALHA = 1, AVISO = 2, PULADO = 3, INFO = 4;
+unsigned int totalOk, totalFalha, totalAviso, totalPulado;
+
+// Cada resultado sai na hora numa linha "RESULTADO;..." e fica guardado
+// para o RESUMO do final. O nome do teste fica na flash (só o ponteiro é
+// guardado); o detalhe é copiado para um buffer fixo.
+struct Registro {
+  const __FlashStringHelper *nome;
+  uint8_t estado;
+  char detalhe[32];
+};
+const uint8_t MAX_REGISTROS = 14;
+Registro registros[MAX_REGISTROS];
+uint8_t totalRegistros = 0;
+
+void zerarResultados() {
+  totalOk = totalFalha = totalAviso = totalPulado = 0;
+  totalRegistros = 0;
+}
+
+const __FlashStringHelper *textoEstado(uint8_t estado) {
+  switch (estado) {
+    case OK:     return F("OK");
+    case FALHA:  return F("FALHA");
+    case AVISO:  return F("AVISO");
+    case PULADO: return F("PULADO");
+    default:     return F("INFO");
+  }
+}
+
+// id: identificador curto para o script (ex: "dht11").
+// nome: nome legível para o resumo (ex: "DHT11").
+void resultado(const __FlashStringHelper *id, const __FlashStringHelper *nome,
+               uint8_t estado, const char *detalhe) {
+  Serial.print(F("RESULTADO;"));
+  Serial.print(id);
+  Serial.print(';');
+  Serial.print(textoEstado(estado));
+  Serial.print(';');
+  Serial.println(detalhe);
+
+  if (totalRegistros < MAX_REGISTROS) {
+    Registro &r = registros[totalRegistros++];
+    r.nome = nome;
+    r.estado = estado;
+    strncpy(r.detalhe, detalhe, sizeof(r.detalhe) - 1);
+    r.detalhe[sizeof(r.detalhe) - 1] = '\0';
+  }
+
+  if (estado == OK) totalOk++;
+  else if (estado == FALHA) totalFalha++;
+  else if (estado == AVISO) totalAviso++;
+  else if (estado == PULADO) totalPulado++;
+}
+
+// Caracteres que aparecem na tela de um texto da flash. Letras acentuadas
+// ocupam 2 bytes em UTF-8; só o 1º conta (alinha os pontinhos do resumo).
+uint8_t larguraNaTela(const __FlashStringHelper *texto) {
+  const char *p = (const char *)texto;
+  uint8_t largura = 0;
+  for (char c = pgm_read_byte(p); c; c = pgm_read_byte(++p)) {
+    if ((c & 0xC0) != 0x80) largura++;
+  }
+  return largura;
+}
+
+void imprimirResumo() {
+  Serial.println();
+  Serial.println(F("=============================================================="));
+  Serial.println(F("  RESUMO"));
+  Serial.println(F("=============================================================="));
+  for (uint8_t i = 0; i < totalRegistros; i++) {
+    switch (registros[i].estado) {
+      case OK:     Serial.print(F("  [  OK  ] ")); break;
+      case FALHA:  Serial.print(F("  [FALHA!] ")); break;
+      case AVISO:  Serial.print(F("  [AVISO ] ")); break;
+      case PULADO: Serial.print(F("  [pulado] ")); break;
+      default:     Serial.print(F("  [ info ] ")); break;
+    }
+    Serial.print(registros[i].nome);
+    Serial.print(' ');
+    for (uint8_t p = larguraNaTela(registros[i].nome); p < 26; p++) Serial.print('.');
+    Serial.print(' ');
+    Serial.println(registros[i].detalhe);
+  }
+  Serial.println(F("--------------------------------------------------------------"));
+  Serial.print(F("  OK: "));
+  Serial.print(totalOk);
+  Serial.print(F("   FALHA: "));
+  Serial.print(totalFalha);
+  Serial.print(F("   AVISO: "));
+  Serial.print(totalAviso);
+  Serial.print(F("   pulados: "));
+  Serial.println(totalPulado);
+  if (totalFalha > 0) {
+    Serial.println(F("  Resultado: há FALHAS. Veja as linhas marcadas com [FALHA!]."));
+  } else if (totalAviso > 0) {
+    Serial.println(F("  Resultado: sem falhas, mas confira as linhas com [AVISO ]."));
+  } else {
+    Serial.println(F("  Resultado: tudo certo."));
+  }
+  Serial.println(F("=============================================================="));
+}
+
+// Resumo para o aluno e, por último, a linha FIM para o script.
+void imprimirFim() {
+  imprimirResumo();
+  Serial.print(F("FIM;ok="));
+  Serial.print(totalOk);
+  Serial.print(F(";falha="));
+  Serial.print(totalFalha);
+  Serial.print(F(";aviso="));
+  Serial.print(totalAviso);
+  Serial.print(F(";pulado="));
+  Serial.println(totalPulado);
+  Serial.println(F("# Envie c para rodar de novo."));
+}
+
+// "D7", "A3"... (nome do pino como na serigrafia)
+void nomePino(uint8_t pino, char *destino) {
+  if (pino >= A0) {
+    destino[0] = 'A';
+    destino[1] = '0' + (pino - A0);
+    destino[2] = '\0';
+  } else {
+    snprintf(destino, 4, "D%u", pino);
+  }
+}
+
+// Acrescenta um texto ao fim do buffer, sem passar do tamanho.
+void acrescentar(char *buffer, size_t tamanho, const char *texto) {
+  strncat(buffer, texto, tamanho - strlen(buffer) - 1);
+}
+
+// =============================================================================
+//  A PLACA: este é um teste CONJUNTO (placa + shield)
+// =============================================================================
+// Mede o Vcc sem multímetro: o ADC compara a referência interna de 1,1V
+// (bandgap) com o próprio Vcc. Vcc = 1,1 V x 1023 / leitura.
+// Cuidado: o bandgap varia de 1,0 a 1,2V entre chips (datasheet), então o
+// valor tem até ~10% de erro. Serve para ver se a USB está fraca, não
+// substitui o multímetro.
+// Esta medição usa o Vcc como referência (não mexe no pino AREF), por isso
+// é segura mesmo se o AREF do shield estiver ligado a algo.
+long medirVccMilivolts() {
+  ADMUX = _BV(REFS0) | 0x0E;  // referência = AVcc; canal = bandgap 1,1V
+  delay(3);                   // o bandgap precisa de um tempo para firmar
+  ADCSRA |= _BV(ADSC);        // 1ª conversão: descartada
+  while (ADCSRA & _BV(ADSC)) {}
+  ADCSRA |= _BV(ADSC);
+  while (ADCSRA & _BV(ADSC)) {}
+  long leitura = ADC;
+  // Depois do canal interno, a 1ª troca para um pino externo deixa as
+  // leituras desse pino altas por dezenas de ms (medido no UNO R3 com o
+  // LM35: 328 mV logo após a troca, e os 239 mV certos 100 ms depois). Por
+  // isso o multiplexador volta já para um pino externo (A0) e espera aqui,
+  // e as leituras seguintes não sofrem mais com isso.
+  analogRead(A0);
+  delay(100);
+  return 1100L * 1023L / leitura;
+}
+
+// Assinatura gravada de fábrica no chip: ATmega328P = 1E 95 0F.
+bool chipEhAtmega328p() {
+  return boot_signature_byte_get(0x00) == 0x1E && boot_signature_byte_get(0x02) == 0x95 &&
+         boot_signature_byte_get(0x04) == 0x0F;
+}
+
+// Mostra qual placa está sob o shield (no início e no teste automático).
+void imprimirPlaca() {
+  Serial.print(F("Placa: UNO R3, "));
+  Serial.print(chipEhAtmega328p() ? F("ATmega328P") : F("chip NÃO é ATmega328P"));
+  Serial.print(F(", Vcc "));
+  Serial.print(medirVccMilivolts());
+  Serial.println(F(" mV (medido pela placa)"));
+}
+
+// Tensão de referência do ADC (o Vcc), em mV, para as contas do LM35.
+long referenciaMilivolts() {
+  return medirVccMilivolts();
+}
+
+void resultadosDaPlaca() {
+  char detalhe[32];
+  resultado(F("placa"), F("Placa"), INFO,
+            chipEhAtmega328p() ? "UNO R3 (ATmega328P)" : "UNO R3? (outro chip)");
+  long vcc = medirVccMilivolts();
+  snprintf(detalhe, sizeof(detalhe), "%ld mV (erro de até ~10%%)", vcc);
+  resultado(F("vcc"), F("Alimentação (Vcc)"), (vcc >= 4500 && vcc <= 5250) ? OK : AVISO, detalhe);
+}
+
+// =============================================================================
+//  TESTE AUTOMÁTICO DO SHIELD (opção "a" do menu)
+// =============================================================================
+//
+//  Confere sozinho o que dá para medir sem ninguém olhar, e termina com um
+//  RESUMO. As linhas RESULTADO;... e FIM;... seguem o formato que o
+//  scripts/serial_placa.py lê (opção --shield). O que só uma pessoa vê ou
+//  ouve (cor dos LEDs, som do buzzer) fica nos testes 1 a 9 do menu.
+
+void testeAutomatico() {
+  zerarResultados();
+  Serial.println();
+  Serial.print(F("INICIO;teste_shield_9em1_uno_r3;"));
+  Serial.println(VERSAO);
+  resultadosDaPlaca();
+
+  // Botões e receptor IR em repouso: com os pull-ups do shield, HIGH.
+  pinMode(PINO_SW1, INPUT);
+  pinMode(PINO_SW2, INPUT);
+  pinMode(PINO_IR, INPUT);
+  delay(5);
+  bool sw1 = digitalRead(PINO_SW1) == HIGH;
+  bool sw2 = digitalRead(PINO_SW2) == HIGH;
+  resultado(F("botoes"), F("Botões SW1 e SW2"), (sw1 && sw2) ? OK : AVISO,
+            (sw1 && sw2) ? "soltos em HIGH (ativos em LOW)"
+            : (!sw1 && !sw2) ? "SW1 e SW2 em LOW sem apertar"
+            : !sw1 ? "SW1 (D2) em LOW sem apertar"
+                   : "SW2 (D3) em LOW sem apertar");
+  bool ir = digitalRead(PINO_IR) == HIGH;
+  resultado(F("ir"), F("Receptor infravermelho"), ir ? OK : AVISO,
+            ir ? "D6 em HIGH (repouso)" : "D6 em LOW (sinal ou defeito)");
+
+  // Saídas: escreve HIGH e LOW e lê de volta (pega pino em curto). Os LEDs
+  // piscam rapidamente.
+  const uint8_t saidas[5] = {PINO_RGB_VERMELHO, PINO_RGB_AZUL, PINO_RGB_VERDE,
+                             PINO_LED_D12, PINO_LED_D13};
+  char falhas[32] = "";
+  char nome[4];
+  for (uint8_t i = 0; i < 5; i++) {
+    // pinMode() devolve o pino ao modo GPIO. No UNO R4, depois de um
+    // analogWrite() (o menu apaga o RGB assim), o pino fica com o timer do
+    // PWM e o digitalWrite() deixa de controlá-lo: sem isto, D9 a D11
+    // falhavam aqui.
+    pinMode(saidas[i], OUTPUT);
+    digitalWrite(saidas[i], HIGH);
+    delay(80);
+    bool alto = digitalRead(saidas[i]) == HIGH;
+    digitalWrite(saidas[i], LOW);
+    delayMicroseconds(50);
+    bool baixo = digitalRead(saidas[i]) == LOW;
+    if (!alto || !baixo) {
+      nomePino(saidas[i], nome);
+      acrescentar(falhas, sizeof(falhas), nome);
+      acrescentar(falhas, sizeof(falhas), " ");
+    }
+  }
+  if (falhas[0] == '\0') {
+    resultado(F("saidas"), F("LEDs D9 a D13"), OK, "D9 a D13 seguem HIGH/LOW");
+  } else {
+    resultado(F("saidas"), F("LEDs D9 a D13"), FALHA, falhas);
+  }
+
+  // DHT11: até 3 tentativas (a 1ª depois de ligar vem zerada).
+  float umidade = 0, temperaturaDht = 0;
+  uint8_t erro = DHT_SEM_RESPOSTA;
+  for (uint8_t t = 0; t < 3 && erro != DHT_OK; t++) {
+    if (t > 0) delay(1200);
+    erro = lerDht11(umidade, temperaturaDht);
+  }
+  char texto[8], detalhe[32];
+  bool dhtOk = erro == DHT_OK;
+  if (dhtOk) {
+    char u[6];
+    dtostrf(temperaturaDht, 1, 1, texto);
+    dtostrf(umidade, 1, 0, u);
+    snprintf(detalhe, sizeof(detalhe), "%s °C, %s %%", texto, u);
+    bool plausivel = temperaturaDht >= 0 && temperaturaDht <= 50 && umidade >= 5 && umidade <= 95;
+    resultado(F("dht11"), F("DHT11"), plausivel ? OK : AVISO, detalhe);
+  } else {
+    resultado(F("dht11"), F("DHT11"), FALHA,
+              erro == DHT_SEM_RESPOSTA ? "não respondeu"
+              : erro == DHT_ERRO_CHECKSUM ? "soma de verificação errada"
+                                          : "transmissão interrompida");
+  }
+
+  // LM35 (10 mV por °C), com a referência do ADC medida pela placa.
+  long mv = map(lround(lerLm35()), 0, 1023, 0, referenciaMilivolts());
+  float celsius = mv / 10.0;
+  bool lm35Ok = celsius >= 10 && celsius <= 40;
+  dtostrf(celsius, 1, 1, texto);
+  snprintf(detalhe, sizeof(detalhe), "%s °C", texto);
+  resultado(F("lm35"), F("LM35"), lm35Ok ? OK : AVISO, detalhe);
+
+  int ldr = (int)lerAnalogicoMedio(PINO_LDR);
+  bool ldrOk = ldr > 10 && ldr < 1013;
+  snprintf(detalhe, sizeof(detalhe), ldrOk ? "%d de 1023" : "%d de 1023 (saturado)", ldr);
+  resultado(F("ldr"), F("LDR (luz)"), ldrOk ? OK : AVISO, detalhe);
+
+  snprintf(detalhe, sizeof(detalhe), "%d de 1023", (int)lerAnalogicoMedio(PINO_POT));
+  resultado(F("pot"), F("Potenciômetro"), INFO, detalhe);
+
+  if (dhtOk && lm35Ok) {
+    float diferenca = fabs(celsius - temperaturaDht);
+    dtostrf(diferenca, 1, 1, texto);
+    snprintf(detalhe, sizeof(detalhe), "LM35 - DHT11 = %s °C", texto);
+    resultado(F("temperatura"), F("LM35 x DHT11"), diferenca <= 5 ? OK : AVISO, detalhe);
+  } else {
+    resultado(F("temperatura"), F("LM35 x DHT11"), PULADO, "sem leitura válida");
+  }
+
+  imprimirFim();
 }
 
 // =============================================================================
@@ -1100,6 +1514,7 @@ void imprimirMenu() {
   Serial.println(F("  8 - DHT11 / temperatura e umidade (D4)"));
   Serial.println(F("  9 - Receptor infravermelho (D6)"));
   Serial.println(F("  0 - Todos os testes em sequência"));
+  Serial.println(F("  a - Teste automático do shield (com resumo)"));
   Serial.println(F("  p - Painel ao vivo (todas as entradas)"));
   Serial.println(F("------------------------------------------------------------"));
   Serial.println(F("Digite a opção e envie:"));
@@ -1138,11 +1553,14 @@ void setup() {
     // espera
   }
 
+  Serial.println();
+  imprimirPlaca();
   imprimirMenu();
 }
 
 void loop() {
   if (Serial.available() == 0) {
+    sinalizarEspera();
     return;
   }
 
@@ -1153,6 +1571,8 @@ void loop() {
     return;
   }
   limparSerial();
+  digitalWrite(PINO_LED_D13, LOW);  // encerra o sinal de espera
+  prepararBotoes();
 
   switch (opcao) {
     case '1': testeLeds();          break;
@@ -1165,6 +1585,8 @@ void loop() {
     case '8': testeDht11();         break;
     case '9': testeIr();            break;
     case '0': testarTodos();        break;
+    case 'a':
+    case 'A': testeAutomatico();    break;
     case 'p':
     case 'P': painelAoVivo();       break;
     default:

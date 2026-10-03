@@ -39,7 +39,7 @@ PWM do D11 e o `tone()` do buzzer).
    Gerenciador de Placas.
 4. Grave o sketch (botão **Carregar**).
 5. Abra o **Monitor Serial** e configure:
-   - velocidade: **9600 baud**
+   - velocidade: **115200 baud** (a mesma dos testes da placa; no UNO R4 tanto faz)
    - final de linha: **qualquer opção** funciona.
 6. Digite o número do teste e envie. Quando o teste pedir para continuar
    ou voltar ao menu, **envie `c`**. (Com "Nova linha", só o Enter também
@@ -51,7 +51,7 @@ Pela linha de comando (`arduino-cli`):
 ```bash
 arduino-cli compile --fqbn arduino:avr:uno teste_shield_9em1_uno_r3
 arduino-cli upload  --fqbn arduino:avr:uno -p COM3 teste_shield_9em1_uno_r3
-arduino-cli monitor -p COM3 -c baudrate=9600
+arduino-cli monitor -p COM3 -c baudrate=115200
 ```
 
 Para o UNO R4, use a pasta `teste_shield_9em1_uno_r4` e o `--fqbn`
@@ -91,7 +91,7 @@ certo de cada constante:
 
 | Sintoma | Causa provável |
 |---------|----------------|
-| Nada aparece no Monitor Serial | Velocidade diferente de 9600 ou porta COM errada. No UNO R3 clone, falta o driver do CH340 (ver [ponte USB-serial](../../../boards/arduino-uno-r3/README.md#ponte-usb-serial)). |
+| Nada aparece no Monitor Serial | Velocidade diferente de 115200 ou porta COM errada. No UNO R3 clone, falta o driver do CH340 (ver [ponte USB-serial](../../../boards/arduino-uno-r3/README.md#ponte-usb-serial)). |
 | O teste pede para continuar e o Enter não faz nada | Com "Sem final de linha", o Enter com a caixa vazia não envia nada: digite `c` e envie. |
 | Buzzer apita sem parar | `BUZZER_NIVEL_LIGADO` trocado (rode o teste 4). |
 | DHT11: "não respondeu" | Shield mal encaixado ou sensor com defeito. |

@@ -8,32 +8,25 @@
  *
  *  O QUE ESTE SKETCH FAZ
  *  ---------------------
- *  Roda uma bateria de testes SEM precisar de ninguém apertando botões e
- *  termina com um RESUMO no Monitor Serial, um teste por linha. Serve para
- *  conferir rapidamente se uma placa está boa.
+ *  Testa SÓ A PLACA, sem shield: roda uma bateria de testes sem precisar
+ *  de ninguém apertando botões e termina com um RESUMO no Monitor Serial,
+ *  um teste por linha. Serve para conferir rapidamente se uma placa está
+ *  boa.
  *
- *  Testes da placa (sempre rodam):
  *    - chip ......... assinatura do microcontrolador (ATmega328P = 1E 95 0F)
  *    - relogio ...... millis() e micros() andam juntos e no ritmo certo
  *    - eeprom ....... grava, lê e restaura o último byte da EEPROM
  *    - vcc .......... tensão de alimentação, medida pela própria placa
- *    - gpio ......... cada pino livre: pull-up interno e saída HIGH/LOW
- *
- *  Testes do Shield 9 em 1 (só rodam se o shield for detectado):
- *    - botoes, ir ... nível de repouso de D2, D3 (botões) e D6 (receptor IR)
- *    - saidas ....... LEDs D12/D13 e LED RGB D9-D11 (escreve e lê de volta)
- *    - dht11 ........ leitura com soma de verificação e valores plausíveis
- *    - lm35, ldr .... leituras dentro da faixa esperada
- *    - pot .......... posição atual do potenciômetro (só informa)
- *    - temperatura .. LM35 e DHT11 concordam (diferença de até 5 °C)
+ *    - gpio ......... cada pino: pull-up interno e saída HIGH/LOW
  *
  *  O UNO R3 não tem RTC, DAC, segunda serial nem ID único no chip: esses
- *  testes do UNO R4 não existem aqui.
+ *  testes do UNO R4 não existem aqui. Os periféricos do Shield 9 em 1 são
+ *  testados no sketch conjunto (placa + shield):
+ *  shields/uno-shield-9in1/code/teste_shield_9em1_uno_r3.
  *
  *  COMO USAR
  *  ---------
- *  1. Para os testes da placa: NADA ligado aos pinos. Para os testes do
- *     shield: o Shield 9 em 1 encaixado (sem mais nada).
+ *  1. Placa SOZINHA: sem shield e sem nada ligado aos pinos.
  *  2. Grave o sketch (placa "Arduino Uno").
  *  3. Abra o Monitor Serial em 115200 baud (qualquer opção de final de
  *     linha). Envie "c" para começar. Envie "c" de novo para repetir.
@@ -41,13 +34,17 @@
  *  Ou, pela linha de comando:
  *    python scripts/serial_placa.py auto --porta COM10
  *
- *  ATENÇÃO: RODE COM A PLACA SOZINHA OU SÓ COM O SHIELD 9 EM 1
- *  ------------------------------------------------------------
- *  Sem o shield, o teste "gpio" liga D2 a D13 e A1 a A5 como saída (HIGH e
- *  LOW). Um módulo, protoboard ou outro shield ligado nesses pinos pode
- *  receber esses sinais e se danificar. Um pino que já está sendo puxado
- *  para LOW por algo externo não é ligado como saída, mas essa proteção
- *  não pega todos os casos.
+ *  SINAL DE FIRMWARE GRAVADO: enquanto espera o "c", o LED "L" (D13) pisca
+ *  duas vezes rápidas a cada 2 s.
+ *
+ *  ATENÇÃO: RODE COM A PLACA SOZINHA
+ *  ---------------------------------
+ *  O teste "gpio" liga D2 a D13 e A1 a A5 como saída (HIGH e LOW). Um
+ *  módulo, protoboard ou shield ligado nesses pinos pode receber esses
+ *  sinais e se danificar. Proteção: antes de acionar os pinos, o sketch
+ *  procura resistores externos neles (como os pull-ups do Shield 9 em 1).
+ *  Se achar, ele NÃO aciona nenhum pino e pede para tirar o que estiver
+ *  ligado. A proteção não pega todos os circuitos: tire tudo da placa.
  *
  *  FORMATO DA SAÍDA
  *  ----------------
@@ -73,32 +70,16 @@
 #include <EEPROM.h>
 #include <avr/boot.h>
 
-const char VERSAO[] = "1";
+const char VERSAO[] = "2";
 const unsigned long VELOCIDADE_SERIAL = 115200;
 
 // =============================================================================
-//  PINOS DO SHIELD 9 EM 1 (ver shields/uno-shield-9in1/README.md)
+//  PINOS TESTADOS
 // =============================================================================
-const uint8_t PINO_SW1          = 2;
-const uint8_t PINO_SW2          = 3;
-const uint8_t PINO_DHT11        = 4;
-const uint8_t PINO_IR           = 6;
-const uint8_t PINO_RGB_VERMELHO = 9;
-const uint8_t PINO_RGB_AZUL     = 10;
-const uint8_t PINO_RGB_VERDE    = 11;
-// LEDs de 3 mm: no padrão, D12 é VERMELHO e D13 é AZUL. Mas há variação de
-// montagem entre lotes, por isso o nome é o pino, e não a cor.
-const uint8_t PINO_LED_D12      = 12;
-const uint8_t PINO_LED_D13      = 13;
-const uint8_t PINO_POT          = A0;
-const uint8_t PINO_LDR          = A1;
-const uint8_t PINO_LM35         = A2;
-
-// Pinos do teste "gpio". D0/D1 ficam de fora: são a serial da USB.
+// D0/D1 ficam de fora: são a serial da USB.
 // O D13 fica fora da parte do pull-up: o LED "L" da placa está nele (em
 // clones, às vezes ligado direto) e pode puxar o pino para baixo.
-const uint8_t PINOS_SEM_SHIELD[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, A1, A2, A3, A4, A5};
-const uint8_t PINOS_COM_SHIELD[] = {7, 8, A3, A4, A5};  // livres no shield
+const uint8_t PINOS_GPIO[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, A1, A2, A3, A4, A5};
 
 // =============================================================================
 //  RESULTADOS: linha para o script + resumo legível
@@ -280,8 +261,8 @@ void imprimirBoasVindas() {
   Serial.println(F("=============================================================="));
   Serial.println(F("  TESTE AUTOMÁTICO DO UNO R3"));
   Serial.println(F("=============================================================="));
-  Serial.println(F("ATENÇÃO: a placa deve estar SOZINHA ou só com o Shield 9 em 1."));
-  Serial.println(F("O teste liga pinos como saída: tire módulos, fios e protoboard."));
+  Serial.println(F("ATENÇÃO: a placa deve estar SOZINHA, sem shield e sem nada nos pinos."));
+  Serial.println(F("O teste liga pinos como saída: tire shield, módulos, fios e protoboard."));
   Serial.println(F("> Envie c para começar (ou só Enter, se o Monitor estiver em \"Nova linha\")."));
 }
 
@@ -362,11 +343,10 @@ long medirVccMilivolts() {
   return 1100L * 1023L / leitura;
 }
 
-long vccMilivolts = 5000;  // usado nas contas do LM35
 
 void testeVcc() {
   Serial.println(F("# Vcc medido pela referência interna (bandgap)"));
-  vccMilivolts = medirVccMilivolts();
+  long vccMilivolts = medirVccMilivolts();
   char detalhe[32];
   snprintf(detalhe, sizeof(detalhe), "%ld mV (erro de até ~10%%)", vccMilivolts);
   bool ok = vccMilivolts >= 4500 && vccMilivolts <= 5250;
@@ -408,201 +388,34 @@ void testeGpio(const uint8_t *pinos, uint8_t quantidade) {
   if (falhas[0] == '\0') {
     char detalhe[32];
     snprintf(detalhe, sizeof(detalhe), "%u pinos OK", quantidade);
-    resultado(F("gpio"), F("Pinos livres (GPIO)"), OK, detalhe);
+    resultado(F("gpio"), F("Pinos (GPIO)"), OK, detalhe);
   } else {
-    resultado(F("gpio"), F("Pinos livres (GPIO)"), FALHA, falhas);
+    resultado(F("gpio"), F("Pinos (GPIO)"), FALHA, falhas);
   }
 }
 
 // =============================================================================
-//  DETECÇÃO DO SHIELD (mesmo método do teste do UNO R4)
+//  PROTEÇÃO: HÁ ALGO LIGADO NOS PINOS?
 // =============================================================================
-//  O shield tem pull-ups externos para o 5V em D2, D3, D4 e D6. Cada pino
-//  é descarregado (saída LOW) e vira entrada sem pull-up: com o shield ele
-//  sobe para HIGH; sem o shield fica perto de 0V.
-uint8_t contarPullupsDoShield() {
-  const uint8_t pinos[4] = {PINO_SW1, PINO_SW2, PINO_DHT11, PINO_IR};
-  uint8_t altos = 0;
-  for (uint8_t i = 0; i < 4; i++) {
-    pinMode(pinos[i], OUTPUT);
-    digitalWrite(pinos[i], LOW);
-    delayMicroseconds(100);
-    pinMode(pinos[i], INPUT);
-    delayMicroseconds(200);
-    if (digitalRead(pinos[i]) == HIGH) altos++;
-  }
-  return altos;
-}
-
-// =============================================================================
-//  DHT11 (sem biblioteca; protocolo explicado no sketch do shield)
-// =============================================================================
-const uint8_t DHT_OK = 0, DHT_SEM_RESPOSTA = 1, DHT_ERRO_LEITURA = 2, DHT_ERRO_CHECKSUM = 3;
-const uint16_t DHT_TIMEOUT = 0xFFFF;
-
-uint16_t contarNivel(uint8_t nivel) {
-  const uint16_t LIMITE = F_CPU / 1000;
-  uint16_t contagem = 0;
-  while (digitalRead(PINO_DHT11) == nivel) {
-    if (++contagem >= LIMITE) return DHT_TIMEOUT;
-  }
-  return contagem;
-}
-
-uint8_t lerDht11(float &umidade, float &temperatura) {
-  uint8_t dados[5] = {0, 0, 0, 0, 0};
-  uint16_t ciclos[80];
-  pinMode(PINO_DHT11, OUTPUT);
-  digitalWrite(PINO_DHT11, LOW);
-  delay(20);
-  pinMode(PINO_DHT11, INPUT_PULLUP);
-  delayMicroseconds(55);
-
-  noInterrupts();
-  if (contarNivel(LOW) == DHT_TIMEOUT || contarNivel(HIGH) == DHT_TIMEOUT) {
-    interrupts();
-    return DHT_SEM_RESPOSTA;
-  }
-  for (uint8_t i = 0; i < 80; i += 2) {
-    ciclos[i]     = contarNivel(LOW);
-    ciclos[i + 1] = contarNivel(HIGH);
-  }
-  interrupts();
-
-  for (uint8_t bit = 0; bit < 40; bit++) {
-    if (ciclos[2 * bit] == DHT_TIMEOUT || ciclos[2 * bit + 1] == DHT_TIMEOUT) {
-      return DHT_ERRO_LEITURA;
-    }
-    dados[bit / 8] <<= 1;
-    if (ciclos[2 * bit + 1] > ciclos[2 * bit]) dados[bit / 8] |= 1;
-  }
-  uint8_t soma = dados[0] + dados[1] + dados[2] + dados[3];
-  if (soma != dados[4]) return DHT_ERRO_CHECKSUM;
-  // A 1ª leitura depois de ligar vem zerada e passa na soma: descartar.
-  if (dados[0] == 0 && dados[2] == 0 && dados[4] == 0) return DHT_ERRO_LEITURA;
-  umidade = dados[0] + dados[1] * 0.1;
-  temperatura = dados[2] + (dados[3] & 0x0F) * 0.1;
-  if (dados[3] & 0x80) temperatura = -temperatura;
-  return DHT_OK;
-}
-
-// =============================================================================
-//  TESTES DO SHIELD 9 EM 1
-// =============================================================================
-
-// Média de 16 leituras, depois de trocar de canal e ESPERAR 100 ms.
-// O ADC tem um capacitor interno que chega carregado com a tensão do pino
-// lido antes, e o LM35 quase não consegue absorver corrente para
-// descarregá-lo. No UNO R3 (medido em 2026-10-03): o LM35 lido logo depois
-// de um pino com tensão maior dava até 445 mV (1ª leitura) e ~295 mV nas
-// seguintes, contra 239 mV certos; 100 ms depois da troca, a leitura fica
-// certa. (No UNO R4 o erro não passa sozinho; ver o README do R4.)
-float lerAnalogicoMedio(uint8_t pino) {
-  analogRead(pino);  // troca o canal do ADC para este pino
-  delay(100);
-  unsigned long soma = 0;
-  for (uint8_t i = 0; i < 16; i++) soma += analogRead(pino);
-  return soma / 16.0;
-}
-
-void testeShieldRepouso() {
-  Serial.println(F("# Shield: nível de repouso das entradas digitais"));
-  bool sw1 = digitalRead(PINO_SW1) == HIGH;
-  bool sw2 = digitalRead(PINO_SW2) == HIGH;
-  // Um botão em LOW sem ninguém apertar: botão travado, curto com o GND
-  // ou pino torto. Visto no 1º UNO R3 testado (SW2/D3 preso em LOW).
-  const char *detalhe = (sw1 && sw2) ? "soltos em HIGH (ativos em LOW)"
-                        : (!sw1 && !sw2) ? "SW1 e SW2 em LOW sem apertar"
-                        : !sw1 ? "SW1 (D2) em LOW sem apertar"
-                               : "SW2 (D3) em LOW sem apertar";
-  resultado(F("botoes"), F("Botões SW1 e SW2"), (sw1 && sw2) ? OK : AVISO, detalhe);
-  bool ir = digitalRead(PINO_IR) == HIGH;
-  resultado(F("ir"), F("Receptor infravermelho"), ir ? OK : AVISO,
-            ir ? "D6 em HIGH (repouso)" : "D6 em LOW (sinal ou defeito)");
-}
-
-void testeShieldSaidas() {
-  Serial.println(F("# Shield: saídas D9-D13 (os LEDs piscam rapidamente)"));
-  const uint8_t pinos[5] = {PINO_RGB_VERMELHO, PINO_RGB_AZUL, PINO_RGB_VERDE,
-                            PINO_LED_D12, PINO_LED_D13};
-  char falhas[32] = "";
+//  Para cada pino: LOW como saída por 100 µs (descarrega), depois entrada
+//  SEM pull-up e espera 200 µs. Num pino livre, ele continua perto de 0V;
+//  se algo o puxa para cima (como os pull-ups do Shield 9 em 1 em D2, D3,
+//  D4 e D6), ele volta para HIGH. Preenche "lista" com os pinos achados.
+void pinosComAlgoLigado(char *lista, size_t tamanho) {
+  lista[0] = '\0';
   char nome[4];
-  for (uint8_t i = 0; i < 5; i++) {
-    pinMode(pinos[i], OUTPUT);
-    digitalWrite(pinos[i], HIGH);
-    delay(80);
-    bool highOk = digitalRead(pinos[i]) == HIGH;
-    digitalWrite(pinos[i], LOW);
-    delayMicroseconds(50);
-    bool lowOk = digitalRead(pinos[i]) == LOW;
-    if (!highOk || !lowOk) {
-      nomePino(pinos[i], nome);
-      acrescentar(falhas, sizeof(falhas), nome);
-      acrescentar(falhas, sizeof(falhas), " ");
+  for (uint8_t i = 0; i < sizeof(PINOS_GPIO); i++) {
+    uint8_t pino = PINOS_GPIO[i];
+    pinMode(pino, OUTPUT);
+    digitalWrite(pino, LOW);
+    delayMicroseconds(100);
+    pinMode(pino, INPUT);
+    delayMicroseconds(200);
+    if (digitalRead(pino) == HIGH) {
+      nomePino(pino, nome);
+      acrescentar(lista, tamanho, nome);
+      acrescentar(lista, tamanho, " ");
     }
-  }
-  if (falhas[0] == '\0') {
-    resultado(F("saidas"), F("LEDs D9 a D13"), OK, "D9 a D13 seguem HIGH/LOW");
-  } else {
-    resultado(F("saidas"), F("LEDs D9 a D13"), FALHA, falhas);
-  }
-}
-
-bool testeShieldDht11(float &temperatura) {
-  Serial.println(F("# Shield: DHT11 (até 3 tentativas)"));
-  float umidade = 0;
-  uint8_t erro = DHT_SEM_RESPOSTA;
-  for (uint8_t t = 0; t < 3 && erro != DHT_OK; t++) {
-    if (t > 0) delay(1200);
-    erro = lerDht11(umidade, temperatura);
-  }
-  if (erro != DHT_OK) {
-    resultado(F("dht11"), F("DHT11"), FALHA,
-              erro == DHT_SEM_RESPOSTA ? "não respondeu"
-              : erro == DHT_ERRO_CHECKSUM ? "soma de verificação errada"
-                                          : "transmissão interrompida");
-    return false;
-  }
-  char t[8], u[8], detalhe[32];
-  dtostrf(temperatura, 1, 1, t);
-  dtostrf(umidade, 1, 0, u);
-  snprintf(detalhe, sizeof(detalhe), "%s °C, %s %%", t, u);
-  bool plausivel = temperatura >= 0 && temperatura <= 50 && umidade >= 5 && umidade <= 95;
-  resultado(F("dht11"), F("DHT11"), plausivel ? OK : AVISO, detalhe);
-  return true;
-}
-
-void testeShieldAnalogicos(bool dhtValido, float temperaturaDht) {
-  Serial.println(F("# Shield: entradas analógicas (10 bits, referência = Vcc medido)"));
-  // LM35: 10 mV por °C. Referência padrão (Vcc), com o Vcc medido acima.
-  // A referência interna de 1,1V daria mais resolução, mas, ao trocar de
-  // referência, o capacitor do pino AREF da placa leva centenas de ms para
-  // descarregar de 5V até 1,1V (medido: leituras erradas por ~100 ms e
-  // certas só depois de ~500 ms). Para um teste rápido, o Vcc basta.
-  analogReference(DEFAULT);
-  long mv = map(lround(lerAnalogicoMedio(PINO_LM35)), 0, 1023, 0, vccMilivolts);
-  float celsius = mv / 10.0;
-  bool lm35Ok = celsius >= 10 && celsius <= 40;
-  char texto[8], detalhe[32];
-  dtostrf(celsius, 1, 1, texto);
-  snprintf(detalhe, sizeof(detalhe), "%s °C", texto);
-  resultado(F("lm35"), F("LM35"), lm35Ok ? OK : AVISO, detalhe);
-
-  int ldr = (int)lerAnalogicoMedio(PINO_LDR);
-  bool ldrOk = ldr > 10 && ldr < 1013;
-  snprintf(detalhe, sizeof(detalhe), ldrOk ? "%d de 1023" : "%d de 1023 (saturado)", ldr);
-  resultado(F("ldr"), F("LDR (luz)"), ldrOk ? OK : AVISO, detalhe);
-
-  snprintf(detalhe, sizeof(detalhe), "%d de 1023", (int)lerAnalogicoMedio(PINO_POT));
-  resultado(F("pot"), F("Potenciômetro"), INFO, detalhe);
-
-  if (dhtValido && lm35Ok) {
-    float diferenca = fabs(celsius - temperaturaDht);
-    dtostrf(diferenca, 1, 1, texto);
-    snprintf(detalhe, sizeof(detalhe), "LM35 - DHT11 = %s °C", texto);
-    resultado(F("temperatura"), F("LM35 x DHT11"), diferenca <= 5 ? OK : AVISO, detalhe);
-  } else {
-    resultado(F("temperatura"), F("LM35 x DHT11"), PULADO, "sem leitura válida");
   }
 }
 
@@ -620,34 +433,16 @@ void rodarTestes() {
   testeEeprom();
   testeVcc();
 
-  uint8_t pullups = contarPullupsDoShield();
-  bool comShield = pullups >= 3;
-  bool semShield = pullups == 0;
-  char detalhe[32];
-  if (comShield) {
-    snprintf(detalhe, sizeof(detalhe), "detectado (%u/4 pull-ups)", pullups);
-    resultado(F("shield"), F("Shield 9 em 1"), INFO, detalhe);
-  } else if (semShield) {
-    resultado(F("shield"), F("Shield 9 em 1"), INFO, "nenhum shield detectado");
+  // O teste dos pinos só roda com a placa sozinha.
+  char ocupados[24];
+  pinosComAlgoLigado(ocupados, sizeof(ocupados));
+  if (ocupados[0] == '\0') {
+    testeGpio(PINOS_GPIO, sizeof(PINOS_GPIO));
   } else {
-    snprintf(detalhe, sizeof(detalhe), "montagem estranha (%u/4)", pullups);
-    resultado(F("shield"), F("Shield 9 em 1"), AVISO, detalhe);
-  }
-
-  if (semShield) {
-    testeGpio(PINOS_SEM_SHIELD, sizeof(PINOS_SEM_SHIELD));
-  } else {
-    testeGpio(PINOS_COM_SHIELD, sizeof(PINOS_COM_SHIELD));
-  }
-
-  if (comShield) {
-    testeShieldRepouso();
-    testeShieldSaidas();
-    float temperaturaDht = 0;
-    bool dhtValido = testeShieldDht11(temperaturaDht);
-    testeShieldAnalogicos(dhtValido, temperaturaDht);
-  } else {
-    resultado(F("shield"), F("Testes do shield"), PULADO, "shield ausente");
+    char detalhe[32] = "ligado: ";
+    acrescentar(detalhe, sizeof(detalhe), ocupados);
+    resultado(F("gpio"), F("Pinos (GPIO)"), PULADO, detalhe);
+    Serial.println(F("# Há algo ligado nos pinos (shield?). Tire tudo para testar os pinos."));
   }
 
   imprimirFim();
@@ -659,15 +454,30 @@ void rodarTestes() {
 // No UNO R3, abrir a porta serial REINICIA a placa (sinal DTR, pelo chip
 // da USB). Por isso as boas-vindas ficam no setup(): aparecem toda vez que
 // o Monitor Serial abre. O teste só começa com o comando "c".
+// Sinal de "firmware de teste gravado": enquanto espera o comando, o LED
+// "L" (D13) pisca duas vezes rápidas a cada 2 s, um "tum-tum" diferente do
+// Blink comum (1 s aceso, 1 s apagado). O D13 já é usado pelo bootloader,
+// então piscá-lo aqui não acrescenta risco a algo ligado nele.
+void sinalizarEspera() {
+  unsigned long t = millis() % 2000;
+  bool aceso = t < 100 || (t >= 250 && t < 350);
+  digitalWrite(LED_BUILTIN, aceso ? HIGH : LOW);
+}
+
 void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(VELOCIDADE_SERIAL);
   imprimirBoasVindas();
 }
 
 void loop() {
-  if (!Serial.available()) return;
+  if (!Serial.available()) {
+    sinalizarEspera();
+    return;
+  }
   char comando = lerComando();
   if (comando == 'c' || comando == 'r' || comando == '\0') {
+    digitalWrite(LED_BUILTIN, LOW);  // encerra o sinal de espera
     rodarTestes();
   } else {
     Serial.println(F("# Comando não entendido. Envie c para começar."));

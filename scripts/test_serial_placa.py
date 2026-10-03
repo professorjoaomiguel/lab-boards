@@ -248,6 +248,18 @@ class FalsaConexao:
 
 
 class TestExecutarAuto(unittest.TestCase):
+    def test_comando_e_marcador_do_sketch_do_shield(self):
+        # O sketch conjunto (placa + shield) mostra um menu e roda o teste
+        # automático com a opção "a".
+        conexao = FalsaConexao([
+            "Placa: UNO R3, ATmega328P, Vcc 4871 mV\n",
+            "Digite a opção e envie:\n",
+            "FIM;ok=0;falha=0;aviso=0;pulado=0\n",
+        ])
+        with contextlib.redirect_stdout(io.StringIO()):
+            sp.executar_auto(conexao, 5, comando=b"a\n", marcador="Digite a opção")
+        self.assertEqual(conexao.escrito, b"a\n")
+
     def test_so_manda_comecar_depois_das_boas_vindas(self):
         # No UNO R3, o que chega antes das boas-vindas cai no bootloader.
         conexao = FalsaConexao(["# reiniciando\n"])

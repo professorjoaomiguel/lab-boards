@@ -11,17 +11,24 @@ O QUE FAZ
     listar      Mostra as portas seriais, com VID:PID, número de série USB
                 e a placa reconhecida (quando é uma das placas conhecidas).
     auto        Abre a porta, recebe o resultado do sketch de teste
-                automático e termina sozinho. Opcionalmente grava o sketch
+                automático da PLACA (placa sozinha, sem shield) e termina
+                sozinho. Com --shield, usa o sketch CONJUNTO placa + Shield
+                9 em 1 e roda a opção "a" (teste automático do shield). Opcionalmente grava o sketch
                 antes (--gravar) e registra a placa no inventário
                 (--registrar). Código de saída: 0 = sem falhas, 1 = há
                 falhas, 2 = erro (porta, gravação, tempo esgotado).
     interativo  Terminal simples: mostra o que a placa envia e manda para
-                ela cada linha digitada (com Enter). Serve para o sketch de
-                teste com ajuda do usuário: envie "c" para começar.
-                Ctrl+C para sair.
+                ela cada linha digitada (com Enter). Serve para o sketch
+                CONJUNTO placa + Shield 9 em 1, que tem um menu de testes
+                guiados (com --gravar, é ele que é gravado). Ctrl+C sai.
 
-    Os sketches de teste esperam o comando "c" antes de começar (abrir a
-    porta só mostra um aviso); o modo auto envia o "c" sozinho. Os alunos
+    Dois tipos de teste, cada um com o seu sketch:
+      - só a PLACA (pasta boards/<placa>/code): automático, sem interação.
+        Espera o comando "c" antes de começar (abrir a porta só mostra um
+        aviso); o modo auto envia o "c" sozinho.
+      - CONJUNTO placa + Shield 9 em 1 (pasta shields/uno-shield-9in1/code):
+        menu de testes guiados e a opção "a" (automático com resumo), que o
+        modo auto --shield envia sozinho. Os alunos
     não precisam deste script: os mesmos sketches funcionam só com o
     Monitor Serial da IDE do Arduino.
 
@@ -51,6 +58,7 @@ COMO USAR
     python scripts/serial_placa.py auto
     python scripts/serial_placa.py auto --porta COM8 --gravar --registrar
     python scripts/serial_placa.py interativo --gravar
+    python scripts/serial_placa.py auto --shield --gravar      # placa + shield
     python scripts/serial_placa.py auto --log teste.txt
 
     Sem --porta, o script usa a única placa reconhecida que estiver ligada.
@@ -78,15 +86,16 @@ from typing import Optional
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Placas conhecidas. "sketch_auto" e "sketch_interativo" são pastas relativas
-# à raiz do repositório; None = ainda não existe sketch dedicado.
+# Placas conhecidas. "sketch_auto" (teste só da placa) e "sketch_shield"
+# (teste conjunto placa + Shield 9 em 1) são pastas relativas à raiz do
+# repositório; None = ainda não existe sketch dedicado.
 PLACAS = {
     "uno-r4-minima": {
         "nome": "UNO R4 Minima",
         "usb": [(0x2341, 0x0069)],
         "fqbn": "arduino:renesas_uno:minima",
         "sketch_auto": "boards/arduino-uno-r4/code/teste_uno_r4_automatico",
-        "sketch_interativo": "boards/arduino-uno-r4/code/teste_uno_r4_interativo",
+        "sketch_shield": "shields/uno-shield-9in1/code/teste_shield_9em1_uno_r4",
         "inventario": "boards/arduino-uno-r4/inventario.csv",
     },
     "uno-r4-wifi": {
@@ -94,7 +103,7 @@ PLACAS = {
         "usb": [(0x2341, 0x1002)],
         "fqbn": "arduino:renesas_uno:unor4wifi",
         "sketch_auto": "boards/arduino-uno-r4/code/teste_uno_r4_automatico",
-        "sketch_interativo": "boards/arduino-uno-r4/code/teste_uno_r4_interativo",
+        "sketch_shield": "shields/uno-shield-9in1/code/teste_shield_9em1_uno_r4",
         "inventario": "boards/arduino-uno-r4/inventario.csv",
     },
     "uno-r3": {
@@ -102,7 +111,7 @@ PLACAS = {
         "usb": [(0x2341, 0x0043), (0x2341, 0x0001), (0x2A03, 0x0043), (0x1A86, 0x7523)],
         "fqbn": "arduino:avr:uno",
         "sketch_auto": "boards/arduino-uno-r3/code/teste_uno_r3_automatico",
-        "sketch_interativo": "shields/uno-shield-9in1/code/teste_shield_9em1_uno_r3",
+        "sketch_shield": "shields/uno-shield-9in1/code/teste_shield_9em1_uno_r3",
         "inventario": "boards/arduino-uno-r3/inventario.csv",
         # O ATmega328P não tem ID único. No UNO R3 original, o chip da USB
         # (ATmega16U2) tem um número de série gravado pela Arduino, único
@@ -450,13 +459,17 @@ def abrir_serial(porta, baud):
         raise ErroPorta(f"não foi possível abrir {porta} (o Monitor Serial está aberto?): {e}")
 
 
-def executar_auto(conexao, tempo_limite, log=None):
+def executar_auto(conexao, tempo_limite, log=None, comando=b"c\n", marcador=">"):
     """Lê o resultado de um sketch de teste automático até a linha FIM.
 
     Args:
         conexao: porta serial aberta.
         tempo_limite: segundos de espera pela linha FIM.
         log: arquivo aberto para gravar tudo o que chegar, ou None.
+        comando: o que enviar para começar ("c" nos testes da placa; "a"
+            no sketch conjunto do shield, que mostra um menu).
+        marcador: início da linha que indica que o sketch está pronto
+            (">" nas boas-vindas da placa; "Digite a opção" no menu).
 
     Returns:
         Tupla (resultados, fim, id_unico): a lista de dicts RESULTADO, o
@@ -475,15 +488,15 @@ def executar_auto(conexao, tempo_limite, log=None):
     limite = time.time() + tempo_limite
     while time.time() < limite and fim is None:
         if not enviado and time.time() > envio_forcado:
-            conexao.write(b"c\n")
+            conexao.write(comando)
             enviado = True
         bruta = conexao.readline()
         if not bruta:
             continue
         linha = bruta.decode("utf-8", errors="replace").rstrip()
-        if not enviado and linha.startswith(">"):
+        if not enviado and linha.startswith(marcador):
             print(linha)
-            conexao.write(b"c\n")
+            conexao.write(comando)
             enviado = True
             continue
         print(linha)
@@ -608,11 +621,20 @@ def _preparar(args, tipo_sketch):
 
 def _cmd_auto(args):
     """Roda o teste automático e, se pedido, registra no inventário."""
-    porta, chave = _preparar(args, "sketch_auto")
+    if args.shield and args.registrar:
+        print("erro: o inventário é das placas; registre com o teste da placa "
+              "(sem --shield)", file=sys.stderr)
+        return 2
+    porta, chave = _preparar(args, "sketch_shield" if args.shield else "sketch_auto")
     log = open(args.log, "w", encoding="utf-8") if args.log else None
+    if args.shield:
+        comando, marcador = b"a\n", "Digite a opção"
+    else:
+        comando, marcador = b"c\n", ">"
     try:
         with abrir_serial(porta.dispositivo, args.baud) as conexao:
-            resultados, fim, id_unico = executar_auto(conexao, args.tempo, log)
+            resultados, fim, id_unico = executar_auto(conexao, args.tempo, log,
+                                                      comando, marcador)
     finally:
         if log:
             log.close()
@@ -659,7 +681,7 @@ def _cmd_auto(args):
 
 def _cmd_interativo(args):
     """Abre o terminal interativo com a placa."""
-    porta, _chave = _preparar(args, "sketch_interativo")
+    porta, _chave = _preparar(args, "sketch_shield")
     log = open(args.log, "w", encoding="utf-8") if args.log else None
     try:
         with abrir_serial(porta.dispositivo, args.baud) as conexao:
@@ -709,6 +731,9 @@ def main(argv=None):
         if nome == "auto":
             p.add_argument("--tempo", type=float, default=60,
                            help="segundos de espera pelo fim do teste (padrão 60)")
+            p.add_argument("--shield", action="store_true",
+                           help="teste CONJUNTO placa + Shield 9 em 1 (opção 'a' do "
+                                "sketch do shield); sem ele, testa só a placa")
             p.add_argument("--registrar", action="store_true",
                            help="registra a placa (ou atualiza o último teste) no inventário")
 

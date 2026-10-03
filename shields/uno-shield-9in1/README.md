@@ -159,7 +159,7 @@ placa.
 
 ## Código de teste e validação
 Os sketches [`code/teste_shield_9em1_uno_r3`](code/teste_shield_9em1_uno_r3/teste_shield_9em1_uno_r3.ino) e [`code/teste_shield_9em1_uno_r4`](code/teste_shield_9em1_uno_r4/teste_shield_9em1_uno_r4.ino) (um por placa)
-testam os 9 periféricos por um menu no Monitor Serial (9600 baud, final de
+testam os 9 periféricos por um menu no Monitor Serial (115200 baud, final de
 linha "Nova linha"). A versão R4 serve para o Minima e o WiFi. Nenhum
 precisa de bibliotecas externas. Instruções, resultado esperado de cada
 teste e problemas comuns: [`code/README.md`](code/README.md).
