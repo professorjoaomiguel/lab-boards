@@ -82,8 +82,8 @@ estrutural.
   nº 2 no UNO R4). Com o padrão antigo (`LOW` = ligado), o buzzer apitava
   sem parar no menu; os dois sketches do shield agora usam `HIGH`. Faixa
   de frequência explorada de ouvido (tabela no README do shield). Pendente:
-  medir a frequência do apito natural (app de afinador) e conferir o
-  buzzer do shield nº 1 (pode ser de outro tipo).
+  medir a frequência do apito natural (app de afinador). Conferido
+  também no shield do UNO R3-01: mesmo comportamento (2026-10-03).
 - Sketch do Shield 9 em 1 separado por placa (2026-10-03):
   `teste_shield_9em1_uno_r3` e `teste_shield_9em1_uno_r4` (só a versão R4
   liga a descarga do ADC).
@@ -105,7 +105,8 @@ estrutural.
 - **Menus do shield (`teste_shield_9em1_uno_r3` e `_uno_r4`) ainda exigem
   "Nova linha" no Monitor Serial** (2026-10-03, pedido do usuário para
   depois): aplicar a mesma leitura dos testes do R4 (fim da mensagem no
-  ``/`
+  `
+`/`
 ` ou após 200 ms sem caracteres).
 - Adicionar fotos e diagrama esquemático reais de `boards/esp32-s3-n16r8/`.
 - ESP32-S3 UNO: variante N16R8, PSRAM com `SPIRAM_OCT` e gravação sem
