@@ -184,7 +184,7 @@ usa a porta.
 
 `ok=11 falha=0 aviso=1 pulado=3`. Os pulados são esperados com o shield
 (`dac`, `serial1` sem jumper e a comparação de temperatura). O aviso foi o
-LM35 marcando ~48 °C com o DHT11 em 26 °C: ver "A confirmar" no
+LM35 marcando ~48 °C com o DHT11 em 26 °C. O multímetro mediu 0,47 V no A2, a mesma tensão que o ADC leu: a placa leu certo, e o **LM35 daquele shield está com defeito**. Ver "A confirmar" no
 [README do shield](../../shields/uno-shield-9in1/README.md#a-confirmar-com-o-shield-em-mãos).
 
 Observações feitas durante o teste:

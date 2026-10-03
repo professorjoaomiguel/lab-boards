@@ -59,10 +59,12 @@ estrutural.
   completo) e com jumper D0↔D1 (`serial1`); rodar o teste interativo
   respondendo de verdade; medir o pino 5V. Preencher "A confirmar" no
   README do R4. Nenhuma UNO R4 WiFi testada ainda.
-- **LM35 do Shield 9 em 1 lê ~45–49 °C** no UNO R4 com o DHT11 em 26 °C
-  (2026-10-03). A ligação foi conferida visualmente. Medir a tensão entre
-  A2 e GND com multímetro: ~0,27 V = sensor bom (oscilação/erro de leitura);
-  ~0,45 V = sensor com defeito ou não é LM35. Detalhes no README do shield.
+- **LM35 com defeito no Shield 9 em 1 em uso** (2026-10-03): o multímetro
+  mediu 0,47 V no A2 com a sala a 26 °C, o mesmo que o ADC do UNO R4 leu.
+  A leitura do código está certa. Um shield novo foi pedido. Quando ele
+  chegar: rodar o teste automático do R4 (esperado: `lm35` e `temperatura`
+  OK) e conferir se o A2 ainda sobe (~0,1 V) quando é lido logo depois do
+  A1 (possível oscilação do LM35).
 - **UNO R3: teste automático dedicado adiado** (2026-10-03), para quando
   houver um UNO R3 ligado. Criar `boards/arduino-uno-r3/code/teste_uno_r3_automatico`
   no mesmo formato de saída do R4 (sem RTC, DAC, Serial1 nem ID único; dá
