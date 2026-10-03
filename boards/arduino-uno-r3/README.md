@@ -117,18 +117,27 @@ ICSP de 6 pinos perto dele. O CH340 é um chip retangular com a marcação
 
 ## Código de teste e validação
 
-| Sketch | Quem confere | Para quê |
-|--------|--------------|----------|
-| [`code/teste_uno_r3_automatico`](code/teste_uno_r3_automatico/teste_uno_r3_automatico.ino) | o próprio sketch | Triagem rápida da placa e registro no inventário |
-| [`teste_shield_9em1_uno_r3`](../../shields/uno-shield-9in1/code/teste_shield_9em1_uno_r3/teste_shield_9em1_uno_r3.ino) (no shield) | o aluno, por um menu | Testar cada periférico do Shield 9 em 1 vendo, ouvindo e mexendo |
+Há dois tipos de teste, cada um com o seu sketch:
 
-> ⚠️ **Antes do teste automático, tire tudo da placa: deixe-a sozinha ou só
-> com o Shield 9 em 1.** Sem o shield, o teste liga **D2 a D13 e A1 a A5
-> como saída** (HIGH e LOW). Um módulo, protoboard ou outro shield ligado
-> nesses pinos pode receber esses sinais e se danificar. O teste só começa
+| Teste | Sketch | Como é | Para quê |
+|-------|--------|--------|----------|
+| **Só a placa** | [`code/teste_uno_r3_automatico`](code/teste_uno_r3_automatico/teste_uno_r3_automatico.ino) | Automático, só pela serial, **placa sozinha** (sem shield) | Triagem rápida e registro no inventário |
+| **Placa + Shield 9 em 1** | [`teste_shield_9em1_uno_r3`](../../shields/uno-shield-9in1/code/teste_shield_9em1_uno_r3/teste_shield_9em1_uno_r3.ino) (na pasta do shield) | Menu com testes guiados (ver, ouvir, apertar) e uma opção automática | Testar o shield e a placa juntos; informa sobre os dois |
+
+Os dois usam **115200 baud** no Monitor Serial e aceitam qualquer opção de
+final de linha. Enquanto esperam um comando, o LED **L** (D13) pisca **duas
+vezes rápidas a cada 2 s**: é o sinal de que o firmware de teste está
+gravado.
+
+> ⚠️ **O teste da placa é com a placa sozinha.** Ele liga **D2 a D13 e A1 a
+> A5 como saída** (HIGH e LOW). Um módulo, protoboard ou shield ligado
+> nesses pinos pode receber esses sinais e se danificar. Proteção: antes de
+> acionar os pinos, o sketch procura resistores externos neles (como os
+> pull-ups do Shield 9 em 1). Se achar, não aciona nenhum pino, marca
+> `gpio` como pulado e diz em quais pinos achou algo. O teste só começa
 > quando você envia `c`.
 
-### Teste automático
+### Teste da placa (automático)
 
 | Teste | O que confere |
 |-------|---------------|
@@ -136,42 +145,55 @@ ICSP de 6 pinos perto dele. O CH340 é um chip retangular com a marcação
 | `relogio` | `millis()` e `micros()` medem 1 s corretamente |
 | `eeprom` | Grava, lê e **restaura** o último byte da EEPROM (1 KB) |
 | `vcc` | Tensão de alimentação, medida pela própria placa (até ~10% de erro) |
-| `gpio` | Pull-up interno e saída HIGH/LOW de cada pino livre (sem shield: D2–D13 e A1–A5; com shield: D7, D8, A3–A5) |
-| `botoes`, `ir`, `saidas`, `dht11`, `lm35`, `ldr`, `pot`, `temperatura` | Periféricos do Shield 9 em 1, quando encaixado |
+| `gpio` | Pull-up interno e saída HIGH/LOW de D2–D12 e A1–A5 |
 
 O UNO R3 não tem RTC, DAC, segunda serial nem ID único no chip, então esses
 testes do UNO R4 não existem aqui.
 
 **Como rodar pela IDE do Arduino:** placa **Arduino Uno**, grave o sketch,
-abra o **Monitor Serial em 115200 baud** (qualquer opção de final de
-linha) e **envie `c`**. No fim aparece o **RESUMO**, um teste por linha.
-No UNO R3, abrir o Monitor Serial **reinicia a placa** (é assim que o chip
-da USB funciona), por isso a mensagem de boas-vindas aparece de novo toda
-vez que o Monitor abre.
+abra o **Monitor Serial em 115200 baud** e **envie `c`**. No fim aparece o
+**RESUMO**, um teste por linha. No UNO R3, abrir o Monitor Serial
+**reinicia a placa** (é assim que o chip da USB funciona), por isso o aviso
+inicial aparece de novo toda vez que o Monitor abre.
 
-**Pelo terminal** (ferramenta do professor; preparação do computador em
-[Como rodar, no README do UNO R4](../arduino-uno-r4/README.md#como-rodar)):
+### Teste conjunto (placa + Shield 9 em 1)
+
+Fica na pasta do shield. Ao abrir o Monitor Serial, mostra a placa
+(chip e Vcc) e o menu: os testes **1 a 9** são guiados e a opção **`a`**
+roda um teste automático do shield com resumo. Detalhes em
+[Código de teste do shield](../../shields/uno-shield-9in1/code/README.md).
+
+### Pelo terminal (ferramenta do professor)
+
+Preparação do computador em
+[Como rodar, no README do UNO R4](../arduino-uno-r4/README.md#como-rodar).
 
 ```bash
-python scripts/serial_placa.py auto --porta COM10 --gravar --registrar
+python scripts/serial_placa.py auto --porta COM10 --gravar --registrar   # placa sozinha
+python scripts/serial_placa.py auto --porta COM10 --gravar --shield      # placa + shield
 ```
 
-O script espera as boas-vindas antes de enviar o `c`: o que chega durante o
-~1,5 s em que o bootloader roda (logo após o reset) se perde.
+O script espera o aviso inicial (ou o menu) antes de enviar o comando: o
+que chega durante o ~1,5 s em que o bootloader roda, logo após o reset, se
+perde.
 
-### Resultado na placa real (2026-10-03, R3-01 + Shield 9 em 1)
+### Resultados na placa real (2026-10-03, R3-01)
 
-`ok=11 falha=0 aviso=1 pulado=0`. Placa original (ATmega16U2), Vcc de
-4,87–4,89 V na USB, LM35 em 23,9 °C e DHT11 em 27,3 °C. O aviso foi do
-**shield**: o botão **SW2 (D3) fica em LOW sem ninguém apertar**. O D3 lê
-LOW mesmo com o pull-up interno ligado, o que indica botão travado ou
-curto com o GND no shield (ver o README do shield).
+Placa original (ATmega16U2), Vcc de 4,87–4,89 V na USB.
+
+- **Teste da placa com o shield encaixado:** chip, relógio, EEPROM e Vcc
+  OK; `gpio` corretamente **pulado** ("ligado: D2 D4 D6 A1").
+- **Teste conjunto (opção `a`):** `ok=7 aviso=1`. LM35 em 23,9 °C e
+  DHT11 em 28,8 °C. O aviso foi do **shield**: o botão **SW2 (D3) fica em
+  LOW sem ninguém apertar**. O D3 lê LOW mesmo com o pull-up interno
+  ligado, o que indica botão travado ou curto com o GND no shield (ver o
+  README do shield).
 
 ### A confirmar na placa real
 
 | Item | Como | Situação |
 |------|------|----------|
-| Teste `gpio` completo (D2–D13, A1–A5) | Teste automático **sem** o shield | A rodar |
+| Teste `gpio` completo (D2–D12, A1–A5) | Teste da placa **sem** o shield | A rodar |
 | Vcc com multímetro | Comparar com o valor do teste `vcc` | A medir |
 | Clone com CH340 | Os mesmos testes; o inventário precisa de registro à mão (sem número de série USB) | Sem placa testada |
 
