@@ -17,7 +17,13 @@ O QUE FAZ
                 falhas, 2 = erro (porta, gravação, tempo esgotado).
     interativo  Terminal simples: mostra o que a placa envia e manda para
                 ela cada linha digitada (com Enter). Serve para o sketch de
-                teste com ajuda do usuário. Ctrl+C para sair.
+                teste com ajuda do usuário: envie "c" para começar.
+                Ctrl+C para sair.
+
+    Os sketches de teste esperam o comando "c" antes de começar (abrir a
+    porta só mostra um aviso); o modo auto envia o "c" sozinho. Os alunos
+    não precisam deste script: os mesmos sketches funcionam só com o
+    Monitor Serial da IDE do Arduino.
 
     Os sketches de teste imprimem linhas num formato fixo, separado por ";":
         INICIO;<sketch>;<versão>
@@ -449,6 +455,11 @@ def executar_auto(conexao, tempo_limite, log=None):
         dict da linha FIM (ou None se o tempo acabou) e o ID_UNICO (ou None).
     """
     resultados, fim, id_unico = [], None, None
+    # O sketch espera o comando "c" antes de testar: assim ele não aciona
+    # os pinos sozinho quando a IDE abre o Monitor Serial. Se o comando
+    # chegar antes da mensagem de boas-vindas, ele fica na fila da placa e
+    # é lido logo depois.
+    conexao.write(b"c\n")
     limite = time.time() + tempo_limite
     while time.time() < limite and fim is None:
         bruta = conexao.readline()

@@ -5,7 +5,9 @@
 Rodar com: python -m unittest scripts/test_serial_placa.py -v
 """
 
+import contextlib
 import csv
+import io
 import os
 import sys
 import tempfile
@@ -228,6 +230,41 @@ class TestVerificarAmbiente(unittest.TestCase):
         estado, detalhe = [(e, d) for i, e, d in itens if i == "pacote arduino:renesas_uno"][0]
         self.assertEqual(estado, "AVISO")
         self.assertIn("arduino-cli core install arduino:renesas_uno", detalhe)
+
+
+
+class FalsaConexao:
+    """Porta serial falsa: devolve linhas prontas e guarda o que foi escrito."""
+
+    def __init__(self, linhas):
+        self.linhas = [l.encode("utf-8") for l in linhas]
+        self.escrito = b""
+
+    def readline(self):
+        return self.linhas.pop(0) if self.linhas else b""
+
+    def write(self, dados):
+        self.escrito += dados
+
+
+class TestExecutarAuto(unittest.TestCase):
+    def test_manda_comecar_e_le_ate_o_fim(self):
+        conexao = FalsaConexao([
+            "> Envie c para começar\n",
+            "INICIO;teste_uno_r4_automatico;2\n",
+            "ID_UNICO;ABC\n",
+            "RESULTADO;clock;OK;48 MHz\n",
+            "  [  OK  ] Clock do processador ..... 48 MHz\n",
+            "FIM;ok=1;falha=0;aviso=0;pulado=0\n",
+            "RESULTADO;depois_do_fim;OK;nao deve ser lido\n",
+        ])
+        with contextlib.redirect_stdout(io.StringIO()):
+            resultados, fim, id_unico = sp.executar_auto(conexao, 5)
+        # O sketch espera o comando "c" antes de testar (seguro na IDE).
+        self.assertEqual(conexao.escrito, b"c\n")
+        self.assertEqual([r["teste"] for r in resultados], ["clock"])
+        self.assertEqual(fim["ok"], 1)
+        self.assertEqual(id_unico, "ABC")
 
 
 if __name__ == "__main__":

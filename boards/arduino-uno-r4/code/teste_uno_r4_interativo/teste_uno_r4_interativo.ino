@@ -31,12 +31,14 @@
  *
  *  COMO USAR
  *  ---------
- *  1. Grave o sketch. Abra o Monitor Serial com final de linha "Nova linha"
- *     (Newline); a velocidade não importa no UNO R4 (USB nativa).
+ *  1. Grave o sketch e abra o Monitor Serial. A velocidade e a opção de
+ *     final de linha não importam (USB nativa; a leitura aceita todas).
  *     Ou: python scripts/serial_placa.py interativo --porta COM8
- *  2. Siga as instruções. Em cada pergunta, digite e envie:
+ *  2. Envie "c" para começar e siga as instruções. Em cada pergunta,
+ *     digite e envie:
  *       s = sim, funcionou      n = não funcionou      p = pular o passo
- *  3. No fim aparece o resumo. Envie "r" para recomeçar.
+ *  3. No fim aparece o RESUMO, um passo por linha. Envie "c" para
+ *     recomeçar.
  *
  *  As linhas de resultado seguem o mesmo formato do teste automático
  *  (RESULTADO;<teste>;<estado>;<detalhe> e FIM;ok=..;falha=..;...), para
@@ -50,7 +52,7 @@
 #error "Este sketch é só para o Arduino UNO R4 (Minima ou WiFi)."
 #endif
 
-const char *VERSAO = "1";
+const char *VERSAO = "2";
 
 // Pinos do Shield 9 em 1 (ver shields/uno-shield-9in1/README.md)
 const uint8_t PINO_SW1          = 2;
@@ -71,6 +73,23 @@ const uint8_t PINO_LDR          = A1;
 // =============================================================================
 unsigned int totalOk, totalFalha, totalAviso, totalPulado;
 
+// Cada resultado sai na hora numa linha "RESULTADO;..." (formato fixo, lido
+// pelo scripts/serial_placa.py) e fica guardado para o RESUMO do final,
+// que é o que o aluno lê no Monitor Serial.
+struct Registro {
+  const char *teste;
+  const char *estado;
+  String detalhe;
+};
+const uint8_t MAX_REGISTROS = 40;
+Registro registros[MAX_REGISTROS];
+uint8_t totalRegistros = 0;
+
+void zerarResultados() {
+  totalOk = totalFalha = totalAviso = totalPulado = 0;
+  totalRegistros = 0;
+}
+
 void resultado(const char *teste, const char *estado, const String &detalhe) {
   Serial.print("RESULTADO;");
   Serial.print(teste);
@@ -79,10 +98,176 @@ void resultado(const char *teste, const char *estado, const String &detalhe) {
   Serial.print(';');
   Serial.println(detalhe);
 
+  if (totalRegistros < MAX_REGISTROS) {
+    registros[totalRegistros].teste = teste;
+    registros[totalRegistros].estado = estado;
+    registros[totalRegistros].detalhe = detalhe;
+    totalRegistros++;
+  }
+
   if (strcmp(estado, "OK") == 0) totalOk++;
   else if (strcmp(estado, "FALHA") == 0) totalFalha++;
   else if (strcmp(estado, "AVISO") == 0) totalAviso++;
   else if (strcmp(estado, "PULADO") == 0) totalPulado++;
+}
+
+// Nome de cada teste no resumo. A linha RESULTADO usa o identificador curto
+// (sem acento nem espaço), que é o que o script lê.
+const char *nomeDoTeste(const char *id) {
+  struct Nome { const char *id; const char *nome; };
+  static const Nome NOMES[] = {
+    {"info", "Informação"},             {"clock", "Clock do processador"},
+    {"relogio", "millis() e micros()"}, {"eeprom", "EEPROM"},
+    {"rtc", "RTC (relógio)"},           {"shield", "Shield 9 em 1"},
+    {"gpio", "Pinos livres (GPIO)"},    {"dac", "DAC no A0"},
+    {"serial1", "Serial1 (D0/D1)"},     {"botoes", "Botões SW1 e SW2"},
+    {"ir", "Receptor infravermelho"},   {"saidas", "LEDs D9 a D13"},
+    {"dht11", "DHT11"},                 {"avcc", "Referência do ADC"},
+    {"lm35", "LM35"},                   {"ldr", "LDR (luz)"},
+    {"pot", "Potenciômetro"},           {"temperatura", "LM35 x DHT11"},
+    {"led_l", "LED L (D13)"},           {"tensao_5v", "Pino 5V (multímetro)"},
+    {"pot_adc", "Potenciômetro e ADC"}, {"rgb_pwm", "LED RGB (PWM)"},
+    {"buzzer", "Buzzer"},
+  };
+  for (const Nome &n : NOMES) {
+    if (strcmp(n.id, id) == 0) return n.nome;
+  }
+  return id;
+}
+
+// Quantos caracteres aparecem na tela. Letras acentuadas ocupam 2 bytes em
+// UTF-8 ("ç" = 0xC3 0xA7); só o 1º byte conta. Sem isso, os pontinhos do
+// resumo ficariam desalinhados nas linhas com acento.
+size_t larguraNaTela(const char *texto) {
+  size_t largura = 0;
+  for (const char *p = texto; *p; p++) {
+    if ((*p & 0xC0) != 0x80) largura++;
+  }
+  return largura;
+}
+
+// Resumo legível, um teste por linha, ex:
+//   [  OK  ] DHT11 ..................... 23.0 °C, 51 %
+void imprimirResumo() {
+  Serial.println();
+  Serial.println("==============================================================");
+  Serial.println("  RESUMO");
+  Serial.println("==============================================================");
+  for (uint8_t i = 0; i < totalRegistros; i++) {
+    const char *estado = registros[i].estado;
+    if (strcmp(estado, "OK") == 0)          Serial.print("  [  OK  ] ");
+    else if (strcmp(estado, "FALHA") == 0)  Serial.print("  [FALHA!] ");
+    else if (strcmp(estado, "AVISO") == 0)  Serial.print("  [AVISO ] ");
+    else if (strcmp(estado, "PULADO") == 0) Serial.print("  [pulado] ");
+    else                                    Serial.print("  [ info ] ");
+
+    const char *nome = nomeDoTeste(registros[i].teste);
+    Serial.print(nome);
+    Serial.print(' ');
+    for (size_t p = larguraNaTela(nome); p < 26; p++) Serial.print('.');
+    Serial.print(' ');
+    Serial.println(registros[i].detalhe);
+  }
+  Serial.println("--------------------------------------------------------------");
+  Serial.print("  OK: ");
+  Serial.print(totalOk);
+  Serial.print("   FALHA: ");
+  Serial.print(totalFalha);
+  Serial.print("   AVISO: ");
+  Serial.print(totalAviso);
+  Serial.print("   pulados: ");
+  Serial.println(totalPulado);
+  if (totalFalha > 0) {
+    Serial.println("  Resultado: há FALHAS. Veja as linhas marcadas com [FALHA!].");
+  } else if (totalAviso > 0) {
+    Serial.println("  Resultado: sem falhas, mas confira as linhas com [AVISO ].");
+  } else {
+    Serial.println("  Resultado: tudo certo.");
+  }
+  Serial.println("==============================================================");
+}
+
+// Resumo para o aluno e, por último, a linha FIM para o script (o script
+// para de ler na linha FIM, então o resumo vem antes dela).
+void imprimirFim() {
+  imprimirResumo();
+  Serial.print("FIM;ok=");
+  Serial.print(totalOk);
+  Serial.print(";falha=");
+  Serial.print(totalFalha);
+  Serial.print(";aviso=");
+  Serial.print(totalAviso);
+  Serial.print(";pulado=");
+  Serial.println(totalPulado);
+  Serial.println("# Envie c para rodar de novo.");
+}
+
+// =============================================================================
+//  ENTRADA PELO MONITOR SERIAL
+// =============================================================================
+
+// Descarta os caracteres de final de linha que sobraram. Com "Ambos, NL e
+// CR", o Monitor envia "\r\n": sem isto, o "\n" viraria uma linha vazia
+// extra e seria lido como a próxima resposta.
+void descartarFimDeLinha() {
+  delay(20);
+  while (Serial.peek() == '\r' || Serial.peek() == '\n') {
+    Serial.read();
+  }
+}
+
+// Lê uma mensagem enviada pelo Monitor Serial e espera o tempo que for
+// preciso: quem dita o ritmo é a pessoa.
+//
+// Funciona com QUALQUER opção de final de linha do Monitor ("Nova linha",
+// "Retorno de carro", "Ambos" ou "Sem final de linha"). Com final de
+// linha, a mensagem termina no '\n' ou no '\r'. Sem final de linha, o
+// Monitor envia o texto todo de uma vez; quando passam 200 ms sem chegar
+// nada, a mensagem é dada como completa. Atenção: sem final de linha, só
+// o Enter (caixa vazia) não envia nada. Por isso as instruções pedem uma
+// letra (ex: "c").
+String lerLinha() {
+  String linha;
+  unsigned long ultimoCaractere = 0;
+  while (true) {
+    if (Serial.available()) {
+      char c = Serial.read();
+      if (c == '\n' || c == '\r') {
+        descartarFimDeLinha();
+        break;
+      }
+      linha += c;
+      ultimoCaractere = millis();
+    } else if (linha.length() > 0 && millis() - ultimoCaractere > 200) {
+      break;
+    }
+  }
+  linha.trim();
+  return linha;
+}
+
+// Mensagem mostrada quando o Monitor Serial (ou o script) abre a porta.
+// Nada é testado antes de a pessoa mandar começar.
+void imprimirBoasVindas(const char *titulo, const char *aviso) {
+  Serial.println();
+  Serial.println("==============================================================");
+  Serial.print("  ");
+  Serial.println(titulo);
+  Serial.println("==============================================================");
+  Serial.println(aviso);
+  Serial.println("> Envie c para começar (ou só Enter, se o Monitor estiver em \"Nova linha\").");
+}
+
+// Lê o comando, se chegou algum. Devolve true se a pessoa mandou começar.
+bool pediuParaComecar() {
+  if (!Serial.available()) return false;
+  String comando = lerLinha();
+  comando.toLowerCase();
+  if (comando == "" || comando == "c" || comando == "r") return true;
+  Serial.print("# Comando não entendido: \"");
+  Serial.print(comando);
+  Serial.println("\". Envie c para começar.");
+  return false;
 }
 
 void titulo(const char *texto) {
@@ -94,23 +279,8 @@ void titulo(const char *texto) {
 }
 
 // =============================================================================
-//  ENTRADA DO USUÁRIO
+//  PERGUNTAS AO USUÁRIO
 // =============================================================================
-
-// Lê uma linha enviada pelo Monitor Serial (até o Enter). Espera para
-// sempre: num teste interativo, quem dita o ritmo é a pessoa.
-String lerLinha() {
-  String linha;
-  while (true) {
-    if (Serial.available()) {
-      char c = Serial.read();
-      if (c == '\n') break;
-      if (c != '\r') linha += c;
-    }
-  }
-  linha.trim();
-  return linha;
-}
 
 // Mostra a pergunta e espera s, n ou p. Devolve 's', 'n' ou 'p'.
 char perguntar(const char *pergunta) {
@@ -155,7 +325,7 @@ bool perguntarNumero(const char *pergunta, float &valor) {
 
 // Espera o Enter para começar um passo; "p" pula. Devolve false se pulou.
 bool prontoParaComecar() {
-  Serial.println("> Envie Enter para começar (ou p para pular).");
+  Serial.println("> Envie c para começar este passo (ou p para pular).");
   String resposta = lerLinha();
   resposta.toLowerCase();
   return resposta != "p";
@@ -519,12 +689,11 @@ bool shieldPresente() {
 }
 
 void rodarTestes() {
-  totalOk = totalFalha = totalAviso = totalPulado = 0;
+  zerarResultados();
   Serial.println();
   Serial.print("INICIO;teste_uno_r4_interativo;");
   Serial.println(VERSAO);
   Serial.println("# Teste interativo do UNO R4. Responda s (sim), n (não) ou p (pular).");
-  Serial.println("# Use final de linha \"Nova linha\" no Monitor Serial.");
 
   bool detectado = shieldPresente();
   Serial.print("# Shield 9 em 1 ");
@@ -553,36 +722,28 @@ void rodarTestes() {
     passoDac();
   }
 
-  Serial.println();
-  Serial.print("FIM;ok=");
-  Serial.print(totalOk);
-  Serial.print(";falha=");
-  Serial.print(totalFalha);
-  Serial.print(";aviso=");
-  Serial.print(totalAviso);
-  Serial.print(";pulado=");
-  Serial.println(totalPulado);
-  Serial.println(totalFalha == 0 ? "# Nenhuma falha." : "# Há FALHAS: veja as linhas RESULTADO.");
-  Serial.println("# Envie \"r\" para recomeçar.");
+  imprimirFim();
 }
 
 void setup() {
   Serial.begin(115200);
 }
 
-// Como no teste automático: começa sempre que um programa abre a porta.
+// Como no teste automático: ao abrir a porta aparecem as boas-vindas, e o
+// teste só começa com o comando "c".
 bool conectadoAntes = false;
 
 void loop() {
   bool conectado = Serial;
   if (conectado && !conectadoAntes) {
     delay(300);
-    rodarTestes();
+    imprimirBoasVindas("TESTE INTERATIVO DO UNO R4",
+                       "Você vai ver, ouvir e medir cada parte da placa e responder\n"
+                       "s (funcionou), n (não funcionou) ou p (pular).");
   }
   conectadoAntes = conectado;
 
-  if (conectado && Serial.available()) {
-    char c = Serial.read();
-    if (c == 'r' || c == 'R') rodarTestes();
+  if (conectado && pediuParaComecar()) {
+    rodarTestes();
   }
 }

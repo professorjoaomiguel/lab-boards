@@ -167,8 +167,8 @@ D6). Nenhum precisa de biblioteca externa.
 | [`code/teste_uno_r4_interativo`](code/teste_uno_r4_interativo/teste_uno_r4_interativo.ino) | o aluno, guiado pelo Monitor Serial | O que só uma pessoa vê, ouve ou mede: LED aceso, buzzer, potenciômetro, multímetro |
 
 > ⚠️ **Antes do teste automático, tire tudo da placa: deixe-a sozinha ou só
-> com o Shield 9 em 1.** O teste roda sozinho toda vez que a porta serial é
-> aberta, inclusive pelo Monitor Serial da IDE. Sem o shield, ele liga
+> com o Shield 9 em 1.** O teste só começa quando você envia `c` no Monitor
+> Serial (abrir a porta mostra só o aviso). Sem o shield, ele liga
 > **D2 a D13 e A1 a A5 como saída** (HIGH e LOW) e gera tensão no **A0**
 > (DAC). Um módulo, protoboard ou outro shield ligado nesses pinos pode
 > receber esses sinais e se danificar: o R4 aguenta só 8 mA por pino. Há uma
@@ -197,8 +197,8 @@ sketch explica cada teste.
 
 ### Teste interativo (com ajuda do usuário)
 
-Monitor Serial com final de linha **"Nova linha"**. A cada passo, responda
-`s` (funcionou), `n` (não funcionou) ou `p` (pular). Alguns passos medem
+Envie `c` para começar. A cada passo, responda `s` (funcionou), `n` (não
+funcionou) ou `p` (pular). Alguns passos medem
 sozinhos depois que você age (apertar o botão, girar o potenciômetro, cobrir
 o LDR, soprar no DHT11, apertar o controle remoto).
 
@@ -217,7 +217,9 @@ o LDR, soprar no DHT11, apertar o controle remoto).
 
 ### Como rodar
 
-Há dois caminhos. Os dois usam os mesmos sketches.
+Há dois caminhos. Os dois usam os mesmos sketches. **Para os alunos, o
+caminho 1 (só a IDE) basta.** O caminho 2 é a ferramenta do professor:
+triagem de um lote de placas e registro no inventário.
 
 #### Caminho 1: só a IDE do Arduino (nada para instalar além da IDE)
 
@@ -226,11 +228,31 @@ Há dois caminhos. Os dois usam os mesmos sketches.
    no Gerenciador de Placas.
 2. Abra o sketch (`teste_uno_r4_automatico` ou `teste_uno_r4_interativo`),
    escolha a porta COM e clique em **Carregar**.
-3. Abra o **Monitor Serial** com final de linha **"Nova linha"**. A
-   velocidade não importa no UNO R4 (a serial é USB nativa).
-4. O teste começa quando o Monitor abre a porta. No interativo, digite a
-   resposta (`s`, `n`, `p` ou um número) na caixa de envio e tecle Enter.
-   Envie `r` para recomeçar.
+3. Abra o **Monitor Serial**. A velocidade e a opção de final de linha
+   não importam: os sketches aceitam todas ("Nova linha", "Retorno de
+   carro", "Ambos" ou "Sem final de linha").
+4. Aparece uma mensagem de boas-vindas. **Envie `c`** para começar: digite
+   `c` na caixa de envio e tecle Enter. Nada é testado antes disso, nem
+   quando a IDE reabre o Monitor depois de gravar.
+5. No interativo, responda cada pergunta do mesmo jeito (`s`, `n`, `p` ou
+   um número, como `4.85`). Espere a pergunta aparecer antes de responder.
+6. No fim aparece o **RESUMO**, um teste por linha:
+
+   ```text
+     [  OK  ] DHT11 ..................... 23.0 °C, 46 %
+     [  OK  ] LM35 ...................... 26.2 °C
+     [pulado] DAC no A0 ................. A0 ocupado (potenciômetro do shield)
+   --------------------------------------------------------------
+     OK: 13   FALHA: 0   AVISO: 0   pulados: 2
+     Resultado: tudo certo.
+   ```
+
+   Antes do resumo aparecem linhas como `RESULTADO;dht11;OK;...`. Elas são
+   para o script do caminho 2 e podem ser ignoradas. Envie `c` para rodar
+   de novo.
+
+> **Sem final de linha:** só o Enter, com a caixa vazia, não envia nada.
+> Por isso o comando para começar é a letra `c`, e não só o Enter.
 
 #### Caminho 2: pelo terminal, com o script `serial_placa.py`
 
@@ -279,7 +301,8 @@ python scripts/serial_placa.py interativo --gravar         # teste com ajuda do 
 - Sem `--gravar`, o script usa o sketch que já está na placa.
 - No **interativo**, o que a placa envia aparece no terminal. Digite a
   resposta (`s`, `n`, `p` ou um número, como `4.85`) e tecle **Enter**.
-  Envie `r` para recomeçar e **Ctrl+C** para sair. No fim aparece o resumo.
+  Envie `c` para começar (e para recomeçar) e **Ctrl+C** para sair. No
+  modo `auto`, o script envia o `c` sozinho.
 - Com mais de uma placa ligada, indique qual com `--porta COM8`
   (`python scripts/serial_placa.py listar` mostra as portas).
 - Ajuda completa: `python scripts/serial_placa.py --help`.

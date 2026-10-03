@@ -34,6 +34,16 @@ estrutural.
   código sob MIT (`LICENSE-CODE`), citação em `CITATION.cff`. Autor
   identificado como Prof. Joao Miguel Roehe (@professorjoaomiguel), sem
   e-mail público.
+- Testes pela IDE como caminho oficial para alunos (2026-10-03): os
+  sketches de teste do R4 funcionam só com a IDE do Arduino e o Monitor
+  Serial (sem Python nem pyserial). O `scripts/serial_placa.py` é
+  ferramenta do professor (triagem de lote, inventário). Para isso, os
+  sketches do R4 (versão 2): (1) terminam com um RESUMO legível, um teste
+  por linha, antes da linha `FIM`; (2) aceitam qualquer opção de final de
+  linha do Monitor (fim da mensagem no `\r`/`\n` ou após 200 ms sem
+  caracteres); (3) só começam com o comando `c` (abrir a porta mostra só o
+  aviso), e o script envia o `c` no modo `auto`. Validado no R4 Minima
+  com as três opções de final de linha.
 - Código de teste dedicado por placa (2026-10-03): cada placa tem os
   próprios sketches, em vez de um sketch genérico com `#ifdef` para várias
   placas (preferência do usuário). Cada placa tem dois formatos: automático
