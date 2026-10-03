@@ -5,6 +5,9 @@
 O QUE FAZ
     Ajuda a testar placas Arduino ligadas na USB, sem abrir a IDE:
 
+    verificar   Confere se o computador está pronto: versão do Python,
+                pyserial, arduino-cli e pacotes de placa instalados, e
+                quais placas estão ligadas. Rode este primeiro.
     listar      Mostra as portas seriais, com VID:PID, número de série USB
                 e a placa reconhecida (quando é uma das placas conhecidas).
     auto        Abre a porta, recebe o resultado do sketch de teste
@@ -30,6 +33,14 @@ O QUE FAZ
     O CH340 também está na ESP32-S3 UNO; se a detecção errar, use --placa.
 
 COMO USAR
+    Preparar o computador (uma vez):
+        1. Instale o Python 3.8 ou mais novo (python.org; no Windows, marque
+           "Add python.exe to PATH" no instalador).
+        2. pip install pyserial
+        3. Só para --gravar: instale o arduino-cli e o pacote da placa
+           (ex: arduino-cli core install arduino:renesas_uno).
+        4. python scripts/serial_placa.py verificar
+
     python scripts/serial_placa.py listar
     python scripts/serial_placa.py auto
     python scripts/serial_placa.py auto --porta COM8 --gravar --registrar
@@ -49,6 +60,8 @@ TESTES
 import argparse
 import csv
 import datetime
+import importlib
+import json
 import os
 import subprocess
 import sys
@@ -293,6 +306,61 @@ def atualizar_inventario(caminho, id_unico, modelo, resultado, data):
     return etiqueta, nova
 
 
+def verificar_ambiente(executar=subprocess.run, importar=importlib.import_module):
+    """Confere o que o script precisa no computador.
+
+    Args:
+        executar: função no formato de subprocess.run (trocada nos testes).
+        importar: função no formato de importlib.import_module (idem).
+
+    Returns:
+        Lista de tuplas (item, estado, detalhe), com estado "OK", "FALHA"
+        (o script não funciona sem isso) ou "AVISO" (só algumas funções
+        ficam indisponíveis, como o --gravar).
+    """
+    itens = []
+    versao = sys.version.split()[0]
+    if sys.version_info >= (3, 8):
+        itens.append(("python", "OK", versao))
+    else:
+        itens.append(("python", "FALHA", f"{versao}: instale o Python 3.8 ou mais novo"))
+
+    try:
+        modulo = importar("serial")
+        itens.append(("pyserial", "OK", getattr(modulo, "VERSION", "instalado")))
+    except ImportError:
+        itens.append(("pyserial", "FALHA", "não instalado: rode  pip install pyserial"))
+
+    # O arduino-cli só é usado pelo --gravar: a falta dele é só um aviso.
+    try:
+        saida = executar(["arduino-cli", "version"], capture_output=True, text=True)
+        itens.append(("arduino-cli", "OK", saida.stdout.strip()))
+    except FileNotFoundError:
+        itens.append(("arduino-cli", "AVISO",
+                      "não encontrado no PATH: sem ele, o --gravar não funciona "
+                      "(grave pela IDE do Arduino)"))
+        return itens
+
+    saida = executar(["arduino-cli", "core", "list", "--format", "json"],
+                     capture_output=True, text=True)
+    try:
+        dados = json.loads(saida.stdout or "{}")
+        # O formato mudou entre versões do arduino-cli: lista pura ou
+        # {"platforms": [...]}; o id pode estar em "id" ou em "metadata".
+        lista = dados.get("platforms", []) if isinstance(dados, dict) else dados
+        instalados = {p.get("id") or p.get("metadata", {}).get("id") for p in lista}
+    except (ValueError, AttributeError):
+        instalados = set()
+    pacotes = sorted({PLACAS[c]["fqbn"].rsplit(":", 1)[0] for c in PLACAS})
+    for pacote in pacotes:
+        if pacote in instalados:
+            itens.append((f"pacote {pacote}", "OK", "instalado"))
+        else:
+            itens.append((f"pacote {pacote}", "AVISO",
+                          f"não instalado: rode  arduino-cli core install {pacote}"))
+    return itens
+
+
 # =============================================================================
 #  Funções que mexem com o hardware
 # =============================================================================
@@ -456,6 +524,30 @@ def executar_interativo(conexao, log=None):
 #  Linha de comando
 # =============================================================================
 
+def _cmd_verificar(_args):
+    """Mostra o que está pronto no computador e as placas ligadas."""
+    itens = verificar_ambiente()
+    for item, estado, detalhe in itens:
+        print(f"{estado:6} {item:28} {detalhe}")
+    if any(estado == "FALHA" for _, estado, _ in itens):
+        print()
+        print("Corrija os itens com FALHA antes de usar o script.")
+        return 2
+
+    print()
+    portas = listar_portas()
+    conhecidas = [(p, identificar_placa(p.vid, p.pid)) for p in portas]
+    conhecidas = [(p, c) for p, c in conhecidas if c]
+    if not conhecidas:
+        print("AVISO  nenhuma placa reconhecida ligada (confira o cabo USB: alguns só carregam)")
+    for p, chaves in conhecidas:
+        nomes = " ou ".join(PLACAS[c]["nome"] for c in chaves)
+        print(f"OK     placa em {p.dispositivo:20} {nomes}")
+    print()
+    print("Tudo pronto." if conhecidas else "Computador pronto; falta ligar uma placa.")
+    return 0
+
+
 def _cmd_listar(_args):
     """Imprime as portas seriais e a placa reconhecida em cada uma."""
     portas = listar_portas()
@@ -564,6 +656,7 @@ def main(argv=None):
         formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="comando", required=True)
 
+    sub.add_parser("verificar", help="confere Python, pyserial, arduino-cli e placas ligadas")
     sub.add_parser("listar", help="lista as portas seriais e as placas reconhecidas")
 
     for nome, ajuda in (("auto", "roda o teste automático e mostra o resumo"),
@@ -584,7 +677,7 @@ def main(argv=None):
                            help="registra a placa (ou atualiza o último teste) no inventário")
 
     args = parser.parse_args(argv)
-    comandos = {"listar": _cmd_listar, "auto": _cmd_auto, "interativo": _cmd_interativo}
+    comandos = {"verificar": _cmd_verificar, "listar": _cmd_listar, "auto": _cmd_auto, "interativo": _cmd_interativo}
     try:
         return comandos[args.comando](args)
     except (ErroPorta, ErroGravacao) as e:

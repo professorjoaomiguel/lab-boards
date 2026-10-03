@@ -217,24 +217,75 @@ o LDR, soprar no DHT11, apertar o controle remoto).
 
 ### Como rodar
 
-Na IDE do Arduino: placa **Arduino UNO R4 Minima** (ou **WiFi**), grave o
-sketch e abra o Monitor Serial. No UNO R4 a velocidade do Monitor não
-importa (a serial é USB nativa). O teste começa quando a porta é aberta;
-envie `r` para repetir.
+Há dois caminhos. Os dois usam os mesmos sketches.
 
-Pela linha de comando, o script
-[`scripts/serial_placa.py`](../../scripts/serial_placa.py) identifica a
-placa pela USB, grava o sketch dedicado, mostra o resultado e registra a
-placa no inventário (ajuda completa: `python scripts/serial_placa.py --help`):
+#### Caminho 1: só a IDE do Arduino (nada para instalar além da IDE)
+
+1. Em **Ferramentas > Placa**, escolha **Arduino UNO R4 Minima** (ou
+   **WiFi**). Se não aparecer, instale o pacote **Arduino UNO R4 Boards**
+   no Gerenciador de Placas.
+2. Abra o sketch (`teste_uno_r4_automatico` ou `teste_uno_r4_interativo`),
+   escolha a porta COM e clique em **Carregar**.
+3. Abra o **Monitor Serial** com final de linha **"Nova linha"**. A
+   velocidade não importa no UNO R4 (a serial é USB nativa).
+4. O teste começa quando o Monitor abre a porta. No interativo, digite a
+   resposta (`s`, `n`, `p` ou um número) na caixa de envio e tecle Enter.
+   Envie `r` para recomeçar.
+
+#### Caminho 2: pelo terminal, com o script `serial_placa.py`
+
+O script [`scripts/serial_placa.py`](../../scripts/serial_placa.py)
+identifica a placa pela USB, grava o sketch certo, mostra o resultado e
+registra a placa no inventário.
+
+**Preparar o computador (uma vez):**
+
+1. Instale o **Python 3.8 ou mais novo** ([python.org](https://www.python.org/downloads/)).
+   No Windows, marque **"Add python.exe to PATH"** no instalador.
+2. No terminal: `pip install pyserial` (a biblioteca que abre a porta
+   serial).
+3. Só para gravar pelo script (`--gravar`): instale o
+   [arduino-cli](https://arduino.github.io/arduino-cli/latest/installation/)
+   e o pacote da placa: `arduino-cli core install arduino:renesas_uno`.
+   Sem ele, grave o sketch pela IDE (caminho 1) e use o script só para
+   testar.
+4. Na pasta raiz do repositório, confira se está tudo pronto:
+
+   ```bash
+   python scripts/serial_placa.py verificar
+   ```
+
+   Ele mostra `OK`, `AVISO` ou `FALHA` para o Python, o pyserial, o
+   arduino-cli, os pacotes de placa e as placas ligadas, e diz como
+   corrigir o que faltar. Exemplo:
+
+   ```text
+   OK     python                       3.14.6
+   OK     pyserial                     3.5
+   OK     arduino-cli                  arduino-cli  Version: 1.5.1 ...
+   OK     pacote arduino:avr           instalado
+   OK     pacote arduino:renesas_uno   instalado
+
+   OK     placa em COM8                 UNO R4 Minima
+   ```
+
+**Testar:**
 
 ```bash
-python scripts/serial_placa.py listar                       # portas e placas reconhecidas
-python scripts/serial_placa.py auto --gravar --registrar    # grava, testa e registra
-python scripts/serial_placa.py interativo --gravar          # teste com ajuda do usuário
+python scripts/serial_placa.py auto --gravar --registrar   # grava, testa e registra no inventário
+python scripts/serial_placa.py interativo --gravar         # teste com ajuda do usuário
 ```
 
-Feche o Monitor Serial da IDE antes de usar o script: só um programa por vez
-usa a porta.
+- Sem `--gravar`, o script usa o sketch que já está na placa.
+- No **interativo**, o que a placa envia aparece no terminal. Digite a
+  resposta (`s`, `n`, `p` ou um número, como `4.85`) e tecle **Enter**.
+  Envie `r` para recomeçar e **Ctrl+C** para sair. No fim aparece o resumo.
+- Com mais de uma placa ligada, indique qual com `--porta COM8`
+  (`python scripts/serial_placa.py listar` mostra as portas).
+- Ajuda completa: `python scripts/serial_placa.py --help`.
+
+**Feche o Monitor Serial da IDE antes de usar o script:** só um programa
+por vez usa a porta. Se aparecer `não foi possível abrir COM8`, é isso.
 
 ### Resultado na placa real (2026-10-03, R4M-01 + Shield 9 em 1)
 

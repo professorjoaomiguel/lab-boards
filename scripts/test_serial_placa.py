@@ -165,5 +165,70 @@ class TestResumo(unittest.TestCase):
                          "ok=2 falha=0 aviso=1 pulado=0")
 
 
+
+class FalsoProcesso:
+    """Resposta falsa de subprocess.run para os testes de verificar_ambiente."""
+
+    def __init__(self, returncode=0, stdout=""):
+        self.returncode = returncode
+        self.stdout = stdout
+        self.stderr = ""
+
+
+def executor(cli_existe=True, cores=("arduino:renesas_uno", "arduino:avr")):
+    """Cria um subprocess.run falso para o arduino-cli."""
+    def executar(comando, **_kwargs):
+        if not cli_existe:
+            raise FileNotFoundError("arduino-cli")
+        if comando[1] == "version":
+            return FalsoProcesso(stdout="arduino-cli  Version: 1.2.0")
+        lista = [{"id": c} for c in cores]
+        import json
+        return FalsoProcesso(stdout=json.dumps({"platforms": lista}))
+    return executar
+
+
+def importador(pyserial_existe=True):
+    def importar(nome):
+        if not pyserial_existe:
+            raise ImportError(nome)
+        class Modulo:
+            VERSION = "3.5"
+        return Modulo
+    return importar
+
+
+class TestVerificarAmbiente(unittest.TestCase):
+    def estados(self, itens):
+        return {item: estado for item, estado, _ in itens}
+
+    def test_tudo_instalado(self):
+        itens = sp.verificar_ambiente(executor(), importador())
+        estados = self.estados(itens)
+        self.assertEqual(estados["python"], "OK")
+        self.assertEqual(estados["pyserial"], "OK")
+        self.assertEqual(estados["arduino-cli"], "OK")
+        self.assertEqual(estados["pacote arduino:renesas_uno"], "OK")
+
+    def test_sem_pyserial_e_falha(self):
+        itens = sp.verificar_ambiente(executor(), importador(False))
+        estado, detalhe = [(e, d) for i, e, d in itens if i == "pyserial"][0]
+        self.assertEqual(estado, "FALHA")
+        self.assertIn("pip install pyserial", detalhe)
+
+    def test_sem_arduino_cli_e_so_aviso(self):
+        # O arduino-cli só é preciso para --gravar.
+        itens = sp.verificar_ambiente(executor(cli_existe=False), importador())
+        estados = self.estados(itens)
+        self.assertEqual(estados["arduino-cli"], "AVISO")
+        self.assertNotIn("pacote arduino:renesas_uno", estados)
+
+    def test_pacote_da_placa_faltando(self):
+        itens = sp.verificar_ambiente(executor(cores=("arduino:avr",)), importador())
+        estado, detalhe = [(e, d) for i, e, d in itens if i == "pacote arduino:renesas_uno"][0]
+        self.assertEqual(estado, "AVISO")
+        self.assertIn("arduino-cli core install arduino:renesas_uno", detalhe)
+
+
 if __name__ == "__main__":
     unittest.main()
