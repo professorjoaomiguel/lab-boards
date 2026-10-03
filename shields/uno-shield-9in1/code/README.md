@@ -1,24 +1,42 @@
 # Código de teste — Shield Multifunção 9 em 1
 
-Sketch que testa, um a um, os 9 periféricos do shield, com um menu no
-Monitor Serial. Cada teste diz o que deve acontecer e o que observar.
+**Teste conjunto (placa + shield)**: o sketch testa os 9 periféricos do
+shield e informa também sobre a placa que está embaixo dele. Ao abrir o
+Monitor Serial, ele mostra a placa (modelo, ID no UNO R4, tensão de
+referência) e um menu:
+
+- **testes 1 a 9 (e `0`, todos):** guiados, um por periférico. Cada teste
+  diz o que deve acontecer e o que observar: aqui sempre há alguém
+  apertando, girando, olhando e ouvindo;
+- **`a`:** teste automático do shield, com um RESUMO no fim (o que dá para
+  conferir sem ninguém olhar: botões e IR em repouso, saídas, DHT11, LM35,
+  LDR e LM35 × DHT11);
+- **`p`:** painel ao vivo com todas as entradas.
+
+Para testar **só a placa**, sem o shield, use os sketches da pasta da placa
+(ex: [UNO R4](../../../boards/arduino-uno-r4/README.md#código-de-teste-e-validação)).
 
 Há **uma versão dedicada para cada placa**, com o mesmo menu. Use a da sua
 placa: a outra não compila (uma trava no início do código avisa).
 
 | Arquivo | Placa | Uso de memória |
 |---------|-------|----------------|
-| [`teste_shield_9em1_uno_r3/teste_shield_9em1_uno_r3.ino`](teste_shield_9em1_uno_r3/teste_shield_9em1_uno_r3.ino) | [Arduino UNO R3](../../../boards/arduino-uno-r3/README.md) | 51% da flash, 11% da RAM |
-| [`teste_shield_9em1_uno_r4/teste_shield_9em1_uno_r4.ino`](teste_shield_9em1_uno_r4/teste_shield_9em1_uno_r4.ino) | [Arduino UNO R4](../../../boards/arduino-uno-r4/README.md) Minima / WiFi | Minima: 20% da flash, 12% da RAM. WiFi: 25% e 20% |
+| [`teste_shield_9em1_uno_r3/teste_shield_9em1_uno_r3.ino`](teste_shield_9em1_uno_r3/teste_shield_9em1_uno_r3.ino) | [Arduino UNO R3](../../../boards/arduino-uno-r3/README.md) | 78% da flash, 59% da RAM |
+| [`teste_shield_9em1_uno_r4/teste_shield_9em1_uno_r4.ino`](teste_shield_9em1_uno_r4/teste_shield_9em1_uno_r4.ino) | [Arduino UNO R4](../../../boards/arduino-uno-r4/README.md) Minima / WiFi | Minima: 25% da flash, 14% da RAM. WiFi: 27% e 22% |
 
-A única diferença está na leitura do LM35: no UNO R4, o sketch liga a
-descarga do capacitor de amostragem do ADC antes de cada leitura. Sem isso,
-o LM35 chega a marcar ~50 °C a mais depois que outro pino é lido (ver
-[ADC do UNO R4](../../../boards/arduino-uno-r4/README.md#adc-leitura-errada-de-sensores-que-não-absorvem-corrente)).
+O que muda entre as versões:
 
-No UNO R4 também há os testes **automático** e **interativo** da própria
-placa, que testam o shield quando ele está encaixado (ver
-[Código de teste do UNO R4](../../../boards/arduino-uno-r4/README.md#código-de-teste-e-validação)).
+- **Leitura do LM35.** No UNO R4, o sketch liga a descarga do capacitor de
+  amostragem do ADC antes de cada leitura; sem isso, o LM35 chega a marcar
+  ~50 °C a mais depois que outro pino é lido (ver
+  [ADC do UNO R4](../../../boards/arduino-uno-r4/README.md#adc-leitura-errada-de-sensores-que-não-absorvem-corrente)).
+  No UNO R3, ele espera 100 ms depois de trocar o canal do ADC (ver
+  [ADC do UNO R3](../../../boards/arduino-uno-r3/README.md#adc-cuidados-medidos-na-placa-real-2026-10-03)).
+- **Informações da placa.** UNO R3: assinatura do chip e Vcc medido pela
+  referência interna. UNO R4: modelo, ID único e AVCC.
+
+**Sinal de firmware gravado:** parado no menu, o LED do D13 (o LED "L" da
+placa e o azul do shield) pisca duas vezes rápidas a cada 2 s.
 
 > ⚠️ Não use em placas de 3,3V (ESP32, etc.): o shield é de 5V. Ver
 > [Tensão de operação](../README.md#tensão-de-operação).
@@ -62,19 +80,21 @@ Para o UNO R4, use a pasta `teste_shield_9em1_uno_r4` e o `--fqbn`
 | Opção | Teste | O que fazer | Resultado esperado |
 |-------|-------|-------------|--------------------|
 | 1 | LEDs D12 e D13 | Só observar e conferir a cor | O do D12 (vermelho, no padrão) pisca 3×, o do D13 (azul) pisca 3×, os dois juntos. Há variação de montagem: anote se as cores vieram trocadas |
-| 2 | LED RGB D9–D11 | Conferir a cor de cada pino | D9 vermelho, D10 azul, D11 verde; as três juntas formam o branco; brilho varia suave |
+| 2 | LED RGB D9–D11 | Conferir a cor de cada pino; depois girar o potenciômetro | D9 vermelho, D10 azul, D11 verde; as três juntas formam o branco; brilho varia suave; na parte E, o brilho do branco segue o potenciômetro |
 | 3 | Botões SW1 e SW2 | Apertar e soltar | Cada aperto conta 1. O LED acende na hora e fica aceso enquanto o botão estiver apertado: SW1 → LED azul (D13), SW2 → LED vermelho (D12). Botão em LOW no repouso é avisado (travado ou em curto) |
-| 4 | Buzzer D5 | Ouvir | Buzzer ativo (o testado): apita no nível HIGH; escala e melodia "Nokia Tune" com o ritmo certo, timbre misturado com o apito próprio |
+| 4 | Buzzer D5 | Ouvir; depois girar o potenciômetro | Buzzer ativo (o testado): apita no nível HIGH; escala e melodia "Nokia Tune" com o ritmo certo, timbre misturado com o apito próprio; na parte D, o potenciômetro muda a frequência do `tone()` de 100 a 5000 Hz |
 | 5 | Potenciômetro A0 | Girar de ponta a ponta | Leitura vai de ~0 a ~1023; brilho do vermelho do LED RGB acompanha |
 | 6 | LDR A1 | Cobrir e iluminar | Leitura sobe com a luz; diferença de centenas entre escuro e claro |
 | 7 | LM35 A2 | Segurar entre os dedos | Temperatura ambiente, subindo com o calor da mão |
 | 8 | DHT11 D4 | Soprar no sensor | Umidade sobe; temperatura parecida com a do LM35 |
 | 9 | Receptor IR D6 | Apertar botões de um controle | Mesmo botão gera sempre o mesmo código NEC |
 | 0 | Todos | Seguir as instruções | Roda os testes 1 a 9 em sequência |
+| a | Automático do shield | Nada (não mexa nos botões) | Placa (modelo, tensão), botões e IR em repouso, saídas D9–D13, DHT11, LM35, LDR, potenciômetro e LM35 × DHT11, com RESUMO no fim |
 | p | Painel ao vivo | Mexer em tudo | Todas as entradas em uma linha, a cada 0,5 s |
 
-Nos testes contínuos (3, 5, 6, 7, 8, 9 e o painel), envie `c` para voltar
-ao menu.
+Para continuar ou voltar ao menu, **envie `c` ou aperte o SW1** do shield.
+No teste 3 (botões) e no painel ao vivo só vale o `c`, porque ali o SW1 é
+o que está sendo testado. Um SW1 travado em LOW é ignorado como entrada.
 
 ## Ajustes no início do código
 

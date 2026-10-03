@@ -158,17 +158,21 @@ placa.
 - Expansão: I2C, serial TTL, D7, D8 e A3
 
 ## Código de teste e validação
-Os sketches [`code/teste_shield_9em1_uno_r3`](code/teste_shield_9em1_uno_r3/teste_shield_9em1_uno_r3.ino) e [`code/teste_shield_9em1_uno_r4`](code/teste_shield_9em1_uno_r4/teste_shield_9em1_uno_r4.ino) (um por placa)
-testam os 9 periféricos por um menu no Monitor Serial (115200 baud, final de
-linha "Nova linha"). A versão R4 serve para o Minima e o WiFi. Nenhum
-precisa de bibliotecas externas. Instruções, resultado esperado de cada
-teste e problemas comuns: [`code/README.md`](code/README.md).
+O teste do shield é um **teste conjunto (placa + shield)**: um sketch por
+placa, [`code/teste_shield_9em1_uno_r3`](code/teste_shield_9em1_uno_r3/teste_shield_9em1_uno_r3.ino)
+e [`code/teste_shield_9em1_uno_r4`](code/teste_shield_9em1_uno_r4/teste_shield_9em1_uno_r4.ino)
+(Minima e WiFi). Ele mostra a placa (modelo e tensão de referência) e um
+menu no Monitor Serial (115200 baud, qualquer final de linha): testes
+**guiados** de cada periférico, em que alguém aperta, gira, olha e ouve, e
+a opção **`a`**, um teste **automático** do shield com resumo. O SW1 do
+próprio shield serve para continuar e voltar ao menu, e o potenciômetro
+controla o brilho do RGB e a frequência do buzzer. Nenhum precisa de
+bibliotecas externas. Instruções, resultado esperado de cada teste e
+problemas comuns: [`code/README.md`](code/README.md).
 
-No **UNO R4**, os sketches dedicados da placa também testam o shield,
-quando ele está encaixado: um **automático** (botões e IR em repouso,
-saídas D9–D13, DHT11, LM35, LDR) e um **interativo** (guiado, com
-botões, potenciômetro, LED RGB, buzzer, LDR, DHT11 e IR). Ver
-[Código de teste do UNO R4](../../boards/arduino-uno-r4/README.md#código-de-teste-e-validação).
+Para testar **só a placa** (sem o shield), use os sketches da pasta de cada
+placa, por exemplo o do
+[UNO R4](../../boards/arduino-uno-r4/README.md#código-de-teste-e-validação).
 
 ### A confirmar com o shield em mãos
 Detalhes que variam entre lotes e que o sketch de teste ajuda a descobrir.
