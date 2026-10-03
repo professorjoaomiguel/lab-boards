@@ -10,6 +10,22 @@ O objetivo é ir montando uma lista de placas **conhecidas** (registradas,
 com etiqueta) à medida que cada uma é conectada e identificada. Uma placa
 que ainda não está aqui é **desconhecida**.
 
+## Relatório
+
+Para olhar o inventário, abra **[`relatorio.html`](relatorio.html)** (dois
+cliques no arquivo, depois de clonar o repositório). Ele mostra todas as
+unidades numa tabela só, com filtros por tipo, dono, situação e etiqueta
+colada, busca livre, contadores e colunas ordenáveis. Os filtros ficam na
+URL (ex: `relatorio.html#situacao=com+falha`), o que permite guardar ou
+compartilhar uma visão.
+
+O relatório é **gerado a partir dos CSVs**: não edite o HTML. Depois de
+mudar um CSV, gere de novo e faça commit dos dois juntos:
+
+```bash
+python scripts/gerar_inventario.py
+```
+
 ## Arquivos
 
 | Arquivo | Itens | Identificador (a chave) |

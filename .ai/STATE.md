@@ -17,6 +17,10 @@ estrutural.
 
 ## Decisões tomadas
 
+- **Relatório do inventário** (2026-10-03): `scripts/gerar_inventario.py`
+  gera `inventario/relatorio.html` (arquivo único, dados embutidos, abre
+  offline) com filtros, busca e contadores. Regerar e commitar junto com o
+  CSV a cada mudança. Para ver online, falta ligar o GitHub Pages.
 - **Inventário separado do código de teste** (2026-10-03, decisão do
   usuário): `inventario/` com um CSV por tipo de placa e um de shields,
   colunas `etiqueta_colada` e `dono` (professor / SENAI / a confirmar) e,
