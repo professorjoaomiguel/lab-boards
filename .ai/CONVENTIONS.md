@@ -121,6 +121,35 @@ repositório o item é compatível. Quando um dado não puder ser confirmado
 pela serigrafia ou pelo datasheet, escreva que ele precisa ser medido
 (multímetro) em vez de supor.
 
+## Código de teste (sketches)
+
+Dois tipos de teste, cada um no seu lugar:
+
+- **Teste da placa** (`boards/<slug>/code/`): **automático**, só pela
+  serial e com o LED da própria placa, com a **placa sozinha** (sem shield).
+  Antes de acionar pinos, procura resistores externos neles e, se achar,
+  não aciona nada e avisa. Não pede interação do usuário além do comando
+  para começar.
+- **Teste conjunto placa + shield** (`shields/<slug>/code/`): informa sobre
+  as duas (a placa embaixo e o shield). Sempre envolve alguém apertando,
+  girando, olhando e ouvindo (testes guiados), e pode ter uma opção
+  automática com resumo.
+
+Regras comuns a todos os sketches de teste:
+
+- **Um sketch dedicado por placa** (sem `#ifdef` para várias placas), com
+  uma trava `#error` que impede compilar para a placa errada.
+- **115200 baud** e qualquer opção de final de linha do Monitor Serial
+  (mensagem termina em `\r`/`\n` ou após 200 ms sem caracteres).
+- Só começa com um comando (`c`, ou a opção do menu); abrir a porta mostra
+  um aviso. Enquanto espera, o LED do D13 pisca duas vezes rápidas a cada
+  2 s ("firmware de teste gravado").
+- Saída para o script (`INICIO;`, `RESULTADO;`, `FIM;`) e um **RESUMO**
+  legível no fim, um teste por linha.
+- **Código bem documentado:** cabeçalho com o que faz, cada teste, como
+  usar e cuidados de segurança; comentários explicando o porquê das
+  decisões não óbvias, de preferência com o que foi medido na placa real.
+
 ## Scripts (Python e PowerShell)
 
 Todo script do repositório é documentado **no próprio arquivo**, junto com

@@ -44,6 +44,12 @@ estrutural.
   caracteres); (3) só começam com o comando `c` (abrir a porta mostra só o
   aviso), e o script envia o `c` no modo `auto`. Validado no R4 Minima
   com as três opções de final de linha.
+- **Teste da placa × teste conjunto** (2026-10-03, decisão do usuário):
+  o teste da placa (`boards/<slug>/code`) é automático, só serial + LED,
+  placa sozinha; o teste conjunto placa + shield fica na pasta do shield,
+  com menu guiado e opção `a` automática, e informa sobre os dois. Os
+  sketches interativos da placa foram removidos. Todos em 115200 baud.
+  Regras em `.ai/CONVENTIONS.md`, seção "Código de teste".
 - Código de teste dedicado por placa (2026-10-03): cada placa tem os
   próprios sketches, em vez de um sketch genérico com `#ifdef` para várias
   placas (preferência do usuário). Cada placa tem dois formatos: automático
@@ -65,10 +71,10 @@ estrutural.
   auto --gravar --registrar`, colar a etiqueta `R4M-NN` que o script
   indicar e commitar o `inventario.csv`. Comparar os IDs entre placas para
   confirmar quais trechos mudam (lote/wafer).
-- UNO R4: rodar o teste automático **sem shield** (testes `dac` e `gpio`
-  completo) e com jumper D0↔D1 (`serial1`); rodar o teste interativo
-  respondendo de verdade; medir o pino 5V. Preencher "A confirmar" no
-  README do R4. Nenhuma UNO R4 WiFi testada ainda.
+- UNO R4: rodar o teste da placa **sem shield** (`gpio` e `dac`) e com
+  jumper D0↔D1 (`serial1`); rodar o teste conjunto novo (`auto --shield`;
+  a gravação falhou por LIBUSB em 2026-10-03, resolver com RESET duplo).
+  Preencher "A confirmar" no README do R4. Nenhuma UNO R4 WiFi testada.
 - **ADC do UNO R4 lê errado o LM35** (achado em 2026-10-03, resolvido): o
   capacitor de amostragem chega carregado do pino anterior e o LM35 não
   absorve corrente (A2 lido a 0,77 V com 0,253 V no multímetro). Solução:
