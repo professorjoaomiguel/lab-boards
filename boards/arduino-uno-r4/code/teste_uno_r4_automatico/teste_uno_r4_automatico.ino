@@ -481,6 +481,26 @@ uint8_t lerDht11(float &umidade, float &temperatura) {
 //  TESTES DO SHIELD 9 EM 1
 // =============================================================================
 
+// Liga a DESCARGA do capacitor de amostragem do ADC antes de cada conversão.
+//
+// Por quê: o ADC tem um capacitor interno que guarda a tensão do último
+// pino lido. O LM35 fornece corrente bem, mas quase não consegue ABSORVER
+// corrente. Se o pino lido antes estava alto (o LDR fica perto de 4,5V), o
+// capacitor empurra o A2 para cima e o LM35 não consegue puxá-lo de volta.
+// Medido na placa real (2026-10-03): o multímetro marcava 0,253 V no A2 e o
+// ADC lia 0,77 V (77 °C!) depois de uma leitura do A1, e continuava errado
+// até a placa reiniciar.
+//
+// O RA4M1 tem um recurso para isso: o registrador ADDISCR. Com ADNDIS = 15,
+// o capacitor é descarregado para 0V por 15 ciclos antes de cada conversão.
+// Partindo de 0V, o LM35 só precisa fornecer corrente. Com isso o ADC leu
+// 0,259 V em qualquer ordem de leitura, e o LDR e o potenciômetro não
+// mudaram. O core do Arduino reconfigura o ADC em algumas funções (ex:
+// analogReference()), por isso este ajuste é feito logo antes das leituras.
+void ligarDescargaDoAdc() {
+  R_ADC0->ADDISCR = 0x0F;
+}
+
 // Média de 16 leituras do ADC (10 bits), para reduzir o ruído.
 float lerAnalogicoMedio(uint8_t pino) {
   unsigned long soma = 0;
@@ -582,11 +602,10 @@ void testeShieldAnalogicos(bool dhtValido, float temperaturaDht) {
     resultado("avcc", avccOk ? "OK" : "AVISO", String(avcc, 2) + " V (referência do ADC)");
   }
 
+  ligarDescargaDoAdc();  // sem isso o LM35 lê alto (ver a função)
+
   // LM35: 10 mV por °C. A faixa aceita (10 a 40 °C) é a de uma sala de aula.
   // Fora dela, meça a tensão entre A2 e GND com um multímetro.
-  // O LM35 é lido ANTES do LDR: ler um pino com tensão alta logo antes
-  // (o LDR fica perto de 4V) aumentou a leitura do A2 em ~0,1V na placa
-  // real.
   //
   // map() faz a "regra de três": a leitura de 0 a 1023 vira uma tensão de
   // 0 a AVCC. Como map() só trabalha com números inteiros, a conta é feita

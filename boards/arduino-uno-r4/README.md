@@ -74,11 +74,67 @@ Pinout e esquemático oficiais (Arduino):
 - USB nativa (HID: a placa pode agir como teclado ou mouse)
 - Relógio de tempo real (RTC)
 
+### ADC: leitura errada de sensores que não absorvem corrente
+
+**Achado na placa real (2026-10-03), com o LM35 do Shield 9 em 1.** Vale
+para qualquer sensor cuja saída só *fornece* corrente, como o LM35.
+
+**Sintoma.** O LM35 marcava de 31 °C a 77 °C numa sala a ~25 °C. O
+multímetro no pino A2 mostrava a tensão certa (0,253 V = 25,3 °C), mas o
+`analogRead()` lia outra coisa, dependendo do pino lido **antes**:
+
+| Situação (14 bits, referência AVCC = 4,92 V) | A2 lido pelo ADC | A2 no multímetro |
+|---|---|---|
+| Logo depois de ligar, só o A2 | 302–308 mV (≈31 °C) | — |
+| Depois de **uma** leitura do A1 (LDR, ~4,5 V) | **765–777 mV** (≈77 °C) | 0,253 V |
+| … e depois de 200 leituras do A2, 5 s parado ou outro canal | continua ~771 mV | — |
+| Com a **descarga do capacitor** ligada (abaixo), em qualquer ordem | **259 mV** (≈26 °C) | 0,253 V |
+
+**Causa.** O ADC tem um **capacitor de amostragem** interno (*sample and
+hold*): a cada leitura, ele é ligado ao pino, carrega até a tensão do pino
+e é medido. Ao trocar de pino, ele chega carregado com a tensão do pino
+anterior. Um sensor comum absorve ou fornece corrente e acerta o capacitor
+rapidamente. O **LM35 não**: a saída dele fornece até 10 mA, mas quase não
+consegue **absorver** corrente. Se o capacitor chega com mais tensão que o
+LM35, sobra carga, e o ADC lê alto.
+
+O que ainda **não está explicado**: por que a leitura continua errada por
+segundos, mesmo relendo só o A2, e só volta ao normal quando a placa
+reinicia. É uma observação, não uma conclusão.
+
+**O que NÃO resolveu:** esperar (`delay`), repetir leituras, ler outro
+canal antes, reconfigurar o pino com `pinMode(A2, INPUT)` e ler o LM35
+primeiro (a 1ª leitura já vinha ~50 mV, ou 5 °C, acima do real).
+
+**Solução: descarregar o capacitor antes de cada conversão.** O RA4M1 tem
+um registrador para isso, o `ADDISCR` (*A/D Disconnection Detection
+Control*). Com o campo `ADNDIS` em 15, o capacitor é ligado ao GND por 15
+ciclos de clock do ADC antes de cada conversão. Partindo de 0 V, o LM35 só
+precisa fornecer corrente, que ele faz bem:
+
+```cpp
+// Antes de ler um sensor que não absorve corrente (ex: LM35):
+R_ADC0->ADDISCR = 0x0F;           // descarga por 15 ciclos antes de cada conversão
+int leitura = analogRead(A2);
+```
+
+Com isso, o LDR (A1) e o potenciômetro (A0) leram exatamente igual. O
+ajuste vale até o ADC ser reconfigurado. O core do Arduino reconfigura o
+ADC em funções como `analogReference()` e `analogReadResolution()`, e não
+foi conferido se isso apaga o `ADDISCR`. Por segurança, os sketches deste
+repositório escrevem o registrador logo antes das leituras do LM35.
+
+**E no UNO R3?** O ADC do ATmega328P não tem esse registrador. O efeito
+não foi testado no R3 (os sketches do R3 não mudam). Por isso o código de
+teste do shield tem uma versão por placa.
+
 ### Diferenças para o UNO R3 que afetam os exemplos
 - `Serial` é a USB e `Serial1` são os pinos D0/D1 (no R3, os dois são a
   mesma porta).
 - Alguns sketches de AVR que acessam registradores diretamente (`PORTB`,
   `DDRD`, etc.) não funcionam no RA4M1.
+- Leitura do LM35 (e de outros sensores que não absorvem corrente): ligue
+  a descarga do ADC (seção acima). No R3, o mesmo código lê sem esse ajuste.
 
 ## Ponte USB-serial
 Diferente do UNO R3, o UNO R4 **não tem um chip dedicado de ponte
@@ -182,10 +238,12 @@ usa a porta.
 
 ### Resultado na placa real (2026-10-03, R4M-01 + Shield 9 em 1)
 
-`ok=11 falha=0 aviso=1 pulado=3`. Os pulados são esperados com o shield
-(`dac`, `serial1` sem jumper e a comparação de temperatura). O aviso foi o
-LM35 marcando ~48 °C com o DHT11 em 26 °C. O multímetro mediu 0,47 V no A2, a mesma tensão que o ADC leu: a placa leu certo, e o **LM35 daquele shield está com defeito**. Ver "A confirmar" no
-[README do shield](../../shields/uno-shield-9in1/README.md#a-confirmar-com-o-shield-em-mãos).
+Com o shield trocado e a correção do ADC (ver
+[ADC: leitura errada de sensores que não absorvem corrente](#adc-leitura-errada-de-sensores-que-não-absorvem-corrente)):
+`ok=13 falha=0 aviso=0 pulado=2`. Os pulados são esperados com o shield:
+`dac` (A0 ocupado pelo potenciômetro) e `serial1` (sem jumper). LM35 em
+26,0 °C e DHT11 em 23,0 °C (diferença de 3 °C, dentro da tolerância dos
+dois sensores).
 
 Observações feitas durante o teste:
 

@@ -3,17 +3,22 @@
 Sketch que testa, um a um, os 9 periféricos do shield, com um menu no
 Monitor Serial. Cada teste diz o que deve acontecer e o que observar.
 
-| Arquivo | Descrição |
-|---------|-----------|
-| [`teste_shield_9em1/teste_shield_9em1.ino`](teste_shield_9em1/teste_shield_9em1.ino) | Sketch de teste de todos os periféricos |
+Há **uma versão dedicada para cada placa**, com o mesmo menu. Use a da sua
+placa: a outra não compila (uma trava no início do código avisa).
 
-## Placas suportadas
+| Arquivo | Placa | Uso de memória |
+|---------|-------|----------------|
+| [`teste_shield_9em1_uno_r3/teste_shield_9em1_uno_r3.ino`](teste_shield_9em1_uno_r3/teste_shield_9em1_uno_r3.ino) | [Arduino UNO R3](../../../boards/arduino-uno-r3/README.md) | 51% da flash, 11% da RAM |
+| [`teste_shield_9em1_uno_r4/teste_shield_9em1_uno_r4.ino`](teste_shield_9em1_uno_r4/teste_shield_9em1_uno_r4.ino) | [Arduino UNO R4](../../../boards/arduino-uno-r4/README.md) Minima / WiFi | Minima: 20% da flash, 12% da RAM. WiFi: 25% e 20% |
 
-| Placa | Compila | Uso de memória |
-|-------|---------|----------------|
-| [Arduino UNO R3](../../../boards/arduino-uno-r3/README.md) | ✅ | 50% da flash, 11% da RAM |
-| [Arduino UNO R4 Minima](../../../boards/arduino-uno-r4/README.md) | ✅ | 20% da flash, 12% da RAM |
-| [Arduino UNO R4 WiFi](../../../boards/arduino-uno-r4/README.md) | ✅ | 25% da flash, 20% da RAM |
+A única diferença está na leitura do LM35: no UNO R4, o sketch liga a
+descarga do capacitor de amostragem do ADC antes de cada leitura. Sem isso,
+o LM35 chega a marcar ~50 °C a mais depois que outro pino é lido (ver
+[ADC do UNO R4](../../../boards/arduino-uno-r4/README.md#adc-leitura-errada-de-sensores-que-não-absorvem-corrente)).
+
+No UNO R4 também há os testes **automático** e **interativo** da própria
+placa, que testam o shield quando ele está encaixado (ver
+[Código de teste do UNO R4](../../../boards/arduino-uno-r4/README.md#código-de-teste-e-validação)).
 
 > ⚠️ Não use em placas de 3,3V (ESP32, etc.): o shield é de 5V. Ver
 > [Tensão de operação](../README.md#tensão-de-operação).
@@ -26,7 +31,8 @@ PWM do D11 e o `tone()` do buzzer).
 ## Como usar
 
 1. Encaixe o shield na placa e conecte a placa ao computador pela USB.
-2. Abra `teste_shield_9em1/teste_shield_9em1.ino` na IDE do Arduino.
+2. Abra na IDE do Arduino o sketch da sua placa: `teste_shield_9em1_uno_r3` ou
+   `teste_shield_9em1_uno_r4`.
 3. Em **Ferramentas > Placa**, escolha a placa (UNO R3: "Arduino Uno";
    UNO R4: "Arduino UNO R4 Minima" ou "Arduino UNO R4 WiFi") e a porta COM.
    Para o UNO R4, instale antes o pacote **Arduino UNO R4 Boards** no
@@ -41,13 +47,13 @@ PWM do D11 e o `tone()` do buzzer).
 Pela linha de comando (`arduino-cli`):
 
 ```bash
-arduino-cli compile --fqbn arduino:avr:uno teste_shield_9em1
-arduino-cli upload  --fqbn arduino:avr:uno -p COM3 teste_shield_9em1
+arduino-cli compile --fqbn arduino:avr:uno teste_shield_9em1_uno_r3
+arduino-cli upload  --fqbn arduino:avr:uno -p COM3 teste_shield_9em1_uno_r3
 arduino-cli monitor -p COM3 -c baudrate=9600
 ```
 
-Para o UNO R4, troque o `--fqbn` por `arduino:renesas_uno:minima` ou
-`arduino:renesas_uno:unor4wifi`.
+Para o UNO R4, use a pasta `teste_shield_9em1_uno_r4` e o `--fqbn`
+`arduino:renesas_uno:minima` ou `arduino:renesas_uno:unor4wifi`.
 
 ## Menu de testes
 
@@ -89,7 +95,7 @@ certo de cada constante:
 | DHT11: "não respondeu" | Shield mal encaixado ou sensor com defeito. |
 | DHT11: erro de checksum de vez em quando | Normal em leituras isoladas; seguidos indicam mau contato. |
 | LM35 marca 2–3 °C a mais que o DHT11 | Referência do ADC abaixo de 5V (comum na USB): ajuste `TENSAO_REFERENCIA`. |
-| LM35 marca ~20 °C a mais que o DHT11 (≈45–50 °C) | LM35 com defeito: num shield, o multímetro mediu 0,47 V no A2 com a sala a 26 °C (2026-10-03). Confira com o multímetro (25 °C = 0,25 V): se o multímetro também marcar alto, troque o shield. Ver "A confirmar" no [README do shield](../README.md#a-confirmar-com-o-shield-em-mãos). |
+| UNO R4: LM35 marca 20 a 50 °C a mais que o DHT11 | Particularidade do ADC do R4 com o LM35, já tratada na versão `teste_shield_9em1_uno_r4` (confira se gravou a versão R4). Se o multímetro entre A2 e GND também marcar alto (25 °C = 0,25 V), aí é o LM35 com defeito. Ver "A confirmar" no [README do shield](../README.md#a-confirmar-com-o-shield-em-mãos). |
 | DHT11 mostra 0 °C e 0 % logo depois de ligar | 1ª leitura do sensor vem zerada; o sketch agora a descarta como erro. A próxima leitura já vem certa. |
 | IR: "sinal recebido, mas não é NEC" | O controle usa outro protocolo (Sony, RC5, TV). O receptor está funcionando. |
 

@@ -59,12 +59,19 @@ estrutural.
   completo) e com jumper D0↔D1 (`serial1`); rodar o teste interativo
   respondendo de verdade; medir o pino 5V. Preencher "A confirmar" no
   README do R4. Nenhuma UNO R4 WiFi testada ainda.
-- **LM35 com defeito no Shield 9 em 1 em uso** (2026-10-03): o multímetro
-  mediu 0,47 V no A2 com a sala a 26 °C, o mesmo que o ADC do UNO R4 leu.
-  A leitura do código está certa. Um shield novo foi pedido. Quando ele
-  chegar: rodar o teste automático do R4 (esperado: `lm35` e `temperatura`
-  OK) e conferir se o A2 ainda sobe (~0,1 V) quando é lido logo depois do
-  A1 (possível oscilação do LM35).
+- **ADC do UNO R4 lê errado o LM35** (achado em 2026-10-03, resolvido): o
+  capacitor de amostragem chega carregado do pino anterior e o LM35 não
+  absorve corrente (A2 lido a 0,77 V com 0,253 V no multímetro). Solução:
+  `R_ADC0->ADDISCR = 0x0F` antes das leituras. Documentado no README do R4
+  ("ADC: leitura errada de sensores que não absorvem corrente"). Pendente:
+  (1) entender por que o erro persiste até o reset; (2) conferir se
+  `analogReference()`/`analogReadResolution()` apagam o ADDISCR; (3) testar
+  o LM35 no UNO R3 para ver se o efeito existe lá; (4) reconferir o 1º
+  shield (multímetro marcou 0,47 V no A2 com o ADC parado: provável
+  defeito real) com o sketch corrigido.
+- Sketch do Shield 9 em 1 separado por placa (2026-10-03):
+  `teste_shield_9em1_uno_r3` e `teste_shield_9em1_uno_r4` (só a versão R4
+  liga a descarga do ADC).
 - **UNO R3: teste automático dedicado adiado** (2026-10-03), para quando
   houver um UNO R3 ligado. Criar `boards/arduino-uno-r3/code/teste_uno_r3_automatico`
   no mesmo formato de saída do R4 (sem RTC, DAC, Serial1 nem ID único; dá

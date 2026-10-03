@@ -1,12 +1,13 @@
 /*
  * =============================================================================
- *  Teste dos periféricos do Shield Multifunção 9 em 1 (formato UNO)
+ *  Teste dos periféricos do Shield Multifunção 9 em 1 — versão UNO R3
  * =============================================================================
  *
  *  Autor: Prof. Joao Miguel Roehe (@professorjoaomiguel)
  *  Licença: MIT (SPDX-License-Identifier: MIT) — ver LICENSE-CODE na raiz
  *
- *  Placas suportadas: Arduino UNO R3 e Arduino UNO R4 (Minima e WiFi).
+ *  Placa: Arduino UNO R3 (ATmega328P). Para o UNO R4, use a versão
+ *  ../teste_shield_9em1_uno_r4 (o ADC do R4 precisa de um ajuste no LM35).
  *  NÃO use este shield em placas de 3,3V (ex: ESP32): ele é de 5V e pode
  *  queimar as portas do microcontrolador. Ver ../../README.md.
  *
@@ -34,7 +35,7 @@
  *
  *  COMO USAR
  *  ---------
- *  1. Encaixe o shield na placa UNO R3 ou UNO R4 e ligue a placa na USB.
+ *  1. Encaixe o shield no UNO R3 e ligue a placa na USB.
  *  2. Na IDE do Arduino, escolha a placa certa (Ferramentas > Placa) e a
  *     porta COM, e grave este sketch.
  *  3. Abra o Monitor Serial e configure:
@@ -71,6 +72,10 @@
  *  Repositório: https://github.com/professorjoaomiguel/lab-boards
  * =============================================================================
  */
+
+#if !defined(ARDUINO_ARCH_AVR)
+#error "Esta versão é para o UNO R3. Para o UNO R4, use teste_shield_9em1_uno_r4."
+#endif
 
 // =============================================================================
 //  PINOS
@@ -239,6 +244,11 @@ float lerAnalogicoMedio(uint8_t pino) {
     soma += analogRead(pino);
   }
   return (float)soma / AMOSTRAS;
+}
+
+// Lê o LM35 (média de 16 leituras).
+float lerLm35() {
+  return lerAnalogicoMedio(PINO_LM35);
 }
 
 // Converte uma leitura do ADC (0 a 1023) para tensão em volts.
@@ -809,7 +819,7 @@ void testeLm35() {
   Serial.println(F("Pressione Enter para voltar ao menu."));
 
   while (!usuarioPediuParar()) {
-    float leitura = lerAnalogicoMedio(PINO_LM35);
+    float leitura = lerLm35();
     float volts = adcParaVolts(leitura);
     float celsius = volts * 100.0;
 
@@ -974,7 +984,7 @@ void painelAoVivo() {
     Serial.print(F("\t"));
     Serial.print((int)lerAnalogicoMedio(PINO_LDR));
     Serial.print(F("\t"));
-    Serial.print(adcParaVolts(lerAnalogicoMedio(PINO_LM35)) * 100.0, 1);
+    Serial.print(adcParaVolts(lerLm35()) * 100.0, 1);
     Serial.print(F("\t  "));
     if (dhtValido) {
       Serial.print(dhtTemperatura, 1);

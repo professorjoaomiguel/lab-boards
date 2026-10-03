@@ -83,7 +83,7 @@ PLACAS = {
         "usb": [(0x2341, 0x0043), (0x2341, 0x0001), (0x2A03, 0x0043), (0x1A86, 0x7523)],
         "fqbn": "arduino:avr:uno",
         "sketch_auto": None,
-        "sketch_interativo": "shields/uno-shield-9in1/code/teste_shield_9em1",
+        "sketch_interativo": "shields/uno-shield-9in1/code/teste_shield_9em1_uno_r3",
         "inventario": None,
     },
 }

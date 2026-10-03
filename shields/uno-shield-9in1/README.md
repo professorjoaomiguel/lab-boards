@@ -150,9 +150,9 @@ na ESP32-S3 UNO, a posição AREF está ligada ao reset da placa.
 - Expansão: I2C, serial TTL, D7, D8 e A3
 
 ## Código de teste e validação
-O sketch [`code/teste_shield_9em1`](code/teste_shield_9em1/teste_shield_9em1.ino)
-testa os 9 periféricos por um menu no Monitor Serial (9600 baud, final de
-linha "Nova linha"). Compila no UNO R3 e no UNO R4 (Minima e WiFi) e não
+Os sketches [`code/teste_shield_9em1_uno_r3`](code/teste_shield_9em1_uno_r3/teste_shield_9em1_uno_r3.ino) e [`code/teste_shield_9em1_uno_r4`](code/teste_shield_9em1_uno_r4/teste_shield_9em1_uno_r4.ino) (um por placa)
+testam os 9 periféricos por um menu no Monitor Serial (9600 baud, final de
+linha "Nova linha"). A versão R4 serve para o Minima e o WiFi. Nenhum
 precisa de bibliotecas externas. Instruções, resultado esperado de cada
 teste e problemas comuns: [`code/README.md`](code/README.md).
 
@@ -178,7 +178,7 @@ substitui a medição: clones podem trocar componentes. Confirme com o teste.
 | Botões: pull-up ou pull-down | Teste 3 (nível de repouso) | Pull-down: o exemplo da RoboticX trata o botão apertado como HIGH. O da Keyestudio usa interrupção por borda de descida, que funciona nos dois casos e não confirma nada | ✅ **Pull-up de ≈10 kΩ, ativo em LOW** (multímetro, 2026-10-01; **difere** do exemplo da RoboticX). Falta ver no Teste 3 |
 | LDR: leitura sobe ou desce com mais luz | Teste 6 | **Sobe com a luz** (Keyestudio: "the stronger the light is, the greater the value is") | Multímetro indica que **sobe** (LDR entre 5V e A1). Falta ver no Teste 6 |
 | `VCC` das barras de pinos = 5V | Multímetro | Não indicado | ✅ Ligado ao pino 5V do header (continuidade, 2026-10-01). Falta medir a tensão com o shield ligado |
-| LM35: temperatura coerente | Teste automático do UNO R4; multímetro entre A2 e GND | 10 mV/°C, 0,25 V a 25 °C | ⚠️ **Lê ~0,45–0,49 V (≈45–49 °C) com o DHT11 marcando 26 °C** (UNO R4, 2026-10-03). Ligação conferida visualmente. Com a referência interna de 1,43 V: 0,446 V; com a AVCC (4,78 V): 0,489 V. **Multímetro no A2: 0,47 V**, o mesmo que o ADC lê. A leitura está certa: o **LM35 deste shield está com defeito** (ou não é um LM35). Um shield novo foi pedido. Ponto à parte, a conferir no shield novo: lido logo depois do A1 (LDR), o A2 subiu para ~0,61 V e ficou alto, o que pode ser o LM35 oscilando (o datasheet avisa que ele oscila com carga capacitiva) |
+| LM35: temperatura coerente | Teste automático do UNO R4; multímetro entre A2 e GND | 10 mV/°C, 0,25 V a 25 °C | ✅ **No UNO R4, só com a descarga do ADC ligada** (2026-10-03): sem ela, o ADC lia até 0,77 V com 0,253 V reais no multímetro, porque o LM35 não absorve corrente e o capacitor de amostragem chega carregado do pino anterior. Com a descarga: 26,0 °C, com o DHT11 em 23,0 °C. Ver [ADC do UNO R4](../../boards/arduino-uno-r4/README.md#adc-leitura-errada-de-sensores-que-não-absorvem-corrente). O 1º shield testado mediu **0,47 V no multímetro** (com o ADC parado) e foi trocado: provável defeito real, a reconferir com o sketch corrigido |
 | DHT11: 1ª leitura depois de ligar | Teste automático do UNO R4 | Não indicado | ✅ Vem **zerada** (0 °C, 0 %) e passa na soma de verificação (0+0+0+0 = 0). Os sketches descartam essa leitura (2026-10-03) |
 
 ## Referências
