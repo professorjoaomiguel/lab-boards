@@ -1,2 +1,3 @@
 etiqueta,modelo,id_unico,registrado_em,ultimo_teste,resultado,obs
 R3-01,UNO R3,754373038303511081A2,2026-10-03,2026-10-03,ok=4 falha=1 aviso=0 pulado=0,D3 preso em LOW (porta danificada ou curto): não usar o D3
+R3-02,UNO R3,5573132353635161F0B0,2026-10-03,2026-10-03,ok=5 falha=0 aviso=0 pulado=0,
