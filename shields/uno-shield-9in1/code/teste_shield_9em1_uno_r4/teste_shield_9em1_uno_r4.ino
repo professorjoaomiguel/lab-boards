@@ -92,8 +92,7 @@ const uint8_t PINO_RGB_VERMELHO = 9;
 const uint8_t PINO_RGB_AZUL     = 10;
 const uint8_t PINO_RGB_VERDE    = 11;
 // LEDs de 3 mm: no padrão, D12 é VERMELHO e D13 é AZUL. Mas há variação de
-// montagem (um shield testado veio com as cores trocadas), por isso o nome
-// é o pino, e não a cor.
+// montagem entre lotes, por isso o nome é o pino, e não a cor.
 const uint8_t PINO_LED_D12      = 12;
 const uint8_t PINO_LED_D13      = 13;
 const uint8_t PINO_POT          = A0;
@@ -639,10 +638,12 @@ void testeBotoes() {
 
   Serial.println(F("Agora aperte e solte SW1 e SW2. Cada aperto aparece aqui, e o"));
   Serial.println(F("LED fica aceso enquanto o botão estiver apertado:"));
-  Serial.println(F("SW1 (D2) -> LED do D12   e   SW2 (D3) -> LED do D13."));
+  Serial.println(F("SW1 (D2) -> LED azul (D13)   e   SW2 (D3) -> LED vermelho (D12)."));
+  Serial.println(F("(cores do padrão; se o seu shield veio com as cores trocadas, vale o pino)"));
   Serial.println(F("Envie c para voltar ao menu."));
 
-  const uint8_t leds[2] = {PINO_LED_D12, PINO_LED_D13};
+  // SW1 acende o LED azul e SW2 o vermelho (no padrão: azul = D13, vermelho = D12).
+  const uint8_t leds[2] = {PINO_LED_D13, PINO_LED_D12};
 
   while (!usuarioPediuParar()) {
     for (uint8_t b = 0; b < 2; b++) {
