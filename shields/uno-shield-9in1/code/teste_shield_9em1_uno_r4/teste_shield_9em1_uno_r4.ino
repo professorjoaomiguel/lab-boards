@@ -446,7 +446,10 @@ uint8_t lerDht11(float &umidade, float &temperatura) {
   // O DHT11 responde com a medição ANTERIOR. Na 1ª leitura depois de ligar
   // ainda não há medição, e ele envia 5 bytes zerados, que "passam" na soma
   // de verificação (0+0+0+0 = 0). Visto num UNO R4: tratar como erro.
-  if (dados[0] == 0 && dados[2] == 0 && dados[4] == 0) {
+  // Também já veio 0 % e 0,4 °C (bytes 0, 0, 0, 4, 4), que somam certo mas
+  // são impossíveis: o DHT11 mede de 20 a 90 % de umidade. Por isso,
+  // umidade 0 = leitura inválida.
+  if (dados[0] == 0) {
     return DHT_ERRO_LEITURA;
   }
 
