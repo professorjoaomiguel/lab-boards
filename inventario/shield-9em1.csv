@@ -1,0 +1,6 @@
+etiqueta,etiqueta_colada,dono,como_reconhecer,testado_em,resultado,obs
+S9-01,não,a confirmar,o 1º shield testado em 2026-10-03 (de manhã),2026-10-03,LM35 instável,"LM35: 0,47 V no multímetro de manhã; depois leu certo no R3-01. Demais periféricos OK"
+S9-02,não,a confirmar,serigrafia com o nome de cada pino,2026-10-03,LM35 instável,"LM35 variando de 12 mV a 0,50 V (multímetro) e de 23 a 48 °C (ADC) em R4, R3-01 e R3-02. Demais periféricos OK"
+S9-03,não,a confirmar,,2026-10-03,tudo OK,"LM35 estável (25,2 a 25,3 °C, 2,2 °C abaixo do DHT11) em 3 rodadas no R3-02"
+S9-04,não,a confirmar,,2026-10-03,a confirmar,"No R4: tudo OK, mas LM35 em 20,3 °C (7 °C abaixo do DHT11) e multímetro no A2 = 28 mV, incoerente com o ADC (~203 mV). No R3-02 dentro do case: mau contato no encaixe (leituras inválidas)"
+S9-05,não,a confirmar,,,não testado,

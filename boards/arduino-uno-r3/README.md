@@ -209,8 +209,10 @@ cada placa, que o computador vê sem gravar nada:
 - `python scripts/serial_placa.py listar` → coluna `série=`;
 - na IDE: **Ferramentas > Obter informações da placa** (campo SN).
 
-As placas registradas ficam em [`inventario.csv`](inventario.csv), com as
-mesmas colunas do [inventário do UNO R4](../arduino-uno-r4/README.md#inventário-identificar-cada-placa).
+As placas registradas ficam no inventário do laboratório, separado do
+código de teste: [`inventario/arduino-uno-r3.csv`](../../inventario/arduino-uno-r3.csv)
+(colunas explicadas em [`inventario/README.md`](../../inventario/README.md);
+a coluna `variante` diz se a placa usa o ATmega16U2 ou o CH340).
 A etiqueta física é `R3-01`, `R3-02`... e a chave é o número de série USB.
 Para registrar, **uma placa por vez**:
 `python scripts/serial_placa.py auto --porta COMx --gravar --registrar`.

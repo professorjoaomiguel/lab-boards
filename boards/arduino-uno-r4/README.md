@@ -347,17 +347,12 @@ como **número de série da USB** (`cores/arduino/usb/USB.cpp`, função
 No **UNO R4 WiFi**, o número de série USB é o do ESP32-S3 (a ponte USB), e
 não o do RA4M1. Nele, só o sketch automático mostra o ID (linha `ID_UNICO`).
 
-As placas registradas ficam em [`inventario.csv`](inventario.csv), uma
-linha por placa física:
-
-| Coluna | Conteúdo |
-|--------|----------|
-| `etiqueta` | Etiqueta física colada na placa: `R4M-01`, `R4M-02`... (Minima) e `R4W-01`... (WiFi) |
-| `modelo` | `UNO R4 Minima` ou `UNO R4 WiFi` |
-| `id_unico` | ID único do RA4M1, 32 dígitos hexadecimais (a chave do inventário) |
-| `registrado_em` | Data do registro (AAAA-MM-DD) |
-| `ultimo_teste`, `resultado` | Data e resumo do último teste automático |
-| `obs` | Observações escritas à mão (defeitos, consertos). O script não apaga |
+As placas registradas ficam no inventário do laboratório, separado do
+código de teste: [`inventario/arduino-uno-r4.csv`](../../inventario/arduino-uno-r4.csv),
+uma linha por placa física. As colunas (etiqueta, dono, variante, ID,
+resultado do último teste...) estão explicadas em
+[`inventario/README.md`](../../inventario/README.md). Etiquetas: `R4M-01`,
+`R4M-02`... (Minima) e `R4W-01`... (WiFi).
 
 **Por que a etiqueta é sequencial, e não um pedaço do ID:** o ID tem
 trechos que parecem texto ASCII (ex: `5A323839` = "Z289"), provavelmente

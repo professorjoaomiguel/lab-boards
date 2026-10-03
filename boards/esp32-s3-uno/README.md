@@ -241,14 +241,14 @@ da porta livre (Thonny desconectado, ESPConnect fechado).
 série, e o código que o Windows mostra para ele (`USB\VID_1A86&PID_7523\...`)
 muda conforme a porta USB do computador. O número da porta COM também muda.
 
-**Inventário:** as placas registradas ficam em
-[`inventario.csv`](inventario.csv), uma linha por placa física. A
-**etiqueta** colada na placa são os dois últimos bytes do MAC (ex: `1e:20`).
-Colunas:
+**Inventário:** as placas registradas ficam no inventário do laboratório,
+separado do código: [`inventario/esp32-s3-uno.csv`](../../inventario/esp32-s3-uno.csv),
+uma linha por placa física. A **etiqueta** colada na placa são os dois
+últimos bytes do MAC (ex: `1e:20`). Colunas próprias deste arquivo:
 
 | Coluna | Conteúdo |
 |---|---|
-| `etiqueta` | Dois últimos bytes do MAC, o que vai na etiqueta física |
+| `etiqueta`, `etiqueta_colada`, `dono` | Etiqueta (dois últimos bytes do MAC), se já está colada e de quem é a placa (ver [`inventario/README.md`](../../inventario/README.md)) |
 | `mac` | MAC completo |
 | `unique_id_128` | ID único de 128 bits (hexadecimal, sem espaços) |
 | `chip_rev` | Revisão do chip (`esptool flash-id`) |
