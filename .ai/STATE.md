@@ -102,12 +102,14 @@ estrutural.
 - **Shield usado com o UNO R3-01: SW2 (D3) preso em LOW** (2026-10-03).
   Medir D3↔GND com o shield solto (SW2 solto deveria ser aberto) e, se
   for defeito, consertar ou separar o shield.
-- **Menus do shield (`teste_shield_9em1_uno_r3` e `_uno_r4`) ainda exigem
-  "Nova linha" no Monitor Serial** (2026-10-03, pedido do usuário para
-  depois): aplicar a mesma leitura dos testes do R4 (fim da mensagem no
-  `
-`/`
-` ou após 200 ms sem caracteres).
+- **Menus do shield aceitam qualquer final de linha** (2026-10-03): os
+  pontos de "continuar"/"voltar ao menu" pedem `c` (com "Sem final de
+  linha", o Enter vazio não envia nada). Validado no R3 e no R4. Na mesma
+  rodada: pausa na parte C do teste do RGB (branco); no teste 3, o LED
+  segue o botão na hora (sem esperar o debounce) e um botão em LOW no
+  repouso é avisado; LEDs de 3 mm chamados pelo pino (`PINO_LED_D12`,
+  `PINO_LED_D13`), porque **a cor muda entre versões do shield** (shield do
+  R3-01: D12 azul, D13 vermelho). Pendente: anotar a cor no shield nº 2.
 - Adicionar fotos e diagrama esquemático reais de `boards/esp32-s3-n16r8/`.
 - ESP32-S3 UNO: variante N16R8, PSRAM com `SPIRAM_OCT` e gravação sem
   jumper já confirmadas (2026-09-29). Faltam o LED RGB, a ordem das cores,
