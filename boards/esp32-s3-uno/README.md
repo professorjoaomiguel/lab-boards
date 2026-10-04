@@ -7,6 +7,17 @@ tags: [esp32, esp32-s3, formato-uno, wifi, bluetooth, usb-c, ch340, ws2812, psra
 
 # ESP32-S3 UNO (TZT D1 ESP32-S3 N16R8)
 
+## Resumo rápido
+
+| | |
+|---|---|
+| Tensão lógica | **3,3V** (não tolera 5V, apesar do formato de UNO) |
+| Placa na IDE | **ESP32S3 Dev Module** (pacote esp32); na N16R8: Flash Size 16MB e PSRAM **OPI PSRAM** (FQBN `esp32:esp32:esp32s3:FlashSize=16M,PSRAM=opi`) |
+| Driver USB | CH340 (Windows Update ou [driver da WCH](https://www.wch-ic.com/downloads/CH341SER_EXE.html)) |
+| LED embutido | Não há LED simples: LED RGB endereçável WS2812 no GPIO48 (a confirmar na placa) |
+| Botões | Só **RST**. Não há BOOT: a gravação é automática pelo CH340 |
+| Cuidado nº 1 | Não encaixe shields de 5V, como o Shield 9 em 1: o encaixe é perfeito, mas o 5V queima os GPIOs |
+
 ## Visão geral
 Placa de desenvolvimento com o módulo **ESP32-S3-WROOM-1** montado no
 **formato do Arduino UNO**: mesmo tamanho, mesmos furos de fixação e
@@ -63,9 +74,11 @@ Compatibilidade no repositório:
   **não compatível** (shield de 5V).
 
 ## Fotos
-_Foto própria ainda não adicionada._ Fotos do produto podem ser vistas nos
-links de **Referências** (anúncio do vendedor). Quando houver foto
-própria, colocar em `imagens/` com texto alternativo descritivo.
+_Ainda sem foto própria._ Previstas, na pasta `imagens/`:
+`vista-de-cima.jpg` (a placa inteira, de cima), `modulo.jpg` (a gravação
+na tampa do módulo: N16R8 ou N8R2) e `serigrafia.jpg` (os nomes dos pinos
+`IOxx`). Fotos do produto estão nos links de **Referências** (anúncio do
+vendedor). A pinagem está em texto logo abaixo.
 
 ## Diagrama esquemático / Pinout
 O fabricante não publica o esquemático. A pinagem abaixo foi levantada da
@@ -211,54 +224,6 @@ e sem gravar nenhum programa. É o jeito mais rápido de saber qual variante
 > Erase, Format). Para só identificar o módulo, use apenas a aba
 > **Device Info**. Apagar a flash remove o programa ou o MicroPython
 > gravado na placa.
-
-### Identificar cada placa (MAC e inventário)
-
-Placas do mesmo modelo são iguais por fora, mas cada chip ESP32-S3
-sai de fábrica com identificadores próprios, gravados em **eFuse** (uma
-memória que só pode ser escrita uma vez). Eles **não mudam** ao apagar a
-flash ou regravar o firmware, por isso servem para saber qual placa é qual.
-
-| Identificador | Como ler | Observação |
-|---|---|---|
-| **Endereço MAC** (6 bytes) | ESPConnect, aba **Device Info**; ou no MicroPython (abaixo); ou `esptool --port COM6 read-mac` | Único por chip. É a chave do inventário. |
-| **ID único de 128 bits** | `espefuse --chip esp32s3 --port COM6 summary`, campo `OPTIONAL_UNIQUE_ID` | Registro complementar. É opcional e pode vir zerado em outros lotes. |
-
-No Shell do Thonny, com o MicroPython gravado:
-
-```python
-import machine, binascii
-binascii.hexlify(machine.unique_id(), ':')   # ex: b'e0:72:a1:d4:1e:20'
-```
-
-No ESP32-S3, `machine.unique_id()` devolve o próprio MAC. O `esptool` e o
-`espefuse` que vêm com o Thonny podem ser chamados com
-`python -m esptool` e `python -m espefuse`, usando o `python.exe` da pasta do
-Thonny. Os dois só **leem** as informações e não apagam nada, mas precisam
-da porta livre (Thonny desconectado, ESPConnect fechado).
-
-**O que não serve para identificar a placa:** o CH340 não tem número de
-série, e o código que o Windows mostra para ele (`USB\VID_1A86&PID_7523\...`)
-muda conforme a porta USB do computador. O número da porta COM também muda.
-
-**Inventário:** as placas registradas ficam no inventário do laboratório,
-separado do código: [`inventario/esp32-s3-uno.csv`](../../inventario/esp32-s3-uno.csv),
-uma linha por placa física. A **etiqueta** colada na placa são os dois
-últimos bytes do MAC (ex: `1e:20`). Colunas próprias deste arquivo:
-
-| Coluna | Conteúdo |
-|---|---|
-| `etiqueta`, `etiqueta_colada`, `dono` | Etiqueta (dois últimos bytes do MAC), se já está colada e de quem é a placa (ver [`inventario/README.md`](../../inventario/README.md)) |
-| `mac` | MAC completo |
-| `unique_id_128` | ID único de 128 bits (hexadecimal, sem espaços) |
-| `chip_rev` | Revisão do chip (`esptool flash-id`) |
-| `flash_mb`, `psram_mb`, `psram_modo` | Tamanho da flash, da PSRAM e modo da PSRAM (`octal` / `quad` / `nenhuma`) |
-| `firmware` | Último firmware conhecido na placa, quando conferido |
-| `registrado_em` | Data do registro (AAAA-MM-DD) |
-| `obs` | Observações (defeitos, testes feitos) |
-
-O inventário não guarda dados pessoais: quem está com cada placa não entra
-neste repositório público.
 
 ### Qual configuração usar depende do módulo
 
@@ -447,6 +412,60 @@ MicroPython teve só a sintaxe verificada, e ainda não rodou numa placa.
 - Página na Cirkit Designer (genérica; a tabela de pinos de lá **não**
   corresponde a esta placa):
   https://docs.cirkitdesigner.com/component/fa2bcd40-a306-42c5-87b3-b984d2ca532d/esp32-s3-uno
+
+## Para o professor / histórico de testes
+
+Esta parte é do professor: como identificar cada unidade e registrá-la no
+inventário do laboratório. Para usar a placa em aula, as seções acima
+bastam.
+
+### Identificar cada placa (MAC e inventário)
+
+Placas do mesmo modelo são iguais por fora, mas cada chip ESP32-S3
+sai de fábrica com identificadores próprios, gravados em **eFuse** (uma
+memória que só pode ser escrita uma vez). Eles **não mudam** ao apagar a
+flash ou regravar o firmware, por isso servem para saber qual placa é qual.
+
+| Identificador | Como ler | Observação |
+|---|---|---|
+| **Endereço MAC** (6 bytes) | ESPConnect, aba **Device Info**; ou no MicroPython (abaixo); ou `esptool --port COM6 read-mac` | Único por chip. É a chave do inventário. |
+| **ID único de 128 bits** | `espefuse --chip esp32s3 --port COM6 summary`, campo `OPTIONAL_UNIQUE_ID` | Registro complementar. É opcional e pode vir zerado em outros lotes. |
+
+No Shell do Thonny, com o MicroPython gravado:
+
+```python
+import machine, binascii
+binascii.hexlify(machine.unique_id(), ':')   # ex: b'e0:72:a1:d4:1e:20'
+```
+
+No ESP32-S3, `machine.unique_id()` devolve o próprio MAC. O `esptool` e o
+`espefuse` que vêm com o Thonny podem ser chamados com
+`python -m esptool` e `python -m espefuse`, usando o `python.exe` da pasta do
+Thonny. Os dois só **leem** as informações e não apagam nada, mas precisam
+da porta livre (Thonny desconectado, ESPConnect fechado).
+
+**O que não serve para identificar a placa:** o CH340 não tem número de
+série, e o código que o Windows mostra para ele (`USB\VID_1A86&PID_7523\...`)
+muda conforme a porta USB do computador. O número da porta COM também muda.
+
+**Inventário:** as placas registradas ficam no inventário do laboratório,
+separado do código: [`inventario/esp32-s3-uno.csv`](../../inventario/esp32-s3-uno.csv),
+uma linha por placa física. A **etiqueta** colada na placa são os dois
+últimos bytes do MAC (ex: `1e:20`). Colunas próprias deste arquivo:
+
+| Coluna | Conteúdo |
+|---|---|
+| `etiqueta`, `etiqueta_colada`, `dono` | Etiqueta (dois últimos bytes do MAC), se já está colada e de quem é a placa (ver [`inventario/README.md`](../../inventario/README.md)) |
+| `mac` | MAC completo |
+| `unique_id_128` | ID único de 128 bits (hexadecimal, sem espaços) |
+| `chip_rev` | Revisão do chip (`esptool flash-id`) |
+| `flash_mb`, `psram_mb`, `psram_modo` | Tamanho da flash, da PSRAM e modo da PSRAM (`octal` / `quad` / `nenhuma`) |
+| `firmware` | Último firmware conhecido na placa, quando conferido |
+| `registrado_em` | Data do registro (AAAA-MM-DD) |
+| `obs` | Observações (defeitos, testes feitos) |
+
+O inventário não guarda dados pessoais: quem está com cada placa não entra
+neste repositório público.
 
 ---
 
