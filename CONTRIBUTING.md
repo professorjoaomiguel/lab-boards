@@ -44,7 +44,7 @@ Antes de cada commit:
 
 ```
 python scripts/verificar_state.py
-python -m pytest -q scripts
+python -m pytest -q tests
 ```
 
 Os testes conferem os geradores, o STATE, o glossário e todos os links

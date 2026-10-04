@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 """Testes de scripts/verificar_site.py (sem internet: o site é falso).
 
-Rodar com: python -m unittest scripts/test_verificar_site.py -v
+Rodar com: python -m unittest tests/test_verificar_site.py -v
 """
 
 import contextlib
@@ -11,7 +11,7 @@ import os
 import sys
 import unittest
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts"))
 
 import verificar_site as vsite  # noqa: E402
 

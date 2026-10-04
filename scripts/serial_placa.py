@@ -68,7 +68,7 @@ COMO USAR
     --gravar, o arduino-cli no PATH com o pacote da placa instalado.
 
 TESTES
-    python -m unittest scripts/test_serial_placa.py -v
+    python -m unittest tests/test_serial_placa.py -v
 """
 
 import argparse

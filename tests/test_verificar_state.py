@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 """Testes de scripts/verificar_state.py.
 
-Rodar com: python -m unittest scripts/test_verificar_state.py -v
+Rodar com: python -m unittest tests/test_verificar_state.py -v
 """
 
 import os
@@ -11,7 +11,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts"))
 
 import verificar_state as vs  # noqa: E402
 

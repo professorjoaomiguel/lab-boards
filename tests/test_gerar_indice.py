@@ -5,7 +5,7 @@
 COMO RODAR
     Na raiz do repositório:
 
-        python -m unittest scripts/test_gerar_indice.py -v
+        python -m unittest tests/test_gerar_indice.py -v
 
 O QUE É TESTADO
     - Leitura do front matter (titulo, tipo, tags, comentários no fim da
@@ -25,7 +25,7 @@ import unittest
 from pathlib import Path
 
 # Permite importar gerar_indice.py, que está na mesma pasta deste arquivo.
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 import gerar_indice as gi
 
 

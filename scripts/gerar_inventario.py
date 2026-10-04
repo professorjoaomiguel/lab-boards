@@ -34,7 +34,7 @@ SITUAÇÃO DE CADA UNIDADE
       - outro texto           -> "atenção" (ex: "LM35 instável")
 
 TESTES
-    python -m unittest scripts/test_gerar_inventario.py -v
+    python -m unittest tests/test_gerar_inventario.py -v
 """
 import argparse
 import csv

@@ -223,6 +223,8 @@ trabalho do zero lendo só este arquivo e os links dele.
 
 ## Resolvido (últimos ~30 dias)
 
+- 2026-10-04: testes movidos de `scripts/` para `tests/` (sugestão do
+  usuário); `scripts/` fica só com as ferramentas.
 - 2026-10-04: `scripts/verificar_site.py` (varredura do site publicado:
   404, âncora inexistente, `.md` cru), com testes sem internet.
 - 2026-10-04: GitHub Pages no ar em
@@ -248,7 +250,7 @@ trabalho do zero lendo só este arquivo e os links dele.
 - 2026-10-04: `docs/superpowers/` saiu do repositório (`git rm --cached`);
   regra do handoff do `/remember` movida para o CONVENTIONS.
 - 2026-10-04: [`GLOSSARIO.md`](../GLOSSARIO.md) com ~50 termos, regra no
-  CONVENTIONS e `scripts/test_glossario.py` (ordem, âncoras e links de
+  CONVENTIONS e `tests/test_glossario.py` (ordem, âncoras e links de
   todos os `.md`); 1ª ocorrência dos termos linkada nos 6 READMEs.
 - 2026-10-04: `scripts/verificar_state.py` + teste; handoff do
   `/remember` passa a apontar para o STATE (`.claude/CLAUDE.md`).

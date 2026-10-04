@@ -26,7 +26,7 @@ COMO USAR
     (_layouts/, _includes/) ou o _config.yml.
 
 TESTES
-    python -m unittest scripts/test_verificar_site.py -v   (sem internet)
+    python -m unittest tests/test_verificar_site.py -v   (sem internet)
 """
 
 import argparse

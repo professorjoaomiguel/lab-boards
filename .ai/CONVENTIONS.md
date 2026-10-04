@@ -23,7 +23,7 @@ E **três modos de acesso**, que precisam funcionar igualmente bem:
   `_layouts/default.html`, configuração em `_config.yml`). Por isso, **nenhum
   `.md` pode conter chave dupla nem chave seguida de porcentagem** (as
   marcas do Liquid, a linguagem de modelos do Jekyll); o teste
-  `scripts/test_glossario.py` confere. Os links relativos para `.md`
+  `tests/test_glossario.py` confere. Os links relativos para `.md`
   continuam funcionando, e a pasta `.ai/` é publicada pelo `include` do
   `_config.yml`. **Não ponha front matter no `README.md` nem no
   `CONTRIBUTING.md` da raiz**: o GitHub mostra como linhas horizontais. No
@@ -90,6 +90,8 @@ para agentes que **constroem** o repositório.
   tamanho do `.ai/STATE.md`.
 - `scripts/verificar_site.py` — confere os links do site publicado (GitHub
   Pages); precisa de internet, não roda na suíte.
+- `tests/` — os testes dos scripts e do repositório (`test_*.py`). Rodar
+  todos: `python -m pytest -q tests`.
 - `scripts/serial_placa.py` — lista as placas ligadas, roda os sketches de
   teste pela serial e registra placas em `inventario/` (`--help`).
 - `docs/` — material local do mantenedor (histórico de design, pesquisa).
@@ -164,7 +166,7 @@ alfabética, um título `###` por termo (o título vira a âncora do link).
   medidas) ficam no README dela. Não copie dados de README para cá.
 - Em cada README, a **primeira** ocorrência de um termo do glossário leva
   o link (`[ADC](../../GLOSSARIO.md#adc)`); as seguintes, não.
-- `scripts/test_glossario.py` confere a ordem alfabética, as âncoras
+- `tests/test_glossario.py` confere a ordem alfabética, as âncoras
   repetidas e os links de todos os `.md` (inclusive os que apontam para o
   glossário).
 
@@ -261,14 +263,17 @@ Todo script deve ter:
 
 ## Testes
 
-`scripts/gerar_indice.py` tem testes em `scripts/test_gerar_indice.py`,
-rodados com `python -m unittest scripts/test_gerar_indice.py -v`.
-`scripts/gerar_inventario.py` tem testes em `scripts/test_gerar_inventario.py`.
+Os testes ficam em `tests/`, um arquivo `test_<script>.py` por script, e
+importam os scripts de `scripts/`. Rodar todos: `python -m pytest -q tests`.
+
+`scripts/gerar_indice.py` tem testes em `tests/test_gerar_indice.py`,
+rodados com `python -m unittest tests/test_gerar_indice.py -v`.
+`scripts/gerar_inventario.py` tem testes em `tests/test_gerar_inventario.py`.
 `scripts/serial_placa.py` (testes de placa pela serial e inventário) tem
-testes em `scripts/test_serial_placa.py`, que não precisam de placa ligada.
+testes em `tests/test_serial_placa.py`, que não precisam de placa ligada.
 `scripts/verificar_state.py` confere o `.ai/STATE.md` (links e títulos de
 destino, idade da seção "Resolvido", limite de linhas); o teste
-`scripts/test_verificar_state.py` roda essa checagem no STATE real, então
+`tests/test_verificar_state.py` roda essa checagem no STATE real, então
 um link quebrado no STATE faz a suíte falhar. Qualquer
 mudança no script deve manter esses testes passando e seguir TDD (teste
 antes da implementação).

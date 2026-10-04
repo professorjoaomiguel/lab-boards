@@ -22,6 +22,7 @@ include:
 # _includes/markdown-da-raiz.html, que ajusta os links .md para o site.
 exclude:
   - .pytest_cache/
+  - tests/
 
 defaults:
   - scope:

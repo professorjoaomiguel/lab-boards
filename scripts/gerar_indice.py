@@ -31,7 +31,7 @@ FORMATO ESPERADO DO FRONT MATTER
     - Comentários `# ...` no fim da linha são ignorados.
 
 TESTES
-    python -m unittest scripts/test_gerar_indice.py -v
+    python -m unittest tests/test_gerar_indice.py -v
 """
 import argparse
 from pathlib import Path

@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 """Testes de scripts/serial_placa.py (sem precisar de placa ligada).
 
-Rodar com: python -m unittest scripts/test_serial_placa.py -v
+Rodar com: python -m unittest tests/test_serial_placa.py -v
 """
 
 import contextlib
@@ -13,7 +13,7 @@ import sys
 import tempfile
 import unittest
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts"))
 
 import serial_placa as sp  # noqa: E402
 
