@@ -1,3 +1,4 @@
 etiqueta,etiqueta_colada,modelo,variante,dono,id_unico,registrado_em,ultimo_teste,resultado,obs
 R4M-01,não,UNO R4 Minima,,professor,32151A295A323839538E33354B573459,2026-10-03,2026-10-03,ok=13 falha=0 aviso=0 pulado=2,
 R4M-02,não,UNO R4 Minima,,professor,32150D2C5A323839D01F33354B573459,2026-10-04,2026-10-04,ok=7 falha=0 aviso=0 pulado=1,
+R4M-03,não,UNO R4 Minima,,professor,321533235A323839AA2F33354B573459,2026-10-04,2026-10-04,ok=7 falha=0 aviso=0 pulado=1,
