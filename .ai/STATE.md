@@ -223,6 +223,8 @@ trabalho do zero lendo só este arquivo e os links dele.
 
 ## Resolvido (últimos ~30 dias)
 
+- 2026-10-04: `scripts/verificar_site.py` (varredura do site publicado:
+  404, âncora inexistente, `.md` cru), com testes sem internet.
 - 2026-10-04: GitHub Pages no ar em
   `https://professorjoaomiguel.github.io/lab-boards/`, com o relatório do
   inventário em `inventario/relatorio.html`; descrição, homepage e tópicos

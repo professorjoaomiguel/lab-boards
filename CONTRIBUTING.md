@@ -33,6 +33,10 @@ está no [`.ai/STATE.md`](.ai/STATE.md).
   dos CSVs (rodar sempre que um CSV mudar).
 - `scripts/verificar_state.py`: confere links, a seção "Resolvido" e o
   tamanho do `.ai/STATE.md`.
+- `scripts/verificar_site.py`: percorre o site publicado no GitHub Pages e
+  aponta página que não abre, âncora inexistente e link para `.md` cru.
+  Rode depois do build do Pages quando mudar o README, o CONTRIBUTING, o
+  layout ou o `_config.yml` (os testes só conferem os links no GitHub).
 
 ## Testes
 

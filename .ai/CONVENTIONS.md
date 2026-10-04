@@ -88,6 +88,8 @@ para agentes que **constroem** o repositório.
   dos CSVs do inventário (rodar sempre que um CSV mudar).
 - `scripts/verificar_state.py` — confere links, a seção "Resolvido" e o
   tamanho do `.ai/STATE.md`.
+- `scripts/verificar_site.py` — confere os links do site publicado (GitHub
+  Pages); precisa de internet, não roda na suíte.
 - `scripts/serial_placa.py` — lista as placas ligadas, roda os sketches de
   teste pela serial e registra placas em `inventario/` (`--help`).
 - `docs/` — material local do mantenedor (histórico de design, pesquisa).
