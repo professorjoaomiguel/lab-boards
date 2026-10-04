@@ -26,6 +26,12 @@ está no [`.ai/STATE.md`](.ai/STATE.md).
 
 ## Ferramentas do professor
 
+- `.claude/skills/inventariar-placas/SKILL.md`: a rotina de testar e
+  registrar placas, uma por vez (gravar o teste, conferir o resultado,
+  dono, texto da etiqueta, relatório e commits). É uma skill de projeto
+  do Claude Code, mas é um texto comum: qualquer pessoa ou agente pode
+  seguir.
+  Se a rotina mudar, atualize a skill junto.
 - `scripts/serial_placa.py`: lista as placas ligadas, roda os sketches de
   teste pela serial e registra as unidades em [`inventario/`](inventario/README.md)
   (`--help`).

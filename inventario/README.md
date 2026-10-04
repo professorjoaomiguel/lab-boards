@@ -57,6 +57,11 @@ ESP32-S3 UNO; `como_reconhecer` nos shields).
 
 ## Como registrar
 
+A rotina completa (preparar, testar uma placa por vez, conferir o
+resultado, texto da etiqueta, relatório e commits) está em
+`.claude/skills/inventariar-placas/SKILL.md`. Os comandos básicos estão
+abaixo.
+
 - **UNO R4 e UNO R3 com ATmega16U2:** com a placa sozinha conectada, o
   teste da placa registra sozinho (uma placa por vez):
 

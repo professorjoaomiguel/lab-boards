@@ -218,6 +218,11 @@ trabalho do zero lendo só este arquivo e os links dele.
 
 ## Resolvido (últimos ~30 dias)
 
+- 2026-10-04: skill de projeto `.claude/skills/inventariar-placas/SKILL.md`
+  com a rotina de testar e registrar placas, tirada da rodada das 4 UNO R4
+  (inclui "suspeitar do teste" e o texto da etiqueta). Citada no
+  `AGENTS.md`, no `CONTRIBUTING.md`, na `.ai/CONVENTIONS.md` e no
+  `inventario/README.md`.
 - 2026-10-04: UNO R4 Minima R4M-01 a R4M-04 (professor) registradas e
   testadas com o sketch v6: ok=7 nas 4 (`serial1` pulado, sem jumper). O
   sketch v4 tirou A4/A5 da checagem de pinos ocupados (pulava o GPIO em

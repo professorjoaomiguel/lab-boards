@@ -94,6 +94,10 @@ para agentes que **constroem** o repositório.
   todos: `python -m pytest -q tests`.
 - `scripts/serial_placa.py` — lista as placas ligadas, roda os sketches de
   teste pela serial e registra placas em `inventario/` (`--help`).
+- `.claude/skills/` — skills de projeto do Claude Code (versionadas).
+  `inventariar-placas/SKILL.md`: rotina de testar e registrar as
+  placas do inventário. Quando mudar o `serial_placa.py`, os sketches de
+  teste ou as colunas do inventário, confira se a skill continua certa.
 - `docs/` — material local do mantenedor (histórico de design, pesquisa).
   **Não é publicado:** está no `.gitignore`.
 

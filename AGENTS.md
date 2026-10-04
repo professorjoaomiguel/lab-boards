@@ -42,6 +42,11 @@ resolva-os a partir da pasta do arquivo atual e monte a URL bruta acima.
    culpar o código por um defeito, veja se a unidade já tem algo anotado
    no inventário. A manutenção do repositório está no
    [`CONTRIBUTING.md`](CONTRIBUTING.md).
+7. **Testar e registrar placas físicas** (o professor liga uma placa e
+   pede para testar, registrar ou etiquetar): siga a rotina em
+   `.claude/skills/inventariar-placas/SKILL.md`. No Claude Code ela é
+   uma skill de projeto e carrega sozinha; outro agente pode ler o arquivo
+   e seguir os passos.
 
 ## Regras ao usar este conteúdo
 
