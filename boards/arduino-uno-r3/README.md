@@ -9,7 +9,7 @@ tags: [arduino, uno, uno-r3, avr, atmega328p, usb-b, 5v]
 
 ## Resumo rápido
 
-| | |
+| Característica | Valor |
 |---|---|
 | Tensão lógica | **5V** |
 | Placa na IDE | **Arduino Uno** (pacote Arduino AVR Boards; FQBN `arduino:avr:uno`) |
@@ -26,7 +26,7 @@ introduzir entradas/saídas digitais, leitura analógica, [PWM](../../GLOSSARIO.
 serial.
 
 ## Tensão de operação
-| | |
+| Característica | Valor |
 |---|---|
 | Tensão lógica dos pinos | **5V** |
 | Alimentação | USB-B 5V, ou Vin/conector P4 de 7–12V (recomendado) |

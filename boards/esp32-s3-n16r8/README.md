@@ -9,7 +9,7 @@ tags: [esp32, esp32-s3, wifi, bluetooth, devkit, usb-c, 3v3]
 
 ## Resumo rápido
 
-| | |
+| Característica | Valor |
 |---|---|
 | Tensão lógica | **3,3V** (não tolera 5V) |
 | Placa na IDE | **a confirmar** (o produto de referência ainda não foi definido); para o módulo N16R8, as opções de flash e PSRAM estão em [Como programar](#como-programar) |
@@ -26,7 +26,7 @@ processamento de imagem, buffers de tela e projetos com Wi-Fi/Bluetooth
 simultâneos.
 
 ## Tensão de operação
-| | |
+| Característica | Valor |
 |---|---|
 | Tensão lógica dos pinos | **3,3V** |
 | Alimentação | USB-C 5V (regulador interno para 3,3V) |

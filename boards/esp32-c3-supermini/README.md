@@ -9,7 +9,7 @@ tags: [esp32, esp32-c3, supermini, risc-v, wifi, bluetooth, usb-c, usb-nativo, m
 
 ## Resumo rápido
 
-| | |
+| Característica | Valor |
 |---|---|
 | Tensão lógica | **3,3V** (não tolera 5V) |
 | Placa na IDE | **Nologo ESP32C3 Super Mini** (pacote esp32; FQBN `esp32:esp32:nologo_esp32c3_super_mini`), com USB CDC On Boot **Enabled** |
@@ -34,7 +34,7 @@ pinagem é **diferente**. Exemplos e tutoriais do XIAO não funcionam
 sem ajuste. Veja a comparação na seção **Diagrama esquemático / Pinout**.
 
 ## Tensão de operação
-| | |
+| Característica | Valor |
 |---|---|
 | Tensão lógica dos pinos | **3,3V** |
 | Alimentação | USB-C 5V, ou 5V no pino **5V**, ou 3,3V no pino **3.3** |

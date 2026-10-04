@@ -9,7 +9,7 @@ tags: [tag1, tag2, 5v]
 
 ## Resumo rápido
 
-| | |
+| Característica | Valor |
 |---|---|
 | Tensão lógica | 5V ou 3,3V |
 | Placa na IDE | nome no menu Ferramentas > Placa (FQBN `pacote:arquitetura:placa`) |
@@ -24,7 +24,7 @@ Só dados que este README confirma; o que falta, escreva "a confirmar".
 Breve descrição: o que é, para que serve, contexto de uso em aula.
 
 ## Tensão de operação
-| | |
+| Característica | Valor |
 |---|---|
 | Tensão lógica dos pinos | 5V ou 3,3V |
 | Alimentação | ex: USB 5V, Vin 7–12V |

@@ -9,7 +9,7 @@ tags: [esp32, esp32-s3, formato-uno, wifi, bluetooth, usb-c, ch340, ws2812, psra
 
 ## Resumo rápido
 
-| | |
+| Característica | Valor |
 |---|---|
 | Tensão lógica | **3,3V** (não tolera 5V, apesar do formato de UNO) |
 | Placa na IDE | **ESP32S3 Dev Module** (pacote esp32); na N16R8: Flash Size 16MB e PSRAM **OPI PSRAM** (FQBN `esp32:esp32:esp32s3:FlashSize=16M,PSRAM=opi`) |
@@ -43,7 +43,7 @@ Não confundir com o [ESP32-S3 N16R8 DevKit](../esp32-s3-n16r8/README.md),
 que é a placa estreita, de encaixar na protoboard.
 
 ## Tensão de operação
-| | |
+| Característica | Valor |
 |---|---|
 | Tensão lógica dos pinos | **3,3V** |
 | Alimentação | USB-C 5V, ou conector DC de **5 a 18V** (segundo o fabricante), ou pino [VIN](../../GLOSSARIO.md#vin) |

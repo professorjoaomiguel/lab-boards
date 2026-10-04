@@ -9,7 +9,7 @@ tags: [arduino, uno, uno-r3, uno-r4, 5v, dht11, lm35, ldr, infravermelho, buzzer
 
 ## Resumo rápido
 
-| | |
+| Característica | Valor |
 |---|---|
 | Tensão lógica | **5V**: só no Arduino UNO R3 ou R4 |
 | Placa na IDE | A da placa embaixo dele ([UNO R3](../../boards/arduino-uno-r3/README.md#como-programar) ou [UNO R4](../../boards/arduino-uno-r4/README.md#como-programar)) |
@@ -36,7 +36,7 @@ genericamente é um clone dele, com o mesmo layout e a mesma pinagem, por
 isso a [documentação da Keyestudio](https://wiki.keyestudio.com/Ks0183_keyestudio_Multi-purpose_Shield_V1) vale para ele.
 
 ## Tensão de operação
-| | |
+| Característica | Valor |
 |---|---|
 | Tensão lógica | **5V** |
 | Alimentação | pino 5V do header da placa, o que fica ao lado do 3,3V (não tem alimentação própria). ✅ Medido |

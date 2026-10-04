@@ -9,7 +9,7 @@ tags: [arduino, uno, uno-r4, renesas, ra4m1, usb-c, wifi, bluetooth, 5v]
 
 ## Resumo rápido
 
-| | |
+| Característica | Valor |
 |---|---|
 | Tensão lógica | **5V**, mas só **8 mA por pino** |
 | Placa na IDE | **Arduino UNO R4 Minima** ou **Arduino UNO R4 WiFi** (pacote Arduino UNO R4 Boards; FQBN `arduino:renesas_uno:minima` ou `arduino:renesas_uno:unor4wifi`) |
@@ -36,7 +36,7 @@ Existem duas versões:
 | Conector SWD/JTAG | Sim | — |
 
 ## Tensão de operação
-| | |
+| Característica | Valor |
 |---|---|
 | Tensão lógica dos pinos | **5V** |
 | Alimentação | USB-C 5V, ou Vin/conector P4 de 6–24V |
