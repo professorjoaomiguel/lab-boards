@@ -80,5 +80,19 @@ class TestLinksDoRepositorio(unittest.TestCase):
         self.assertEqual(problemas, [])
 
 
+class TestPages(unittest.TestCase):
+    """O GitHub Pages passa os .md pelo Liquid: `{{` e `{%` quebram a página."""
+
+    def test_nenhum_md_tem_sintaxe_liquid(self):
+        com_liquid = [str(a.relative_to(RAIZ)) for a in arquivos_md_do_repositorio()
+                      if "{{" in a.read_text(encoding="utf-8")
+                      or "{%" in a.read_text(encoding="utf-8")]
+        self.assertEqual(com_liquid, [])
+
+    def test_pasta_ai_e_publicada(self):
+        config = (RAIZ / "_config.yml").read_text(encoding="utf-8")
+        self.assertIn("include:\n  - .ai", config)
+
+
 if __name__ == "__main__":
     unittest.main()

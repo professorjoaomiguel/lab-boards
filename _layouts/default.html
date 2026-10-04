@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="{{ site.lang | default: 'pt-BR' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% assign titulo_pagina = page.title | default: page.titulo %}
+  <title>{% if titulo_pagina and titulo_pagina != site.title %}{{ titulo_pagina }} · {% endif %}{{ site.title }}</title>
+  <meta name="description" content="{{ site.description | strip }}">
+  <meta name="author" content="{{ site.author }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Mesma identidade do site do professor: Outfit, slate/indigo, modo escuro automático. */
+    :root {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --accent: #4f46e5;
+      --accent-light: #e0e7ff;
+      --border: #e2e8f0;
+      --code-bg: #f1f5f9;
+      --font: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      color-scheme: light;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-primary: #090d16;
+        --bg-secondary: #111827;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --accent: #818cf8;
+        --accent-light: #1e1b4b;
+        --border: #1f2937;
+        --code-bg: #1e293b;
+        color-scheme: dark;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font);
+      font-size: 17px;
+      line-height: 1.65;
+    }
+    a { color: var(--accent); text-underline-offset: 2px; }
+    .topo {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+    }
+    .topo-interno, main, .rodape-interno {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+    .topo-interno {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px 20px;
+      padding-top: 12px;
+      padding-bottom: 12px;
+    }
+    .marca { font-weight: 700; font-size: 1.15rem; color: var(--text-primary); text-decoration: none; }
+    .topo nav { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: .95rem; }
+    .topo nav a { text-decoration: none; }
+    .voltar { margin-left: auto; font-size: .9rem; text-decoration: none; color: var(--text-secondary); }
+    main { padding-top: 24px; padding-bottom: 48px; }
+    h1, h2, h3, h4 { line-height: 1.25; margin: 1.6em 0 .5em; }
+    h1 { font-size: 2rem; margin-top: .4em; }
+    h2 { font-size: 1.45rem; padding-bottom: .25em; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.15rem; }
+    code {
+      font-family: var(--mono);
+      font-size: .88em;
+      background: var(--code-bg);
+      padding: .1em .35em;
+      border-radius: 4px;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      overflow-x: auto;
+      line-height: 1.45;
+    }
+    pre code { background: none; padding: 0; font-size: .85em; }
+    table {
+      display: block;
+      max-width: 100%;
+      overflow-x: auto;
+      border-collapse: collapse;
+      margin: 1em 0;
+      font-size: .93rem;
+    }
+    th, td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; vertical-align: top; }
+    th { background: var(--accent-light); }
+    tr:nth-child(even) td { background: var(--bg-secondary); }
+    blockquote {
+      margin: 1em 0;
+      padding: .6em 1em;
+      border-left: 4px solid var(--accent);
+      background: var(--bg-secondary);
+      border-radius: 0 8px 8px 0;
+      color: var(--text-primary);
+    }
+    blockquote p { margin: .4em 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; }
+    hr { border: 0; border-top: 1px solid var(--border); margin: 2em 0; }
+    .rodape {
+      border-top: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      font-size: .88rem;
+    }
+    .rodape-interno { padding-top: 16px; padding-bottom: 24px; }
+  </style>
+</head>
+<body>
+  <header class="topo">
+    <div class="topo-interno">
+      <a class="marca" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+      <nav aria-label="Navegação principal">
+        <a href="{{ '/INDEX.html' | relative_url }}">Placas</a>
+        <a href="{{ '/IDENTIFICAR.html' | relative_url }}">Que placa é essa?</a>
+        <a href="{{ '/GLOSSARIO.html' | relative_url }}">Glossário</a>
+      </nav>
+      <a class="voltar" href="https://professorjoaomiguel.github.io/">← Site do professor</a>
+    </div>
+  </header>
+  <main>
+{{ content }}
+  </main>
+  <footer class="rodape">
+    <div class="rodape-interno">
+      {{ site.author }} (<a href="https://github.com/professorjoaomiguel">@professorjoaomiguel</a>).
+      Documentação sob <a href="https://creativecommons.org/licenses/by-nc/4.0/deed.pt-br">CC BY-NC 4.0</a>;
+      código sob licença MIT.
+      Fonte: <a href="https://github.com/professorjoaomiguel/lab-boards">github.com/professorjoaomiguel/lab-boards</a>.
+    </div>
+  </footer>
+</body>
+</html>

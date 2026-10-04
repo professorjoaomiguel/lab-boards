@@ -1,0 +1,25 @@
+# Configuração do GitHub Pages (Jekyll padrão, sem build próprio).
+# Publica a branch main, raiz: https://professorjoaomiguel.github.io/lab-boards/
+title: Lab Boards
+description: >-
+  Placas e shields usados em aula (Arduino, ESP32): tensão, pinagem, como
+  programar e testes.
+lang: pt-BR
+author: Prof. Me. Joao Miguel Lac Roehe
+
+# Pastas com ponto não são publicadas por padrão. A .ai/ entra porque o
+# README, o AGENTS, o GLOSSARIO e o CONTRIBUTING linkam para ela.
+include:
+  - .ai
+
+# Só o que não deve virar página. scripts/ e inventario/ ficam: os .py e
+# os .csv são copiados como arquivos, e o relatorio.html abre como página.
+exclude:
+  - templates/
+  - .pytest_cache/
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default

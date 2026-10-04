@@ -12,6 +12,9 @@ direto pelo GitHub.
   `https://raw.githubusercontent.com/professorjoaomiguel/lab-boards/main/<caminho>`.
   Exemplo: o índice fica em
   `https://raw.githubusercontent.com/professorjoaomiguel/lab-boards/main/INDEX.md`.
+- **Site (GitHub Pages):** o mesmo conteúdo, renderizado, em
+  `https://professorjoaomiguel.github.io/lab-boards/` (o índice em
+  `.../lab-boards/INDEX.html`). Para ler o texto puro, prefira a URL bruta.
 
 Os links dentro dos arquivos são relativos. Para segui-los pelo GitHub,
 resolva-os a partir da pasta do arquivo atual e monte a URL bruta acima.

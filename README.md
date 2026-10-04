@@ -5,8 +5,9 @@
 Material de consulta das **placas de desenvolvimento e shields usados no
 laboratório** (Arduino, ESP32 e afins). Para cada placa você encontra a
 tensão de operação, a pinagem, como programar, os cuidados e, quando
-existe, um código de teste. Leia direto aqui no GitHub: não precisa
-baixar nada.
+existe, um código de teste. Leia direto aqui no GitHub ou na versão em
+site, [professorjoaomiguel.github.io/lab-boards](https://professorjoaomiguel.github.io/lab-boards/):
+não precisa baixar nada.
 
 A maioria das placas **ainda não tem foto** no repositório; por isso, a
 pinagem e as ligações estão sempre em tabelas, em texto.

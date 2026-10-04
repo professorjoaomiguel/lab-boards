@@ -11,13 +11,21 @@ Este repositório é **público** e tem **dois públicos**, com o mesmo peso:
 - **Agentes de IA**, que consultam a documentação para responder perguntas
   ou gerar código para essas placas.
 
-E **dois modos de acesso**, que precisam funcionar igualmente bem:
+E **três modos de acesso**, que precisam funcionar igualmente bem:
 
 - **Local**, com o repositório clonado (arquivos lidos direto do disco).
 - **Direto pelo GitHub**, sem clonar: navegando em
   `https://github.com/professorjoaomiguel/lab-boards` ou lendo o arquivo
   bruto em
   `https://raw.githubusercontent.com/professorjoaomiguel/lab-boards/main/<caminho>`.
+- **Site (GitHub Pages)**, em `https://professorjoaomiguel.github.io/lab-boards/`:
+  o Jekyll padrão do GitHub transforma cada `.md` em página (layout em
+  `_layouts/default.html`, configuração em `_config.yml`). Por isso, **nenhum
+  `.md` pode conter chave dupla nem chave seguida de porcentagem** (as
+  marcas do Liquid, a linguagem de modelos do Jekyll); o teste
+  `scripts/test_glossario.py` confere. Os links relativos para `.md`
+  continuam funcionando, e a pasta `.ai/` é publicada pelo `include` do
+  `_config.yml`.
 
 Todo conteúdo novo ou editado deve respeitar estas regras:
 
