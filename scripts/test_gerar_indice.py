@@ -1,4 +1,4 @@
-# Autor: Prof. Joao Miguel Roehe (@professorjoaomiguel)
+# Autor: Prof. Me. Joao Miguel Lac Roehe (@professorjoaomiguel)
 # SPDX-License-Identifier: MIT
 """Testes do scripts/gerar_indice.py.
 

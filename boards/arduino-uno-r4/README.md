@@ -1,7 +1,7 @@
 ---
 titulo: "Arduino UNO R4 (Minima / WiFi)"
 tipo: placa
-autor: "Prof. Joao Miguel Roehe (@professorjoaomiguel)"
+autor: "Prof. Me. Joao Miguel Lac Roehe (@professorjoaomiguel)"
 tags: [arduino, uno, uno-r4, renesas, ra4m1, usb-c, wifi, bluetooth, 5v]
 ---
 
@@ -380,4 +380,4 @@ pessoais: quem está com cada placa não entra neste repositório público.
 
 ---
 
-**Autor:** Prof. Joao Miguel Roehe ([@professorjoaomiguel](https://github.com/professorjoaomiguel)). Documentação sob licença [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.pt-br); código em `code/` sob licença MIT. Veja como citar no [README principal](../../README.md).
+**Autor:** Prof. Me. Joao Miguel Lac Roehe ([@professorjoaomiguel](https://github.com/professorjoaomiguel)). Documentação sob licença [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.pt-br); código em `code/` sob licença MIT. Veja como citar no [README principal](../../README.md).

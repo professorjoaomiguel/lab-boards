@@ -1,7 +1,7 @@
 ---
 titulo: "ESP32-S3 N16R8 DevKit"
 tipo: placa
-autor: "Prof. Joao Miguel Roehe (@professorjoaomiguel)"
+autor: "Prof. Me. Joao Miguel Lac Roehe (@professorjoaomiguel)"
 tags: [esp32, esp32-s3, wifi, bluetooth, devkit, usb-c, 3v3]
 ---
 
@@ -65,4 +65,4 @@ referenciar aqui com `![esquemático](imagens/nome-do-arquivo.png)`._
 
 ---
 
-**Autor:** Prof. Joao Miguel Roehe ([@professorjoaomiguel](https://github.com/professorjoaomiguel)). Documentação sob licença [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.pt-br); código em `code/` sob licença MIT. Veja como citar no [README principal](../../README.md).
+**Autor:** Prof. Me. Joao Miguel Lac Roehe ([@professorjoaomiguel](https://github.com/professorjoaomiguel)). Documentação sob licença [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.pt-br); código em `code/` sob licença MIT. Veja como citar no [README principal](../../README.md).

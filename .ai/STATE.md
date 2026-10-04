@@ -181,8 +181,10 @@ trabalho do zero lendo só este arquivo e os links dele.
   `.ai/CONVENTIONS.md`, seção "Diretiva do repositório".
 - **Licença e autoria** (2026-09-28): documentação CC BY-NC 4.0
   (`LICENSE`), código MIT (`LICENSE-CODE`), citação em `CITATION.cff`.
-  Autor: Prof. Joao Miguel Roehe (@professorjoaomiguel), sem e-mail
-  público.
+  Autor: Prof. Me. Joao Miguel Lac Roehe (@professorjoaomiguel), sem e-mail
+  público; nome do projeto: "Lab Boards" (ambos iguais ao site do
+  professor desde 2026-10-04). No `CITATION.cff`, given-names `Joao Miguel`,
+  family-names `Roehe`.
 - **Scripts documentados no próprio arquivo** (2026-09-28): Python com
   docstrings e `--help`; PowerShell com ajuda por comentários. Ver
   `.ai/CONVENTIONS.md`, seção "Scripts".
@@ -197,6 +199,8 @@ trabalho do zero lendo só este arquivo e os links dele.
 
 ## Resolvido (últimos ~30 dias)
 
+- 2026-10-04: autor "Prof. Me. Joao Miguel Lac Roehe" e nome "Lab Boards"
+  em todos os arquivos (READMEs, front matter, sketches, scripts, licença).
 - 2026-10-04: `docs/superpowers/` saiu do repositório (`git rm --cached`);
   regra do handoff do `/remember` movida para o CONVENTIONS.
 - 2026-10-04: [`GLOSSARIO.md`](../GLOSSARIO.md) com ~50 termos, regra no

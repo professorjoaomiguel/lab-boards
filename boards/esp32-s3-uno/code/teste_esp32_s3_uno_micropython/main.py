@@ -1,4 +1,4 @@
-# Autor: Prof. Joao Miguel Roehe (@professorjoaomiguel)
+# Autor: Prof. Me. Joao Miguel Lac Roehe (@professorjoaomiguel)
 # SPDX-License-Identifier: MIT
 """Teste básico da placa ESP32-S3 UNO (TZT D1 ESP32-S3 N16R8) em MicroPython.
 

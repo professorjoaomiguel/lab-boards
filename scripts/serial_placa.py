@@ -1,4 +1,4 @@
-# Autor: Prof. Joao Miguel Roehe (@professorjoaomiguel)
+# Autor: Prof. Me. Joao Miguel Lac Roehe (@professorjoaomiguel)
 # SPDX-License-Identifier: MIT
 """Conversa com as placas do laboratório pela porta serial: lista, testa e registra.
 

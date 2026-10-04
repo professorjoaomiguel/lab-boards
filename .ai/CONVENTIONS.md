@@ -51,7 +51,7 @@ O ponto de entrada para agentes que **consultam** o repositório é o
 para agentes que **constroem** o repositório.
 
 8. **Autoria e licença em todo item.** O front matter leva
-   `autor: "Prof. Joao Miguel Roehe (@professorjoaomiguel)"`, e o README
+   `autor: "Prof. Me. Joao Miguel Lac Roehe (@professorjoaomiguel)"`, e o README
    termina com o rodapé de autoria e licença do template. Arquivos de
    código começam com um comentário de cabeçalho com o autor e
    `SPDX-License-Identifier: MIT`. Documentação: CC BY-NC 4.0 (`LICENSE`).
@@ -209,7 +209,7 @@ Todo script deve ter:
   arquivo, para `Get-Help .\scripts\<script>.ps1 -Full` mostrar a ajuda:
 
   ```powershell
-  # Autor: Prof. Joao Miguel Roehe (@professorjoaomiguel)
+  # Autor: Prof. Me. Joao Miguel Lac Roehe (@professorjoaomiguel)
   # SPDX-License-Identifier: MIT
   <#
   .SYNOPSIS

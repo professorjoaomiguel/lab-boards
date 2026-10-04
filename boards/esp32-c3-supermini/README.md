@@ -1,7 +1,7 @@
 ---
 titulo: "ESP32-C3 SuperMini"
 tipo: placa
-autor: "Prof. Joao Miguel Roehe (@professorjoaomiguel)"
+autor: "Prof. Me. Joao Miguel Lac Roehe (@professorjoaomiguel)"
 tags: [esp32, esp32-c3, supermini, risc-v, wifi, bluetooth, usb-c, usb-nativo, micropython, 3v3]
 ---
 
@@ -305,4 +305,4 @@ rodou numa placa ainda.
 
 ---
 
-**Autor:** Prof. Joao Miguel Roehe ([@professorjoaomiguel](https://github.com/professorjoaomiguel)). Documentação sob licença [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.pt-br); código em `code/` sob licença MIT. Veja como citar no [README principal](../../README.md).
+**Autor:** Prof. Me. Joao Miguel Lac Roehe ([@professorjoaomiguel](https://github.com/professorjoaomiguel)). Documentação sob licença [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.pt-br); código em `code/` sob licença MIT. Veja como citar no [README principal](../../README.md).

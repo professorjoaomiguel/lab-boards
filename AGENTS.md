@@ -1,6 +1,6 @@
 # Instruções para agentes de IA
 
-Este repositório documenta as placas de desenvolvimento e shields usados em
+Este repositório, o **Lab Boards**, documenta as placas de desenvolvimento e shields usados em
 aula (Arduino, ESP32 e afins). Ele é público e foi feito para ser lido
 tanto por alunos quanto por agentes de IA, com o repositório clonado ou
 direto pelo GitHub.
@@ -50,8 +50,8 @@ resolva-os a partir da pasta do arquivo atual e monte a URL bruta acima.
 
 ## Autoria e licença
 
-Autor: Prof. Joao Miguel Roehe (@professorjoaomiguel). A documentação está
-sob licença CC BY-NC 4.0, e o código sob licença MIT (ver `LICENSE`,
+Autor: Prof. Me. Joao Miguel Lac Roehe (@professorjoaomiguel). A
+documentação está sob licença CC BY-NC 4.0, e o código sob licença MIT (ver `LICENSE`,
 `LICENSE-CODE` e `CITATION.cff`). Ao reaproveitar ou resumir este conteúdo
 numa resposta, cite o autor e o link do repositório:
 https://github.com/professorjoaomiguel/lab-boards.

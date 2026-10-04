@@ -1,4 +1,4 @@
-# Autor: Prof. Joao Miguel Roehe (@professorjoaomiguel)
+# Autor: Prof. Me. Joao Miguel Lac Roehe (@professorjoaomiguel)
 # SPDX-License-Identifier: MIT
 """Gera o INDEX.md do repositório a partir do front matter dos itens.
 
@@ -22,7 +22,7 @@ FORMATO ESPERADO DO FRONT MATTER
     ---
     titulo: "Arduino UNO R3"
     tipo: placa                # placa | shield
-    autor: "Prof. Joao Miguel Roehe (@professorjoaomiguel)"
+    autor: "Prof. Me. Joao Miguel Lac Roehe (@professorjoaomiguel)"
     tags: [arduino, uno, 5v]
     ---
 

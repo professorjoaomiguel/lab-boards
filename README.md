@@ -1,4 +1,4 @@
-# Lab Dev Boards
+# Lab Boards
 
 Documentação de referência das placas de desenvolvimento e shields usados em
 aula: ESP32, Arduino e afins, e shields como teclados, displays, etc. Cada
@@ -56,7 +56,7 @@ agentes de IA que constroem este repositório.
 
 ## Autor, licença e como citar
 
-**Autor:** Prof. Joao Miguel Roehe —
+**Autor:** Prof. Me. Joao Miguel Lac Roehe —
 [@professorjoaomiguel](https://github.com/professorjoaomiguel) (GitHub,
 Instagram e Facebook).
 

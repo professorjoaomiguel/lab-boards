@@ -3,7 +3,7 @@
  *  Teste básico da placa ESP32-C3 SuperMini
  * =============================================================================
  *
- *  Autor: Prof. Joao Miguel Roehe (@professorjoaomiguel)
+ *  Autor: Prof. Me. Joao Miguel Lac Roehe (@professorjoaomiguel)
  *  Licença: MIT (SPDX-License-Identifier: MIT) — ver LICENSE-CODE na raiz
  *
  *  O QUE ESTE SKETCH FAZ

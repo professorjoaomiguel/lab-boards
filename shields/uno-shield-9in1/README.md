@@ -1,7 +1,7 @@
 ---
 titulo: "Shield Multifunção 9 em 1 (UNO)"
 tipo: shield
-autor: "Prof. Joao Miguel Roehe (@professorjoaomiguel)"
+autor: "Prof. Me. Joao Miguel Lac Roehe (@professorjoaomiguel)"
 tags: [arduino, uno, uno-r3, uno-r4, 5v, dht11, lm35, ldr, infravermelho, buzzer, led-rgb, i2c]
 ---
 
@@ -254,4 +254,4 @@ resolve** esta instabilidade.
 
 ---
 
-**Autor:** Prof. Joao Miguel Roehe ([@professorjoaomiguel](https://github.com/professorjoaomiguel)). Documentação sob licença [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.pt-br); código em `code/` sob licença MIT. Veja como citar no [README principal](../../README.md).
+**Autor:** Prof. Me. Joao Miguel Lac Roehe ([@professorjoaomiguel](https://github.com/professorjoaomiguel)). Documentação sob licença [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.pt-br); código em `code/` sob licença MIT. Veja como citar no [README principal](../../README.md).

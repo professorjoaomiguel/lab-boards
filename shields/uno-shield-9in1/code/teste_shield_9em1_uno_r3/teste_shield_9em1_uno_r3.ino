@@ -3,7 +3,7 @@
  *  Teste dos periféricos do Shield Multifunção 9 em 1 — versão UNO R3
  * =============================================================================
  *
- *  Autor: Prof. Joao Miguel Roehe (@professorjoaomiguel)
+ *  Autor: Prof. Me. Joao Miguel Lac Roehe (@professorjoaomiguel)
  *  Licença: MIT (SPDX-License-Identifier: MIT) — ver LICENSE-CODE na raiz
  *
  *  Placa: Arduino UNO R3 (ATmega328P). Para o UNO R4, use a versão
