@@ -45,6 +45,9 @@ trabalho do zero lendo só este arquivo e os links dele.
 
 ### Aguardando decisão ou terceiros
 
+- (2026-10-04) **Repositório do site do professor:** o usuário pode
+  atualizar o card "material de apoio", o `llms.txt` e o `sitemap.xml` com
+  a URL do GitHub Pages (https://professorjoaomiguel.github.io/lab-boards/).
 - (2026-10-03) **Rotina de teste e identificação das placas:** o usuário
   vai definir uma rotina mais clara e objetiva. Até lá, não ampliar os
   testes; só corrigir defeitos.
