@@ -83,7 +83,7 @@
 #include <EEPROM.h>
 #include "RTC.h"
 
-const char *VERSAO = "3";
+const char *VERSAO = "4";
 
 // =============================================================================
 //  PINOS TESTADOS
@@ -545,12 +545,17 @@ void testeSerial1() {
 //  de 0V. Se algo o puxa para cima (como os pull-ups de 3,3 a 10 kΩ do
 //  Shield 9 em 1 em D2, D3, D4 e D6), ele volta para HIGH.
 //  Os 100 µs em LOW são curtos demais para danificar algo ligado ali.
+//  A4 e A5 ficam de fora: são também o SDA/SCL, e na UNO R4 Minima algo na
+//  própria placa os puxa para 5V (testado em 2026-10-04 em duas placas sem
+//  nada ligado: voltam a HIGH em ~6 µs; o ADC lê ~1000 de 1023). Eles ainda
+//  passam pelo teste "gpio" (pull-up e saída).
 //  Devolve a lista dos pinos com algo ligado (vazia se estiver tudo livre).
 String pinosComAlgoLigado() {
   String encontrados;
   // Os pinos do teste "gpio" e mais o A0, que o teste "dac" aciona.
   for (size_t i = 0; i <= sizeof(PINOS_GPIO); i++) {
     uint8_t pino = (i < sizeof(PINOS_GPIO)) ? PINOS_GPIO[i] : A0;
+    if (pino == A4 || pino == A5) continue;
     pinMode(pino, OUTPUT);
     digitalWrite(pino, LOW);
     delayMicroseconds(100);
