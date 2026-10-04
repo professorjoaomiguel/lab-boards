@@ -223,6 +223,10 @@ Todo script deve ter:
 rodados com `python -m unittest scripts/test_gerar_indice.py -v`.
 `scripts/gerar_inventario.py` tem testes em `scripts/test_gerar_inventario.py`.
 `scripts/serial_placa.py` (testes de placa pela serial e inventário) tem
-testes em `scripts/test_serial_placa.py`, que não precisam de placa ligada. Qualquer
+testes em `scripts/test_serial_placa.py`, que não precisam de placa ligada.
+`scripts/verificar_state.py` confere o `.ai/STATE.md` (links e títulos de
+destino, idade da seção "Resolvido", limite de linhas); o teste
+`scripts/test_verificar_state.py` roda essa checagem no STATE real, então
+um link quebrado no STATE faz a suíte falhar. Qualquer
 mudança no script deve manter esses testes passando e seguir TDD (teste
 antes da implementação).

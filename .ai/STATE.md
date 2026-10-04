@@ -21,6 +21,14 @@ trabalho do zero lendo só este arquivo e os links dele.
   afeta (item novo, teste rodado, decisão tomada).
 - **Resolvido:** guarda só os últimos ~30 dias; o histórico completo está
   no `git log`.
+- **Conferir:** `python scripts/verificar_state.py` (links, idade do
+  Resolvido, limite de 300 linhas). Também roda na suíte de testes.
+- **Se crescer demais** (passar do limite, ou um tópico dominar o
+  arquivo): mover o detalhamento para `.ai/state/<tópico ou placa>.md` e
+  deixar aqui só uma linha com o ponteiro.
+- **Handoff do `/remember`:** não copia o backlog; aponta para cá. Item em
+  aberto que só exista no handoff entra aqui antes (regra em
+  `.claude/CLAUDE.md`).
 
 ## Itens documentados
 
@@ -121,6 +129,13 @@ trabalho do zero lendo só este arquivo e os links dele.
 - (2026-10-03) Ligar o GitHub Pages para ver o `inventario/relatorio.html`
   online.
 - Documentar mais placas e shields conforme forem usados em aula.
+- (2026-10-04) CI no GitHub Actions: rodar os testes de `scripts/` (inclui
+  a checagem do STATE) e conferir se `INDEX.md` e `relatorio.html` foram
+  regerados.
+- (2026-10-04) Futuro, só se for o caso: dividir o STATE em arquivos por
+  tópico ou por placa (`.ai/state/`), com o STATE como índice; e migrar o
+  backlog para GitHub Issues se mais pessoas passarem a contribuir (custo:
+  perde o arquivo único que os agentes leem offline).
 
 ### Fora deste repositório
 
@@ -178,6 +193,8 @@ trabalho do zero lendo só este arquivo e os links dele.
 
 ## Resolvido (últimos ~30 dias)
 
+- 2026-10-04: `scripts/verificar_state.py` + teste; handoff do
+  `/remember` passa a apontar para o STATE (`.claude/CLAUDE.md`).
 - 2026-10-04: faxina do STATE: separado em Em aberto / Decisões vigentes /
   Resolvido, com regras de manutenção no topo.
 - 2026-10-03: donos registrados: R3-01 SENAI, R3-02 professor, R4M-01
