@@ -323,8 +323,8 @@ seguidas.
 
 | Item | Como | Situação |
 |------|------|----------|
-| Testes `gpio` e `dac` | Teste da placa **sem** o shield | OK em R4M-02, 03 e 04 (2026-10-04, versão 4 do sketch) |
-| Pull-up do I2C em A4/A5 | Teste da placa, linha `i2c_pullup` | Medido nas 4 Minima (4,7 kΩ); ver se toda placa do lote tem |
+| Testes `gpio` e `dac` | Teste da placa **sem** o shield | OK nas 4 Minima, R4M-01 a 04 (2026-10-04, versão 6 do sketch, com o D13) |
+| Pull-up do I2C em A4/A5 | Teste da placa, linha `i2c_pullup` | Pull-up nas 4 Minima (4,7 kΩ no multímetro); ver se placas de outro lote também têm |
 | Teste `serial1` | Teste da placa com jumper D0↔D1 | A rodar |
 | Teste conjunto, versão nova | `serial_placa.py auto --shield` no R4 | A rodar (a gravação falhou por LIBUSB no dia; a versão anterior passou) |
 | UNO R4 WiFi | Os mesmos sketches (compilam para `unor4wifi`) | Sem placa testada |

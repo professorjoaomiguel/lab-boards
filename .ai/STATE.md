@@ -35,7 +35,7 @@ trabalho do zero lendo só este arquivo e os links dele.
 | Item | Tipo | Status |
 |------|------|--------|
 | [Arduino UNO R3](../boards/arduino-uno-r3/README.md) | placa | Teste da placa (automático) e teste conjunto com o shield; R3-01 e R3-02 no inventário; medição do Vcc, clone CH340 e fotos pendentes |
-| [Arduino UNO R4 (Minima / WiFi)](../boards/arduino-uno-r4/README.md) | placa | Teste da placa (automático) e teste conjunto com o shield; R4M-01 no inventário; teste sem shield, R4 WiFi e fotos pendentes |
+| [Arduino UNO R4 (Minima / WiFi)](../boards/arduino-uno-r4/README.md) | placa | Teste da placa (automático) e teste conjunto com o shield; R4M-01 a 04 no inventário, teste da placa OK nas 4 (v6); `serial1` com jumper, R4 WiFi e fotos pendentes |
 | [ESP32-S3 UNO (TZT D1 ESP32-S3 N16R8)](../boards/esp32-s3-uno/README.md) | placa | Pinagem completa, sketch C++ e MicroPython, `1e:20` no inventário; N16R8 e PSRAM octal confirmadas; LED RGB, "a confirmar" e foto pendentes |
 | [ESP32-C3 SuperMini](../boards/esp32-c3-supermini/README.md) | placa | Pinagem e testes nos dois formatos; sketch **nunca compilado** (compilador RISC-V bloqueado); placa real, foto e "a confirmar" pendentes |
 | [ESP32-S3 N16R8 DevKit](../boards/esp32-s3-n16r8/README.md) | placa | Só a ficha; sem código, fotos nem produto de referência definido |
@@ -65,8 +65,7 @@ trabalho do zero lendo só este arquivo e os links dele.
   vez (o laboratório tem só uma USB livre):
   `python scripts/serial_placa.py auto --porta COMx --gravar --registrar`,
   perguntar o dono, regerar o relatório e commitar CSV + relatório.
-  Faltam as outras R4 (comparar os IDs para ver quais trechos mudam por
-  lote) e os R3 do SENAI (2 ou 3 tipos).
+  Faltam os R3 do SENAI (2 ou 3 tipos).
 - (2026-09-24) ESP32-S3 UNO: confirmar se a 1ª placa usada em aula é a
   `1e:20`; se não for, registrar (não exige regravar o firmware).
 
@@ -89,8 +88,7 @@ trabalho do zero lendo só este arquivo e os links dele.
 
 ### Testes por placa
 
-- (2026-10-03) **UNO R4:** teste da placa sem shield (`gpio`, `dac`) e com
-  jumper D0↔D1 (`serial1`); teste conjunto novo (`auto --shield`; a
+- (2026-10-03) **UNO R4:** teste com jumper D0↔D1 (`serial1`); teste conjunto novo (`auto --shield`; a
   gravação falhou por LIBUSB, resolver com RESET duplo ou religando);
   testar uma UNO R4 WiFi. Ver "A confirmar" no README do R4.
 - (2026-10-03) **UNO R3:** medir o Vcc com multímetro; testar um clone
@@ -219,6 +217,15 @@ trabalho do zero lendo só este arquivo e os links dele.
   CONVENTIONS.
 
 ## Resolvido (últimos ~30 dias)
+
+- 2026-10-04: UNO R4 Minima R4M-01 a R4M-04 (professor) registradas e
+  testadas com o sketch v6: ok=7 nas 4 (`serial1` pulado, sem jumper). O
+  sketch v4 tirou A4/A5 da checagem de pinos ocupados (pulava o GPIO em
+  toda placa); o v5 informa o pull-up do I2C (`i2c_pullup`); o v6 testa o
+  D13. **A4/A5 têm pull-up de 4,7 kΩ** nas 4, ao contrário do manual da
+  Arduino (README do R4, seção I2C; sensores analógicos em A0–A3). Na
+  etiqueta, além de `R4M-NN`, os caracteres 17–20 do ID (`538E`, `D01F`,
+  `AA2F`, `5B1E`) diferem nas 4; o começo e o fim do ID são iguais.
 
 - 2026-10-04: CI no GitHub Actions: `testes.yml` (STATE, suíte, `INDEX.md`
   e `relatorio.html` em dia) a cada push; `site.yml` (varredura do site)
