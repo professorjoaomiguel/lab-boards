@@ -7,6 +7,18 @@ tags: [arduino, uno, uno-r3, uno-r4, 5v, dht11, lm35, ldr, infravermelho, buzzer
 
 # Shield Multifunção 9 em 1 (UNO)
 
+## Resumo rápido
+
+| | |
+|---|---|
+| Tensão lógica | **5V**: só no Arduino UNO R3 ou R4 |
+| Placa na IDE | A da placa embaixo dele ([UNO R3](../../boards/arduino-uno-r3/README.md#como-programar) ou [UNO R4](../../boards/arduino-uno-r4/README.md#como-programar)) |
+| Driver USB | O da placa (o shield não tem USB) |
+| LEDs | D12 vermelho e D13 azul; RGB em D9 (vermelho), D10 (azul) e D11 (verde). Todos acendem em HIGH |
+| Botões | SW1 (D2) e SW2 (D3), **ativos em LOW** (pull-up de 10 kΩ); RESET repetido da placa |
+| Cuidado nº 1 | Não encaixe numa placa de 3,3V, como a ESP32-S3 UNO: o encaixe é perfeito, mas o shield leva 5V aos pinos |
+| Temperatura | Use o **DHT11**: o LM35 dos shields testados está instável |
+
 ## Visão geral
 Shield de aprendizado no formato Arduino UNO que reúne 9 periféricos em uma
 única placa: 2 botões, 2 LEDs, LED RGB, sensor [DHT11](../../GLOSSARIO.md#dht11), buzzer, receptor
@@ -195,6 +207,33 @@ substitui a medição: clones podem trocar componentes. Confirme com o teste.
 | LM35: temperatura coerente | Teste automático (opção `a`); multímetro entre A2 e GND | 10 mV/°C, 0,25 V a 25 °C | ⚠️ **Instável nos dois shields testados** (2026-10-03): a saída do LM35 muda sozinha com o tempo, sem mexer em nada, em três placas (R4, R3-01, R3-02). Multímetro no A2: 12 mV, 19 mV, 0,25 V, 0,47 V e 0,50 V em momentos diferentes; não pulou ao pressionar o sensor (não é mau contato). Pelo ADC, o mesmo sensor foi de 23,3 °C a 39,8 °C em um minuto, com o DHT11 estável em 28,4 °C. Hipótese: **o LM35 oscila** (o datasheet avisa que ele oscila com carga capacitiva; a saída vai direto ao A2). Não tem correção por software. Ver "LM35 instável" abaixo |
 | DHT11: 1ª leitura depois de ligar | Teste automático do UNO R4 | Não indicado | ✅ Vem **zerada** (0 °C, 0 %) e passa na soma de verificação (0+0+0+0 = 0). Os sketches descartam essa leitura (2026-10-03) |
 
+### Dicas de uso em aula
+
+- **Temperatura:** use o DHT11 como referência. O LM35 dos shields
+  testados muda de leitura sozinho (ver
+  [LM35 instável](#lm35-instável-2026-10-03), no fim).
+- **Bipe do buzzer:** basta `digitalWrite(5, HIGH)` e `digitalWrite(5, LOW)`.
+  O buzzer é ativo; `tone()` funciona, mas o som sai misturado com o apito
+  próprio dele (ver [Faixa de frequência do buzzer](#faixa-de-frequência-do-buzzer-2026-10-03)).
+
+## Referências
+- Placas compatíveis (com datasheets dos microcontroladores):
+  [UNO R3](../../boards/arduino-uno-r3/README.md) e
+  [UNO R4](../../boards/arduino-uno-r4/README.md)
+- Keyestudio KS0183 (projeto original deste shield): wiki com pinagem,
+  sketch de teste e resultados esperados: https://wiki.keyestudio.com/Ks0183_keyestudio_Multi-purpose_Shield_V1
+  - Código e bibliotecas: https://fs.keyestudio.com/KS0183
+- Exemplos do fabricante (RoboticX) para esta placa, um sketch por
+  periférico: https://github.com/RoboticXps/nine-in-one-expansion-sensor-board-arduino
+  (o exemplo do DHT11 usa a biblioteca `DHT sensor library` da Adafruit)
+- Pinagem levantada a partir da serigrafia da placa e das imagens em
+  `imagens/`.
+
+## Para o professor / histórico de testes
+
+Esta parte é do professor: investigações feitas nos shields do
+laboratório. Para usar o shield em aula, as seções acima bastam.
+
 ### Faixa de frequência do buzzer (2026-10-03)
 
 Teste de ouvido com o shield nº 2 num UNO R4: `tone(5, f)` por 1,5 s, de
@@ -238,19 +277,6 @@ A descarga do capacitor do ADC no UNO R4 (ver
 [ADC do UNO R4](../../boards/arduino-uno-r4/README.md#adc-leitura-errada-de-sensores-que-não-absorvem-corrente))
 continua no código, porque o efeito que ela trata existe, mas ela **não
 resolve** esta instabilidade.
-
-## Referências## Referências
-- Placas compatíveis (com datasheets dos microcontroladores):
-  [UNO R3](../../boards/arduino-uno-r3/README.md) e
-  [UNO R4](../../boards/arduino-uno-r4/README.md)
-- Keyestudio KS0183 (projeto original deste shield): wiki com pinagem,
-  sketch de teste e resultados esperados: https://wiki.keyestudio.com/Ks0183_keyestudio_Multi-purpose_Shield_V1
-  - Código e bibliotecas: https://fs.keyestudio.com/KS0183
-- Exemplos do fabricante (RoboticX) para esta placa, um sketch por
-  periférico: https://github.com/RoboticXps/nine-in-one-expansion-sensor-board-arduino
-  (o exemplo do DHT11 usa a biblioteca `DHT sensor library` da Adafruit)
-- Pinagem levantada a partir da serigrafia da placa e das imagens em
-  `imagens/`.
 
 ---
 
