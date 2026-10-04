@@ -67,6 +67,10 @@ para agentes que **constroem** o repositório.
   existem, etiqueta, dono (professor ou SENAI) e o que se sabe de cada uma.
   Fica separado do código de teste. Ver `inventario/README.md`.
 - `GLOSSARIO.md` — termos técnicos em ordem alfabética (ver "Glossário").
+- `IDENTIFICAR.md` — guia "Que placa é essa?" pelas características
+  visíveis; todo item novo que dê para reconhecer a olho entra nele.
+- `CONTRIBUTING.md` — como manter o repositório (item novo, scripts,
+  testes). O `README.md` da raiz é voltado ao aluno.
 - `templates/item-README.md` — template a ser copiado para criar um item novo.
 - `scripts/gerar_indice.py` — gera `INDEX.md` a partir do front matter de
   todos os itens.

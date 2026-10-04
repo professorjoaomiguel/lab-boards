@@ -199,6 +199,12 @@ trabalho do zero lendo só este arquivo e os links dele.
 
 ## Resolvido (últimos ~30 dias)
 
+- 2026-10-04: README voltado ao aluno (tabela das placas, tensão,
+  glossário, "Que placa é essa?", "Usado em", agente de IA); manutenção
+  movida para [`CONTRIBUTING.md`](../CONTRIBUTING.md); guia
+  [`IDENTIFICAR.md`](../IDENTIFICAR.md) (sem fotos); AGENTS aponta para
+  glossário, IDENTIFICAR e marca `inventario/` e `scripts/` como
+  ferramentas do professor.
 - 2026-10-04: link "← Site do professor" no README, no INDEX e no relatório
   do inventário (pelos geradores, com teste); contatos do README apontam
   para o site (Instagram e Facebook removidos).

@@ -2,59 +2,70 @@
 
 # Lab Boards
 
-Documentação de referência das placas de desenvolvimento e shields usados em
-aula: ESP32, Arduino e afins, e shields como teclados, displays, etc. Cada
-item traz fotos, diagrama esquemático, lista de componentes e
-funcionalidades e, quando disponível, código de teste/validação dos
-periféricos.
+Material de consulta das **placas de desenvolvimento e shields usados no
+laboratório** (Arduino, ESP32 e afins). Para cada placa você encontra a
+tensão de operação, a pinagem, como programar, os cuidados e, quando
+existe, um código de teste. Leia direto aqui no GitHub: não precisa
+baixar nada.
 
-## Para quem é este repositório
+A maioria das placas **ainda não tem foto** no repositório; por isso, a
+pinagem e as ligações estão sempre em tabelas, em texto.
 
-Este repositório é público e serve a dois públicos:
+## Procurando uma placa?
 
-- **Alunos:** leia pelo GitHub ou clone o repositório e comece pelo
-  [`INDEX.md`](INDEX.md).
-- **Agentes de IA** (Claude, Copilot, Gemini, etc.): o ponto de entrada é o
-  [`AGENTS.md`](AGENTS.md), que explica como achar a informação, com o
-  repositório clonado ou direto pelo GitHub. Você pode passar ao seu agente
-  o link
-  `https://raw.githubusercontent.com/professorjoaomiguel/lab-boards/main/AGENTS.md`.
+| Placa | Tensão | Para que serve |
+|-------|--------|----------------|
+| [Arduino UNO R3](boards/arduino-uno-r3/README.md) | 5V | A placa Arduino clássica: primeiros passos com entradas e saídas, leitura analógica, PWM e serial |
+| [Arduino UNO R4 (Minima / WiFi)](boards/arduino-uno-r4/README.md) | 5V | Sucessora do R3, mesmo formato e mesmos shields, processador de 32 bits |
+| [ESP32-S3 UNO](boards/esp32-s3-uno/README.md) | **3,3V** | ESP32-S3 no formato do UNO: Wi-Fi, Bluetooth e IoT |
+| [ESP32-S3 N16R8 DevKit](boards/esp32-s3-n16r8/README.md) | **3,3V** | ESP32-S3 estreita, de encaixar na protoboard, com bastante memória |
+| [ESP32-C3 SuperMini](boards/esp32-c3-supermini/README.md) | **3,3V** | Placa minúscula com Wi-Fi e Bluetooth, para projetos pequenos de IoT |
+| [Shield Multifunção 9 em 1](shields/uno-shield-9in1/README.md) | 5V | Encaixa sobre o UNO R3/R4: botões, LEDs, buzzer e sensores sem fios soltos |
 
-## Como navegar
-
-- [`INDEX.md`](INDEX.md) — lista todos os itens, com uma tabela geral e uma
-  seção por tag. **Gerado automaticamente, não editar à mão.**
-- [`boards/`](boards/) — placas de desenvolvimento (ESP32, Arduino, etc.)
-- [`shields/`](shields/) — shields e módulos que acoplam nas placas (teclado,
-  display, etc.)
-- [`GLOSSARIO.md`](GLOSSARIO.md) — o que significa cada termo técnico (ADC,
-  pull-up, PSRAM, CH340...), em ordem alfabética.
+A lista completa, agrupada por característica (Wi-Fi, USB-C, 5V, 3,3V...),
+está no [`INDEX.md`](INDEX.md).
 
 ## ⚠️ Atenção à tensão (5V × 3,3V)
 
 Antes de encaixar um shield em uma placa, confira a seção **Tensão de
-operação** dos dois. Placas como o Arduino UNO trabalham em 5V, e placas
-como o ESP32 trabalham em 3,3V. Um shield de 5V sobre uma placa de 3,3V
-pode queimar as portas do microcontrolador. No `INDEX.md`, as tags `5v` e
+operação** dos dois. O Arduino UNO trabalha em 5V; as placas ESP32
+trabalham em 3,3V. Um shield de 5V sobre uma placa de 3,3V pode queimar as
+portas do microcontrolador, **mesmo quando o encaixe é perfeito** (é o
+caso do Shield 9 em 1 na ESP32-S3 UNO). No `INDEX.md`, as tags `5v` e
 `3v3` agrupam os itens por tensão.
 
-## Como adicionar um item novo
+## Não conhece um termo?
 
-Passo a passo resumido:
+O [`GLOSSARIO.md`](GLOSSARIO.md) explica, em ordem alfabética, os termos
+técnicos usados aqui: ADC, pull-up, PSRAM, CH340, strapping...
 
-1. Copie [`templates/item-README.md`](templates/item-README.md) para
-   `boards/<slug-do-item>/README.md` ou `shields/<slug-do-item>/README.md`.
-2. Preencha o front matter (`titulo`, `tipo`, `tags`, com a tag `5v` ou
-   `3v3`) e as seções do template, incluindo a **Tensão de operação**.
-3. Crie as subpastas `imagens/` e `code/` dentro da pasta do item.
-4. Rode `python scripts/gerar_indice.py` para atualizar o `INDEX.md`.
-5. Atualize [`.ai/STATE.md`](.ai/STATE.md) com o item novo.
-6. Faça commit do item novo junto com o `INDEX.md` atualizado.
+## Que placa é essa?
 
-Para o guia completo de convenções (formato exato do front matter,
-convenção de slugs, testes do script de índice), veja
-[`.ai/CONVENTIONS.md`](.ai/CONVENTIONS.md) — é a referência usada por
-agentes de IA que constroem este repositório.
+Achou uma placa na bancada e não sabe qual é? O guia
+[`IDENTIFICAR.md`](IDENTIFICAR.md) ajuda pelo que dá para ver: formato,
+conector USB, módulo metálico, botões e o que está escrito nos chips.
+
+## Usado em
+
+| Disciplina | Placas |
+|------------|--------|
+| S086 - Sistemas Microprocessados | ESP32-S3 UNO, UNO R3, UNO R4 e Shield 9 em 1 |
+| S122 - Internet das Coisas (previsto) | Todas as placas |
+| S053 - Programação Básica (previsto) | UNO R3, UNO R4 e Shield 9 em 1 |
+
+O material de cada disciplina está no
+[site do professor](https://professorjoaomiguel.github.io/).
+
+## Use com um agente de IA
+
+Você pode pedir ajuda sobre estas placas a um agente de IA (Claude,
+ChatGPT, Copilot, Gemini...). Passe para ele este link, que explica como
+consultar o repositório e as regras de segurança (como a da tensão):
+
+`https://raw.githubusercontent.com/professorjoaomiguel/lab-boards/main/AGENTS.md`
+
+Exemplo de pedido: *"Leia o AGENTS.md deste link e me diga se posso ligar
+o Shield 9 em 1 na ESP32-S3 UNO."*
 
 ## Autor, licença e como citar
 
@@ -82,3 +93,9 @@ continuam sob a licença de seus próprios autores.
 
 Na página do repositório no GitHub, o botão **"Cite this repository"** gera
 a citação em APA e BibTeX a partir do arquivo [`CITATION.cff`](CITATION.cff).
+
+## Para quem mantém
+
+Como adicionar uma placa ou um shield, rodar os scripts e os testes:
+[`CONTRIBUTING.md`](CONTRIBUTING.md). O inventário das unidades do
+laboratório fica em [`inventario/`](inventario/README.md).
