@@ -204,6 +204,11 @@ class TestItemSemTags(unittest.TestCase):
             content,
         )
 
+    def test_generate_index_comeca_com_link_para_o_site(self):
+        content = gi.generate_index([])
+        self.assertTrue(content.startswith(
+            "[← Site do professor](https://professorjoaomiguel.github.io/)\n\n# Índice"))
+
 
 class TestAjudaDeLinhaDeComando(unittest.TestCase):
     """`--help` mostra a ajuda e sai sem gerar o INDEX.md."""

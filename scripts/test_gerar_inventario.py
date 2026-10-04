@@ -98,6 +98,10 @@ class TestGerarHtml(unittest.TestCase):
         dados = json.loads(html[inicio:fim].replace("<\\/", "</"))
         self.assertEqual(dados[0]["obs"], "cuidado </script><b>")
 
+    def test_link_para_o_site_do_professor(self):
+        html = gi.gerar_html([], "2026-10-03")
+        self.assertIn('href="https://professorjoaomiguel.github.io/"', html)
+
 
 class TestMain(unittest.TestCase):
     def test_gera_o_arquivo(self):

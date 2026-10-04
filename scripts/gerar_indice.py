@@ -168,6 +168,8 @@ def generate_index(items):
         linha. As seções por tag saem em ordem alfabética.
     """
     lines = [
+        "[← Site do professor](https://professorjoaomiguel.github.io/)",
+        "",
         "# Índice",
         "",
         "Gerado automaticamente por `scripts/gerar_indice.py`. Não editar à mão.",

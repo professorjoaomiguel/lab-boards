@@ -241,6 +241,7 @@ MODELO_HTML = r"""<!doctype html>
 </head>
 <body>
 <main>
+  <p class="sub"><a href="https://professorjoaomiguel.github.io/">← Site do professor</a></p>
   <h1>Inventário do laboratório</h1>
   <p class="sub">Placas e shields registrados em <code>inventario/</code> · gerado em __DATA__ ·
     <span id="contagem"></span></p>

@@ -199,6 +199,9 @@ trabalho do zero lendo só este arquivo e os links dele.
 
 ## Resolvido (últimos ~30 dias)
 
+- 2026-10-04: link "← Site do professor" no README, no INDEX e no relatório
+  do inventário (pelos geradores, com teste); contatos do README apontam
+  para o site (Instagram e Facebook removidos).
 - 2026-10-04: autor "Prof. Me. Joao Miguel Lac Roehe" e nome "Lab Boards"
   em todos os arquivos (READMEs, front matter, sketches, scripts, licença).
 - 2026-10-04: `docs/superpowers/` saiu do repositório (`git rm --cached`);

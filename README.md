@@ -1,3 +1,5 @@
+[← Site do professor](https://professorjoaomiguel.github.io/)
+
 # Lab Boards
 
 Documentação de referência das placas de desenvolvimento e shields usados em
@@ -56,9 +58,9 @@ agentes de IA que constroem este repositório.
 
 ## Autor, licença e como citar
 
-**Autor:** Prof. Me. Joao Miguel Lac Roehe —
-[@professorjoaomiguel](https://github.com/professorjoaomiguel) (GitHub,
-Instagram e Facebook).
+**Autor:** Prof. Me. Joao Miguel Lac Roehe
+([@professorjoaomiguel](https://github.com/professorjoaomiguel)). Contatos e
+outros materiais: [site do professor](https://professorjoaomiguel.github.io/).
 
 **Licença:**
 
