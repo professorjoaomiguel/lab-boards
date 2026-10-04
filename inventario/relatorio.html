@@ -3,11 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Inventário do laboratório</title>
+<title>Inventário do laboratório · Lab Boards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="/assets/tokens.css">
+<link rel="stylesheet" href="/assets/topbar.css">
+<link rel="icon" type="image/png" href="/assets/avatar.png">
 <style>
+  /* Cores da página: as centrais (tokens.css), com reserva para offline.
+     Os selos de situação (ok, atenção...) são só deste relatório. */
   :root {
-    --fundo: #f7f7f5; --cartao: #ffffff; --texto: #1d1d1b; --suave: #6b6b66;
-    --borda: #dcdcd6; --destaque: #2f5d8a;
+    --fundo: var(--bg-primary, #f8fafc); --cartao: var(--bg-secondary, #ffffff);
+    --texto: var(--text-primary, #0f172a); --suave: var(--text-secondary, #475569);
+    --borda: var(--border, #e2e8f0); --destaque: var(--accent, #4f46e5);
     --ok: #2e7d32; --ok-fundo: #e6f2e7;
     --atencao: #8a5a00; --atencao-fundo: #fbf0d9;
     --falha: #b3261e; --falha-fundo: #f9e3e1;
@@ -15,8 +23,9 @@
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --fundo: #161615; --cartao: #1f1f1d; --texto: #ececea; --suave: #a3a39c;
-      --borda: #3a3a36; --destaque: #8fb8e0;
+      --fundo: var(--bg-primary, #090d16); --cartao: var(--bg-secondary, #111827);
+      --texto: var(--text-primary, #f8fafc); --suave: var(--text-secondary, #94a3b8);
+      --borda: var(--border, #1f2937); --destaque: var(--accent, #818cf8);
       --ok: #8fd18f; --ok-fundo: #1f3320;
       --atencao: #e8c06a; --atencao-fundo: #3a2f17;
       --falha: #f0928b; --falha-fundo: #3d1f1d;
@@ -25,8 +34,20 @@
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--fundo); color: var(--texto);
-         font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
-  main { max-width: 1280px; margin: 0 auto; padding: 24px 16px 48px; }
+         font: 15px/1.45 var(--font, system-ui, -apple-system, "Segoe UI", sans-serif); }
+  /* Mais largo que --page-max: a tabela tem 10 colunas. */
+  main { max-width: 1280px; margin: 0 auto; padding: 24px var(--gutter, 16px) 48px; }
+  /* Barra do topo sem o topbar.css (arquivo aberto do disco). Só
+     propriedades que o topbar.css também define: no site, ele ganha em todas. */
+  :where(.topbar) { background: var(--cartao); border-bottom: 1px solid var(--borda); }
+  :where(.topbar-inner) { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px;
+                          padding: 10px 16px; }
+  /* .topbar :where(.brand) = (0,1,0): ganha do "a" acima e perde do
+     ".topbar .brand" (0,2,0) do topbar.css. */
+  .topbar :where(.brand) { display: inline-flex; align-items: center; gap: 8px; font-weight: 700;
+                           color: var(--texto); text-decoration: none; }
+  :where(.topnav) { list-style: none; display: flex; gap: 4px 16px; margin: 0; padding: 0; }
+  :where(.topnav a, .topbar-back) { text-decoration: none; }
   h1 { font-size: 1.5rem; margin: 0 0 4px; }
   .sub { color: var(--suave); margin: 0 0 20px; }
   .cartoes { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -48,7 +69,7 @@
   th[aria-sort=ascending]::after { content: " ▲"; }
   th[aria-sort=descending]::after { content: " ▼"; }
   tr:last-child td { border-bottom: 0; }
-  .mono { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: .85rem; word-break: break-all; }
+  .mono { font-family: var(--mono, ui-monospace, "Cascadia Mono", Consolas, monospace); font-size: .85rem; word-break: break-all; }
   .data { white-space: nowrap; word-break: normal; }
   .selo { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: .8rem; white-space: nowrap; }
   .s-ok { color: var(--ok); background: var(--ok-fundo); }
@@ -57,6 +78,7 @@
   .s-nt { color: var(--nt); background: var(--nt-fundo); }
   .suave { color: var(--suave); }
   a { color: var(--destaque); }
+  a:focus-visible { outline: 2px solid var(--destaque); outline-offset: 2px; border-radius: 4px; }
   details summary { cursor: pointer; color: var(--destaque); }
   dl { margin: 6px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; font-size: .85rem; }
   dt { color: var(--suave); }
@@ -67,8 +89,18 @@
 </style>
 </head>
 <body>
+<nav class="topbar" aria-label="Navegação principal">
+  <div class="topbar-inner">
+    <a class="brand" href="https://professorjoaomiguel.github.io/lab-boards/"><img src="/assets/avatar.png" alt="" width="28" height="28" onerror="this.hidden=true"><span>Lab Boards</span></a>
+    <ul class="topnav">
+      <li><a href="https://professorjoaomiguel.github.io/lab-boards/INDEX.html">Placas</a></li>
+      <li><a href="https://professorjoaomiguel.github.io/lab-boards/IDENTIFICAR.html">Que placa é essa?</a></li>
+      <li><a href="https://professorjoaomiguel.github.io/lab-boards/GLOSSARIO.html">Glossário</a></li>
+    </ul>
+    <a class="topbar-back" href="https://professorjoaomiguel.github.io/">← Site do professor</a>
+  </div>
+</nav>
 <main>
-  <p class="sub"><a href="https://professorjoaomiguel.github.io/">← Site do professor</a></p>
   <h1>Inventário do laboratório</h1>
   <p class="sub">Placas e shields registrados em <code>inventario/</code> · gerado em 2026-10-04 ·
     <span id="contagem"></span></p>

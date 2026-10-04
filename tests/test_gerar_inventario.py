@@ -7,6 +7,7 @@ Rodar com: python -m unittest tests/test_gerar_inventario.py -v
 
 import json
 import os
+import re
 import sys
 import tempfile
 import unittest
@@ -100,7 +101,33 @@ class TestGerarHtml(unittest.TestCase):
 
     def test_link_para_o_site_do_professor(self):
         html = gi.gerar_html([], "2026-10-03")
-        self.assertIn('href="https://professorjoaomiguel.github.io/"', html)
+        self.assertIn('<a class="topbar-back" href="https://professorjoaomiguel.github.io/">', html)
+
+    def test_referencia_visual_central(self):
+        # Mesmos arquivos e mesma barra do resto do site (DESIGN.md do site
+        # do professor), com links absolutos: o relatório também abre do disco.
+        html = gi.gerar_html([], "2026-10-03")
+        for trecho in ('<link rel="stylesheet" href="/assets/tokens.css">',
+                       '<link rel="stylesheet" href="/assets/topbar.css">',
+                       '<link rel="icon" type="image/png" href="/assets/avatar.png">',
+                       '<nav class="topbar"', '<div class="topbar-inner">',
+                       '<a class="brand" href="https://professorjoaomiguel.github.io/lab-boards/">',
+                       '<ul class="topnav">',
+                       'href="https://professorjoaomiguel.github.io/lab-boards/INDEX.html"',
+                       'href="https://professorjoaomiguel.github.io/lab-boards/IDENTIFICAR.html"',
+                       'href="https://professorjoaomiguel.github.io/lab-boards/GLOSSARIO.html"'):
+            self.assertIn(trecho, html)
+
+    def test_cores_e_fontes_centrais_tem_reserva_para_offline(self):
+        # Sem o tokens.css (arquivo aberto do disco), todo var() de token
+        # central precisa de um valor de reserva.
+        estilo = gi.gerar_html([], "2026-10-03").split("<style>")[1].split("</style>")[0]
+        centrais = ("--bg-primary", "--bg-secondary", "--text-primary", "--text-secondary",
+                    "--border", "--accent", "--font", "--mono", "--gutter")
+        usos = re.findall(r"var\((--[\w-]+)(,?)", estilo)
+        sem_reserva = [nome for nome, virgula in usos if nome in centrais and not virgula]
+        self.assertEqual(sem_reserva, [])
+        self.assertIn("var(--font, system-ui", estilo)  # Outfit no site, do sistema offline
 
 
 class TestMain(unittest.TestCase):

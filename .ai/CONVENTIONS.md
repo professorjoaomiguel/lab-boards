@@ -94,6 +94,11 @@ repositório) e usa a marcação da barra do DESIGN.md.
   professor**, não aqui; ela vale para todos os sites de uma vez.
 - O `scripts/verificar_site.py` confere que os arquivos de `/assets/`
   abrem (200), sem percorrê-los.
+- O `inventario/relatorio.html` não usa o layout (é gerado pelo
+  `scripts/gerar_inventario.py` e abre também do disco): carrega os mesmos
+  arquivos e a mesma barra, com links absolutos, reserva em cada
+  `var(--token, valor)` e um estilo mínimo da barra em `:where()`, que o
+  `topbar.css` sempre sobrescreve.
 
 ## Estrutura do repositório
 
