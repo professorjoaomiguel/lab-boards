@@ -199,8 +199,13 @@ trabalho do zero lendo só este arquivo e os links dele.
   `CONTRIBUTING.md` em página, e front matter neles aparece no GitHub,
   então `index.html` (a home) e `CONTRIBUTING.html` incluem o texto deles
   (`_includes/markdown-da-raiz.html` ajusta os links); layout próprio
-  em `_layouts/default.html` (visual do site do professor). Todo push na
-  `main` republica o site.
+  em `_layouts/default.html`. Todo push na `main` republica o site.
+- **Visual do site vem do site do professor** (2026-10-04, decisão do
+  usuário): a referência única é o `DESIGN.md` de
+  `professorjoaomiguel.github.io`; o layout carrega `/assets/tokens.css`,
+  `/assets/topbar.css` e `/assets/avatar.png` de lá e não define cor,
+  fonte nem barra. Mudança visual se pede lá. Regras em
+  `.ai/CONVENTIONS.md`, seção "Visual do site".
 - **Licença e autoria** (2026-09-28): documentação CC BY-NC 4.0
   (`LICENSE`), código MIT (`LICENSE-CODE`), citação em `CITATION.cff`.
   Autor: Prof. Me. Joao Miguel Lac Roehe (@professorjoaomiguel), sem e-mail
@@ -234,14 +239,9 @@ trabalho do zero lendo só este arquivo e os links dele.
   Arduino (README do R4, seção I2C; sensores analógicos em A0–A3). Na
   etiqueta, além de `R4M-NN`, os caracteres 17–20 do ID (`538E`, `D01F`,
   `AA2F`, `5B1E`) diferem nas 4; o começo e o fim do ID são iguais.
-
-- 2026-10-04: CI no GitHub Actions: `testes.yml` (STATE, suíte, `INDEX.md`
-  e `relatorio.html` em dia) a cada push; `site.yml` (varredura do site)
-  depois de cada build do Pages.
-- 2026-10-04: testes movidos de `scripts/` para `tests/` (sugestão do
-  usuário); `scripts/` fica só com as ferramentas.
-- 2026-10-04: `scripts/verificar_site.py` (varredura do site publicado:
-  404, âncora inexistente, `.md` cru), com testes sem internet.
+- 2026-10-04: CI: `testes.yml` (STATE, suíte, `INDEX.md`, relatório) a
+  cada push; `site.yml` roda `scripts/verificar_site.py` (404, âncora,
+  `.md` cru) depois de cada build do Pages. Testes movidos para `tests/`.
 - 2026-10-04: GitHub Pages no ar em
   `https://professorjoaomiguel.github.io/lab-boards/`, com o relatório do
   inventário em `inventario/relatorio.html`; descrição, homepage e tópicos
@@ -276,10 +276,8 @@ trabalho do zero lendo só este arquivo e os links dele.
 - 2026-10-03: relatório HTML do inventário (`gerar_inventario.py`).
 - 2026-10-03: **R3-01 com D3 preso em LOW**: o defeito é da placa (não do
   shield), confirmado pelo teste sem shield. Anotado no inventário.
-- 2026-10-03: R3-02 registrada; teste da placa sem shield com os 16 pinos
-  GPIO OK. Na R3-01, o mesmo teste falhou só no D3.
-- 2026-10-03: teste automático dedicado do UNO R3
-  (`teste_uno_r3_automatico`), validado.
+- 2026-10-03: teste automático do UNO R3 (`teste_uno_r3_automatico`):
+  R3-02 registrada com os 16 GPIO OK; na R3-01 falhou só o D3.
 - 2026-10-03: ADC do UNO R3: o LM35 lido logo depois de outro canal sai
   alto e acerta em ~100 ms; depois de `analogReference(INTERNAL)`, ~0,5 s.
   Documentado no README do R3.

@@ -9,73 +9,42 @@
   <meta name="author" content="{{ site.author }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  {%- comment -%}
+    Cores, fonte, larguras e a barra do topo vêm do site do professor
+    (referência única: https://professorjoaomiguel.github.io/DESIGN.html).
+    Os caminhos começam com "/" de propósito: mesmo domínio, outro repo.
+  {%- endcomment %}
+  <link rel="stylesheet" href="/assets/tokens.css">
+  <link rel="stylesheet" href="/assets/topbar.css">
+  <link rel="icon" type="image/png" href="/assets/avatar.png">
   <style>
-    /* Mesma identidade do site do professor: Outfit, slate/indigo, modo escuro automático. */
-    :root {
-      --bg-primary: #f8fafc;
-      --bg-secondary: #ffffff;
-      --text-primary: #0f172a;
-      --text-secondary: #475569;
-      --accent: #4f46e5;
-      --accent-light: #e0e7ff;
-      --border: #e2e8f0;
-      --code-bg: #f1f5f9;
-      --font: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      --mono: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
-      color-scheme: light;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-primary: #090d16;
-        --bg-secondary: #111827;
-        --text-primary: #f8fafc;
-        --text-secondary: #94a3b8;
-        --accent: #818cf8;
-        --accent-light: #1e1b4b;
-        --border: #1f2937;
-        --code-bg: #1e293b;
-        color-scheme: dark;
-      }
-    }
+    /* Só o estilo do conteúdo. As variáveis vêm de /assets/tokens.css; as
+       reservas (segundo valor do var) servem para abrir fora do domínio. */
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      font-family: var(--font);
+      background: var(--bg-primary, #f8fafc);
+      color: var(--text-primary, #0f172a);
+      font-family: var(--font, sans-serif);
       font-size: 17px;
       line-height: 1.65;
     }
-    a { color: var(--accent); text-underline-offset: 2px; }
-    .topo {
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border);
-    }
-    .topo-interno, main, .rodape-interno {
-      max-width: 960px;
+    a { color: var(--accent, #4f46e5); text-underline-offset: 2px; }
+    a:focus-visible { outline: 2px solid var(--accent, #4f46e5); outline-offset: 2px; border-radius: 4px; }
+    main, .rodape-interno {
+      max-width: var(--page-max, 900px);
       margin: 0 auto;
-      padding: 0 16px;
+      padding: 0 var(--gutter, 1rem);
     }
-    .topo-interno {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 6px 20px;
-      padding-top: 12px;
-      padding-bottom: 12px;
-    }
-    .marca { font-weight: 700; font-size: 1.15rem; color: var(--text-primary); text-decoration: none; }
-    .topo nav { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: .95rem; }
-    .topo nav a { text-decoration: none; }
-    .voltar { margin-left: auto; font-size: .9rem; text-decoration: none; color: var(--text-secondary); }
     main { padding-top: 24px; padding-bottom: 48px; }
     h1, h2, h3, h4 { line-height: 1.25; margin: 1.6em 0 .5em; }
     h1 { font-size: 2rem; margin-top: .4em; }
     h2 { font-size: 1.45rem; padding-bottom: .25em; border-bottom: 1px solid var(--border); }
     h3 { font-size: 1.15rem; }
+    /* A barra do topo é fixa: o título da âncora não pode ficar embaixo dela. */
+    h2[id], h3[id], h4[id] { scroll-margin-top: 4.5rem; }
     code {
-      font-family: var(--mono);
+      font-family: var(--mono, monospace);
       font-size: .88em;
       background: var(--code-bg);
       padding: .1em .35em;
@@ -84,7 +53,7 @@
     pre {
       background: var(--code-bg);
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: var(--radius-sm, 8px);
       padding: 12px 14px;
       overflow-x: auto;
       line-height: 1.45;
@@ -104,13 +73,13 @@
     blockquote {
       margin: 1em 0;
       padding: .6em 1em;
-      border-left: 4px solid var(--accent);
+      border-left: 4px solid var(--accent, #4f46e5);
       background: var(--bg-secondary);
-      border-radius: 0 8px 8px 0;
+      border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0;
       color: var(--text-primary);
     }
     blockquote p { margin: .4em 0; }
-    img { max-width: 100%; height: auto; border-radius: 8px; }
+    img { max-width: 100%; height: auto; border-radius: var(--radius-sm, 8px); }
     hr { border: 0; border-top: 1px solid var(--border); margin: 2em 0; }
     .rodape {
       border-top: 1px solid var(--border);
@@ -119,20 +88,27 @@
       font-size: .88rem;
     }
     .rodape-interno { padding-top: 16px; padding-bottom: 24px; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
   </style>
 </head>
 <body>
-  <header class="topo">
-    <div class="topo-interno">
-      <a class="marca" href="{{ '/' | relative_url }}">{{ site.title }}</a>
-      <nav aria-label="Navegação principal">
-        <a href="{{ '/INDEX.html' | relative_url }}">Placas</a>
-        <a href="{{ '/IDENTIFICAR.html' | relative_url }}">Que placa é essa?</a>
-        <a href="{{ '/GLOSSARIO.html' | relative_url }}">Glossário</a>
-      </nav>
-      <a class="voltar" href="https://professorjoaomiguel.github.io/">← Site do professor</a>
+  <nav class="topbar" aria-label="Navegação principal">
+    <div class="topbar-inner">
+      <a class="brand" href="{{ '/' | relative_url }}"><img src="/assets/avatar.png" alt="" width="28" height="28"><span>{{ site.title }}</span></a>
+      <ul class="topnav">
+        <li><a href="{{ '/INDEX.html' | relative_url }}">Placas</a></li>
+        <li><a href="{{ '/IDENTIFICAR.html' | relative_url }}">Que placa é essa?</a></li>
+        <li><a href="{{ '/GLOSSARIO.html' | relative_url }}">Glossário</a></li>
+      </ul>
+      <a class="topbar-back" href="https://professorjoaomiguel.github.io/">← Site do professor</a>
     </div>
-  </header>
+  </nav>
   <main>
 {%- comment -%}
   O README.md da raiz e o de inventario/ não são páginas README.html: o da

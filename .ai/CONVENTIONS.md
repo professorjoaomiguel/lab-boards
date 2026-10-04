@@ -68,6 +68,30 @@ para agentes que **constroem** o repositório.
    Código: MIT (`LICENSE-CODE`). Citação: `CITATION.cff`. Nunca publique o
    e-mail do autor; use apenas o identificador `@professorjoaomiguel`.
 
+## Visual do site
+
+A referência visual do site (cores claro/escuro, fonte, larguras, raios e
+a barra do topo) é o
+[`DESIGN.md`](https://professorjoaomiguel.github.io/DESIGN.html) do site do
+professor (repositório `professorjoaomiguel.github.io`). **Nada disso é
+definido aqui.** O `_layouts/default.html` carrega de lá
+`/assets/tokens.css`, `/assets/topbar.css` e `/assets/avatar.png` (caminho
+começando com `/`, sem `relative_url`: é o mesmo domínio, outro
+repositório) e usa a marcação da barra do DESIGN.md.
+
+- O `<style>` do layout só estiliza o conteúdo (títulos, tabelas, código,
+  rodapé) com as variáveis do `tokens.css`. Não recrie o `:root` nem o
+  bloco de modo escuro; para abrir fora do domínio, use reserva pontual,
+  como `var(--accent, #4f46e5)`.
+- Larguras e raios pelos tokens (`--page-max`, `--gutter`, `--radius-sm`).
+  Hover sem movimento (nada de `translateY`); respeitar
+  `prefers-reduced-motion`. A barra é fixa: títulos com âncora levam
+  `scroll-margin-top: 4.5rem`.
+- **Mudança visual (cor, fonte, barra) se pede no repositório do site do
+  professor**, não aqui; ela vale para todos os sites de uma vez.
+- O `scripts/verificar_site.py` confere que os arquivos de `/assets/`
+  abrem (200), sem percorrê-los.
+
 ## Estrutura do repositório
 
 - `boards/<slug>/` — placas de desenvolvimento (ESP32, Arduino, etc.)
