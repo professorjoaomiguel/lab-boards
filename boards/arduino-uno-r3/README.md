@@ -7,6 +7,17 @@ tags: [arduino, uno, uno-r3, avr, atmega328p, usb-b, 5v]
 
 # Arduino UNO R3
 
+## Resumo rápido
+
+| | |
+|---|---|
+| Tensão lógica | **5V** |
+| Placa na IDE | **Arduino Uno** (pacote Arduino AVR Boards; FQBN `arduino:avr:uno`) |
+| Driver USB | Original (ATmega16U2): vem com a IDE. Clone com CH340: Windows Update ou [driver da WCH](https://www.wch-ic.com/downloads/CH341SER_EXE.html) |
+| LED embutido | D13 (`LED_BUILTIN`, marcado **L**), acende em HIGH |
+| Botões | RESET |
+| Cuidado nº 1 | D0/D1 estão ligados à USB: um circuito nesses pinos atrapalha a gravação e o Monitor Serial |
+
 ## Visão geral
 A placa Arduino clássica, baseada no microcontrolador de 8 bits
 ATmega328P a 16 MHz. É a referência do formato UNO: a maioria dos shields
@@ -28,8 +39,10 @@ módulos de 3,3V, as saídas da placa (5V) podem queimar o módulo: use um
 conversor de nível lógico ou um divisor resistivo.
 
 ## Fotos
-_Foto ainda não adicionada — colocar o arquivo em `imagens/` e referenciar
-aqui com `![foto](imagens/nome-do-arquivo.jpg)`._
+_Ainda sem foto própria. Previstas, na pasta `imagens/`: `vista-de-cima.jpg`
+(a placa inteira, de cima), `conector-usb.jpg` (o conector USB-B e o chip
+ao lado dele, que mostra se é original ou clone) e `serigrafia.jpg` (o
+verso). A pinagem está em texto logo abaixo._
 
 ## Diagrama esquemático / Pinout
 Pinout e esquemático oficiais (Arduino):
@@ -115,6 +128,26 @@ ICSP de 6 pinos perto dele. O CH340 é um chip retangular com a marcação
 - Como D0/D1 estão ligados à ponte, qualquer circuito nesses pinos pode
   atrapalhar a gravação e o Monitor Serial.
 
+## Como programar
+
+### Arduino (C/C++): Arduino IDE
+
+1. Ligue a placa pelo cabo USB-B (um cabo que só carrega não serve: precisa
+   ter dados).
+2. Em **Ferramentas > Placa**, escolha **Arduino AVR Boards > Arduino Uno**.
+3. Em **Ferramentas > Porta**, escolha a porta da placa: `Arduino Uno (COMx)`
+   no original ou `USB-SERIAL CH340 (COMx)` nos clones. Se ela não aparecer,
+   veja [Ponte USB-serial](#ponte-usb-serial) (driver ou cabo).
+4. Clique em **Carregar**. A placa reinicia sozinha e o sketch é gravado
+   pelo bootloader.
+
+### Arduino (C/C++): arduino-cli
+
+```bash
+arduino-cli compile --fqbn arduino:avr:uno pasta-do-sketch
+arduino-cli upload -p COMx --fqbn arduino:avr:uno pasta-do-sketch
+```
+
 ## Código de teste e validação
 
 Há dois tipos de teste, cada um com o seu sketch:
@@ -150,7 +183,8 @@ gravado.
 O UNO R3 não tem RTC, [DAC](../../GLOSSARIO.md#dac), segunda serial nem ID único no chip, então esses
 testes do UNO R4 não existem aqui.
 
-**Como rodar pela IDE do Arduino:** placa **Arduino Uno**, grave o sketch,
+**Como rodar pela IDE do Arduino:** grave o sketch (ver
+[Como programar](#como-programar)),
 abra o **Monitor Serial em 115200 baud** e **envie `c`**. No fim aparece o
 **RESUMO**, um teste por linha. No UNO R3, abrir o Monitor Serial
 **reinicia a placa** (é assim que o chip da USB funciona), por isso o aviso
@@ -163,10 +197,36 @@ Fica na pasta do shield. Ao abrir o Monitor Serial, mostra a placa
 roda um teste automático do shield com resumo. Detalhes em
 [Código de teste do shield](../../shields/uno-shield-9in1/code/README.md).
 
+### A confirmar na placa real
+
+| Item | Como | Situação |
+|------|------|----------|
+| Teste `gpio` completo (D2–D12, A1–A5) | Teste da placa **sem** o shield | ✅ Rodado na R3-01 (2026-10-03): **FALHA só no D3** (pull-up); os outros pinos passaram |
+| Vcc com multímetro | Comparar com o valor do teste `vcc` | A medir |
+| Clone com CH340 | Os mesmos testes; o inventário precisa de registro à mão (sem número de série USB) | Sem placa testada |
+
+## Referências
+- Datasheet do ATmega328P (Microchip):
+  https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/ATmega48A-PA-88A-PA-168A-PA-328-P-DS-DS40002061B.pdf
+- Datasheet do ATmega16U2 (Microchip):
+  https://ww1.microchip.com/downloads/en/DeviceDoc/doc7799.pdf
+- Datasheet do CH340 (WCH, ponte USB-serial dos clones):
+  https://www.wch-ic.com/downloads/CH340DS1_PDF.html
+- Datasheet da placa (Arduino):
+  https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf
+- Página oficial do Arduino (especificações, tutoriais, downloads):
+  https://docs.arduino.cc/hardware/uno-rev3/
+
+## Para o professor / histórico de testes
+
+Esta parte é do professor: ferramentas de terminal, inventário das
+unidades do laboratório e resultados dos testes nas placas reais. Para
+usar a placa em aula, as seções acima bastam.
+
 ### Pelo terminal (ferramenta do professor)
 
 Preparação do computador em
-[Como rodar, no README do UNO R4](../arduino-uno-r4/README.md#como-rodar).
+[Pelo terminal, no README do UNO R4](../arduino-uno-r4/README.md#pelo-terminal-ferramenta-do-professor).
 
 ```bash
 python scripts/serial_placa.py auto --porta COM10 --gravar --registrar   # placa sozinha
@@ -192,15 +252,7 @@ Placa original (ATmega16U2), Vcc de 4,87–4,89 V na USB.
   D3 desta placa.** Confirmado sem shield: o teste da placa acusa o D3
   (`gpio`: "D3 (pull-up)") e passa todos os outros pinos.
 
-### A confirmar na placa real
-
-| Item | Como | Situação |
-|------|------|----------|
-| Teste `gpio` completo (D2–D12, A1–A5) | Teste da placa **sem** o shield | ✅ Rodado na R3-01 (2026-10-03): **FALHA só no D3** (pull-up); os outros pinos passaram |
-| Vcc com multímetro | Comparar com o valor do teste `vcc` | A medir |
-| Clone com CH340 | Os mesmos testes; o inventário precisa de registro à mão (sem número de série USB) | Sem placa testada |
-
-## Inventário (identificar cada placa)
+### Inventário (identificar cada placa)
 
 O ATmega328P **não tem ID único**. No UNO R3 **original**, o chip da USB
 (ATmega16U2) tem um **número de série** gravado pela Arduino, diferente em
@@ -220,18 +272,6 @@ Para registrar, **uma placa por vez**:
 **Clones com CH340 não têm número de série USB.** O script avisa e não
 registra: anote a placa à mão no CSV (coluna `id_unico` vazia e uma
 descrição em `obs`). O inventário não guarda dados pessoais.
-
-## Referências
-- Datasheet do ATmega328P (Microchip):
-  https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/ATmega48A-PA-88A-PA-168A-PA-328-P-DS-DS40002061B.pdf
-- Datasheet do ATmega16U2 (Microchip):
-  https://ww1.microchip.com/downloads/en/DeviceDoc/doc7799.pdf
-- Datasheet do CH340 (WCH, ponte USB-serial dos clones):
-  https://www.wch-ic.com/downloads/CH340DS1_PDF.html
-- Datasheet da placa (Arduino):
-  https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf
-- Página oficial do Arduino (especificações, tutoriais, downloads):
-  https://docs.arduino.cc/hardware/uno-rev3/
 
 ---
 
