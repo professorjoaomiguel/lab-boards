@@ -226,8 +226,8 @@ trabalho do zero lendo só este arquivo e os links dele.
 - 2026-10-04: GitHub Pages no ar em
   `https://professorjoaomiguel.github.io/lab-boards/`, com o relatório do
   inventário em `inventario/relatorio.html`; descrição, homepage e tópicos
-  do repositório no GitHub. Conferido: 420 links e âncoras das páginas
-  publicadas.
+  do repositório no GitHub. Conferido por varredura: 19 páginas, 457
+  links e âncoras, sem link quebrado.
 - 2026-10-04: READMEs dos itens no padrão aluno primeiro: "Resumo rápido"
   no topo, "Como programar" (agora também no UNO R3 e no R4) e conteúdo do
   professor (terminal, inventário, resultados) na seção final "Para o
