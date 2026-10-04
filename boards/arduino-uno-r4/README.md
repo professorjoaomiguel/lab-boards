@@ -36,6 +36,7 @@ Existem duas versões:
 | Conector SWD/JTAG | Sim | — |
 
 ## Tensão de operação
+
 | Característica | Valor |
 |---|---|
 | Tensão lógica dos pinos | **5V** |

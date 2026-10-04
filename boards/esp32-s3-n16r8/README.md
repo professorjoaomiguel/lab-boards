@@ -26,6 +26,7 @@ processamento de imagem, buffers de tela e projetos com Wi-Fi/Bluetooth
 simultâneos.
 
 ## Tensão de operação
+
 | Característica | Valor |
 |---|---|
 | Tensão lógica dos pinos | **3,3V** |

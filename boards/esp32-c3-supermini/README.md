@@ -34,6 +34,7 @@ pinagem é **diferente**. Exemplos e tutoriais do XIAO não funcionam
 sem ajuste. Veja a comparação na seção **Diagrama esquemático / Pinout**.
 
 ## Tensão de operação
+
 | Característica | Valor |
 |---|---|
 | Tensão lógica dos pinos | **3,3V** |

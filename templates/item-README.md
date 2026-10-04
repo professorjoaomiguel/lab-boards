@@ -24,6 +24,7 @@ Só dados que este README confirma; o que falta, escreva "a confirmar".
 Breve descrição: o que é, para que serve, contexto de uso em aula.
 
 ## Tensão de operação
+
 | Característica | Valor |
 |---|---|
 | Tensão lógica dos pinos | 5V ou 3,3V |

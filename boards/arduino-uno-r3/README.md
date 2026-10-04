@@ -26,6 +26,7 @@ introduzir entradas/saídas digitais, leitura analógica, [PWM](../../GLOSSARIO.
 serial.
 
 ## Tensão de operação
+
 | Característica | Valor |
 |---|---|
 | Tensão lógica dos pinos | **5V** |

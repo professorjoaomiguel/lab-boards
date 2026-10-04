@@ -43,6 +43,7 @@ Não confundir com o [ESP32-S3 N16R8 DevKit](../esp32-s3-n16r8/README.md),
 que é a placa estreita, de encaixar na protoboard.
 
 ## Tensão de operação
+
 | Característica | Valor |
 |---|---|
 | Tensão lógica dos pinos | **3,3V** |

@@ -89,6 +89,18 @@ class TestPages(unittest.TestCase):
                       or "{%" in a.read_text(encoding="utf-8")]
         self.assertEqual(com_liquid, [])
 
+    def test_tabela_comeca_depois_de_linha_em_branco(self):
+        # O GitHub aceita a tabela colada no título; o kramdown do Pages,
+        # não: a tabela vira um parágrafo cheio de "|".
+        coladas = []
+        for arquivo in arquivos_md_do_repositorio():
+            anterior = ""
+            for n, linha in enumerate(arquivo.read_text(encoding="utf-8").splitlines(), 1):
+                if linha.startswith("|") and anterior.strip() and not anterior.startswith("|"):
+                    coladas.append(f"{arquivo.relative_to(RAIZ)}:{n}")
+                anterior = linha
+        self.assertEqual(coladas, [])
+
     def test_readme_e_contributing_publicados_pelos_html(self):
         # O Jekyll do Pages não transforma estes .md em página, e front
         # matter neles aparece no GitHub (como linhas horizontais). Por isso

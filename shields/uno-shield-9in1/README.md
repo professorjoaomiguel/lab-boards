@@ -36,6 +36,7 @@ genericamente é um clone dele, com o mesmo layout e a mesma pinagem, por
 isso a [documentação da Keyestudio](https://wiki.keyestudio.com/Ks0183_keyestudio_Multi-purpose_Shield_V1) vale para ele.
 
 ## Tensão de operação
+
 | Característica | Valor |
 |---|---|
 | Tensão lógica | **5V** |

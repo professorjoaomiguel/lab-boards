@@ -23,8 +23,10 @@ E **três modos de acesso**, que precisam funcionar igualmente bem:
   `_layouts/default.html`, configuração em `_config.yml`). Por isso, **nenhum
   `.md` pode conter chave dupla nem chave seguida de porcentagem** (as
   marcas do Liquid, a linguagem de modelos do Jekyll); o teste
-  `tests/test_glossario.py` confere. Os links relativos para `.md`
-  continuam funcionando, e a pasta `.ai/` é publicada pelo `include` do
+  `tests/test_glossario.py` confere. E **toda tabela começa depois de uma
+  linha em branco**: colada no título, ela funciona no GitHub, mas o
+  kramdown do Pages a mostra como texto (o mesmo teste confere). Os links
+  relativos para `.md` continuam funcionando, e a pasta `.ai/` é publicada pelo `include` do
   `_config.yml`. **Não ponha front matter no `README.md` nem no
   `CONTRIBUTING.md` da raiz**: o GitHub mostra como linhas horizontais. No
   site, eles saem pelo `index.html` e pelo `CONTRIBUTING.html`.
