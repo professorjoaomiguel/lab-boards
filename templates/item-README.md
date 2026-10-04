@@ -7,6 +7,19 @@ tags: [tag1, tag2, 5v]
 
 # Nome do item
 
+## Resumo rápido
+
+| | |
+|---|---|
+| Tensão lógica | 5V ou 3,3V |
+| Placa na IDE | nome no menu Ferramentas > Placa (FQBN `pacote:arquitetura:placa`) |
+| Driver USB | qual chip de USB e se precisa de driver |
+| LED embutido | pino e nível que acende (HIGH ou LOW) |
+| Botões | quais existem (RESET, BOOT...) |
+| Cuidado nº 1 | o erro mais provável de queimar ou travar a placa |
+
+Só dados que este README confirma; o que falta, escreva "a confirmar".
+
 ## Visão geral
 Breve descrição: o que é, para que serve, contexto de uso em aula.
 
@@ -22,7 +35,11 @@ Compatibilidade: com quais placas/shields pode ser usado com segurança, e
 o que acontece se misturar 5V com 3,3V.
 
 ## Fotos
-![foto](imagens/foto-01.jpg)
+![Placa vista de cima](imagens/vista-de-cima.jpg)
+
+Fotos previstas, na pasta `imagens/`: `vista-de-cima.jpg`,
+`conector-usb.jpg` e `serigrafia.jpg`. Enquanto não houver foto, diga
+quais faltam (a pinagem fica sempre em texto).
 
 ## Diagrama esquemático / Pinout
 ![esquemático](imagens/esquematico.png)
@@ -33,12 +50,25 @@ o que acontece se misturar 5V com 3,3V.
 ## Funcionalidades / Periféricos
 - ...
 
+## Como programar
+
+### Arduino (C/C++): Arduino IDE
+Pacote a instalar, placa e opções no menu Ferramentas, porta e driver.
+
+### Arduino (C/C++): arduino-cli
+FQBN e comandos `compile`/`upload`.
+
 ## Código de teste e validação
 (preenchido futuramente — ver pasta `code/`)
 
 ## Referências
 - Datasheet do microcontrolador: link
 - Loja/fabricante: link
+
+## Para o professor / histórico de testes
+Ferramentas de terminal, inventário e resultados dos testes nas placas
+reais. Fica no fim, fora do caminho do aluno. Apague a seção se não houver
+conteúdo.
 
 ---
 

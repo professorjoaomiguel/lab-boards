@@ -102,8 +102,14 @@ espaços, sem acentos (ex: `esp32-s3-n16r8`, `teclado-matricial-4x4`).
      depender disso além do que o template já usa.
    - Toda placa e todo shield leva a tag de tensão lógica: `5v` ou `3v3`.
      Assim o `INDEX.md` agrupa os itens por tensão.
-3. Preencha as seções do template (visão geral, tensão de operação,
-   fotos, diagrama esquemático, componentes, funcionalidades, referências).
+3. Preencha as seções do template, nesta ordem: **Resumo rápido** (tensão,
+   placa na IDE, driver USB, LED embutido, botões, cuidado nº 1; só dados
+   confirmados, o resto "a confirmar"), visão geral, tensão de operação,
+   fotos (diga quais faltam), diagrama esquemático, componentes,
+   funcionalidades, **Como programar**, código de teste, referências e, no
+   fim, **Para o professor / histórico de testes** (terminal, inventário,
+   resultados nas placas reais, investigações longas). O README é lido
+   primeiro pelo aluno: o conteúdo do professor fica no fim.
 4. Crie as subpastas `imagens/` (fotos e diagramas) e `code/` (código de
    teste/validação, quando existir) dentro da pasta do item.
 5. Rode `python scripts/gerar_indice.py` para atualizar o `INDEX.md`. A
