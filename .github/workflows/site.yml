@@ -1,0 +1,27 @@
+# Confere o site publicado (GitHub Pages) depois de cada build.
+# Os testes de tests/ só veem os links como funcionam no GitHub; este
+# workflow percorre o site de verdade (scripts/verificar_site.py).
+name: Site publicado
+
+on:
+  page_build:
+  workflow_dispatch:
+
+jobs:
+  links:
+    # No page_build, só depois de um build que deu certo.
+    if: github.event_name == 'workflow_dispatch' || github.event.build.status == 'built'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Esperar o site atualizar
+        if: github.event_name == 'page_build'
+        run: sleep 60
+
+      - name: Percorrer o site e conferir os links
+        run: python scripts/verificar_site.py

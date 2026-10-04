@@ -16,7 +16,8 @@ COMO USAR
         python scripts/gerar_indice.py --help   # mostra esta ajuda
 
     Rode sempre que criar um item ou mudar o front matter de algum. A
-    geração é manual: não há hook de git nem CI fazendo isso.
+    geração é manual; a CI (.github/workflows/testes.yml) só confere se o
+    INDEX.md commitado está em dia.
 
 FORMATO ESPERADO DO FRONT MATTER
     ---

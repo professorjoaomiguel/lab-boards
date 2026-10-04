@@ -21,8 +21,9 @@ COMO USAR
         python scripts/verificar_site.py --base https://outro.endereco/lab-boards/
 
     Sai com código 1 se achar problema, listando cada um. Precisa de
-    internet; por isso não roda na suíte de testes. Rode depois que o build
-    do Pages terminar, sempre que mudar o README, o CONTRIBUTING, o layout
+    internet; por isso não roda na suíte de testes. A CI roda o script depois
+    de cada build do Pages (.github/workflows/site.yml). À mão, rode depois
+    que o build terminar, quando mudar o README, o CONTRIBUTING, o layout
     (_layouts/, _includes/) ou o _config.yml.
 
 TESTES

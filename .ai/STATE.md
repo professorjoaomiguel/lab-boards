@@ -143,9 +143,6 @@ trabalho do zero lendo só este arquivo e os links dele.
   texto alternativo descritivo.
 - Definir o produto de referência do ESP32-S3 N16R8 DevKit.
 - Documentar mais placas e shields conforme forem usados em aula.
-- (2026-10-04) CI no GitHub Actions: rodar os testes de `scripts/` (inclui
-  a checagem do STATE) e conferir se `INDEX.md` e `relatorio.html` foram
-  regerados.
 - (2026-10-04) Futuro, só se for o caso: dividir o STATE em arquivos por
   tópico ou por placa (`.ai/state/`), com o STATE como índice; e migrar o
   backlog para GitHub Issues se mais pessoas passarem a contribuir (custo:
@@ -223,6 +220,9 @@ trabalho do zero lendo só este arquivo e os links dele.
 
 ## Resolvido (últimos ~30 dias)
 
+- 2026-10-04: CI no GitHub Actions: `testes.yml` (STATE, suíte, `INDEX.md`
+  e `relatorio.html` em dia) a cada push; `site.yml` (varredura do site)
+  depois de cada build do Pages.
 - 2026-10-04: testes movidos de `scripts/` para `tests/` (sugestão do
   usuário); `scripts/` fica só com as ferramentas.
 - 2026-10-04: `scripts/verificar_site.py` (varredura do site publicado:

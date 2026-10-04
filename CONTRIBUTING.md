@@ -48,4 +48,6 @@ python -m pytest -q tests
 ```
 
 Os testes conferem os geradores, o STATE, o glossário e todos os links
-relativos dos arquivos `.md`.
+relativos dos arquivos `.md`. A CI (aba **Actions** do GitHub) roda a
+mesma coisa a cada push, confere se o `INDEX.md` e o `relatorio.html`
+foram regerados e, depois de cada build do site, percorre o site publicado.

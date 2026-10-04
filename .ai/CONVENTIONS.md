@@ -127,8 +127,8 @@ espaços, sem acentos (ex: `esp32-s3-n16r8`, `teclado-matricial-4x4`).
 4. Crie as subpastas `imagens/` (fotos e diagramas) e `code/` (código de
    teste/validação, quando existir) dentro da pasta do item.
 5. Rode `python scripts/gerar_indice.py` para atualizar o `INDEX.md`. A
-   geração é sempre manual — não há hook de git nem CI fazendo isso
-   automaticamente.
+   geração é manual; a CI (`.github/workflows/testes.yml`) só confere se o
+   `INDEX.md` commitado está em dia, e falha se não estiver.
 6. Atualize `.ai/STATE.md` com o item novo.
 7. Faça commit do item novo junto com o `INDEX.md` atualizado.
 
@@ -265,6 +265,11 @@ Todo script deve ter:
 
 Os testes ficam em `tests/`, um arquivo `test_<script>.py` por script, e
 importam os scripts de `scripts/`. Rodar todos: `python -m pytest -q tests`.
+
+**CI (GitHub Actions):** `.github/workflows/testes.yml` roda a cada push e
+pull request (STATE, suíte de `tests/`, `INDEX.md` e `relatorio.html` em
+dia); `.github/workflows/site.yml` roda o `scripts/verificar_site.py` depois
+de cada build do Pages (e à mão, pela aba Actions).
 
 `scripts/gerar_indice.py` tem testes em `tests/test_gerar_indice.py`,
 rodados com `python -m unittest tests/test_gerar_indice.py -v`.

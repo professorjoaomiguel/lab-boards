@@ -23,7 +23,8 @@ COMO USAR
         python scripts/gerar_inventario.py --help   # mostra esta ajuda
 
     Rode sempre que mudar um CSV do inventário e faça commit dos dois
-    juntos. A geração é manual: não há hook de git nem CI.
+    juntos. A geração é manual; a CI (.github/workflows/testes.yml) só
+    confere se o relatório commitado está em dia (ignorando a data).
 
 SITUAÇÃO DE CADA UNIDADE
     Calculada a partir da coluna `resultado`:

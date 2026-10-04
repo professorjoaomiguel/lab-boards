@@ -1,0 +1,44 @@
+# Testes do repositório: a cada push e pull request.
+# Confere o STATE, roda a suíte de tests/ e verifica se os arquivos gerados
+# (INDEX.md e inventario/relatorio.html) foram regerados e commitados.
+name: Testes
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar o pytest
+        run: python -m pip install pytest
+
+      - name: Conferir o .ai/STATE.md
+        run: python scripts/verificar_state.py
+
+      - name: Rodar os testes
+        run: python -m pytest -q tests
+
+      - name: INDEX.md está em dia com o front matter dos itens
+        run: |
+          python scripts/gerar_indice.py
+          git diff --exit-code INDEX.md || {
+            echo "::error::INDEX.md desatualizado: rode python scripts/gerar_indice.py e commite."
+            exit 1
+          }
+
+      - name: relatorio.html está em dia com os CSVs (ignorando a data)
+        run: |
+          python scripts/gerar_inventario.py --saida /tmp/relatorio.html
+          sem_data() { sed -E 's/gerado em [0-9]{4}-[0-9]{2}-[0-9]{2}/gerado em DATA/' "$1"; }
+          diff <(sem_data inventario/relatorio.html) <(sem_data /tmp/relatorio.html) > /dev/null || {
+            echo "::error::relatorio.html desatualizado: rode python scripts/gerar_inventario.py e commite."
+            exit 1
+          }
