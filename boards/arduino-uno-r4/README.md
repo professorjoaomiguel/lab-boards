@@ -7,6 +7,17 @@ tags: [arduino, uno, uno-r4, renesas, ra4m1, usb-c, wifi, bluetooth, 5v]
 
 # Arduino UNO R4 (Minima / WiFi)
 
+## Resumo rápido
+
+| | |
+|---|---|
+| Tensão lógica | **5V**, mas só **8 mA por pino** |
+| Placa na IDE | **Arduino UNO R4 Minima** ou **Arduino UNO R4 WiFi** (pacote Arduino UNO R4 Boards; FQBN `arduino:renesas_uno:minima` ou `arduino:renesas_uno:unor4wifi`) |
+| Driver USB | Não precisa (não há chip de ponte USB-serial) |
+| LED embutido | D13 (`LED_BUILTIN`, marcado **L**), acende em HIGH |
+| Botões | RESET (duas vezes rápido: entra no bootloader) |
+| Cuidado nº 1 | 8 mA por pino, contra 20 mA do UNO R3: LED com resistor baixo, relé ou motor ligado direto no pino podem danificar a placa |
+
 ## Visão geral
 Sucessora do UNO R3, no mesmo formato e com a mesma pinagem, mas com um
 microcontrolador de 32 bits: o Renesas RA4M1 (Arm Cortex-M4 a 48 MHz). Tem
@@ -46,8 +57,10 @@ módulos de 3,3V, as saídas da placa (5V) podem queimar o módulo: use um
 conversor de nível lógico ou um divisor resistivo.
 
 ## Fotos
-_Foto ainda não adicionada — colocar o arquivo em `imagens/` e referenciar
-aqui com `![foto](imagens/nome-do-arquivo.jpg)`._
+_Ainda sem foto própria. Previstas, na pasta `imagens/`: `vista-de-cima.jpg`
+(a placa inteira, de cima; uma da Minima e, quando houver, uma da WiFi),
+`conector-usb.jpg` (o conector USB-C) e `serigrafia.jpg` (o verso). A
+pinagem está em texto logo abaixo._
 
 ## Diagrama esquemático / Pinout
 Pinout e esquemático oficiais (Arduino):
@@ -153,6 +166,32 @@ preciso instalar driver extra no Windows.
 Em nenhuma das versões os pinos D0/D1 estão ligados à USB: eles formam o
 `Serial1`, livre para módulos externos.
 
+## Como programar
+
+### Arduino (C/C++): Arduino IDE
+
+1. Na primeira vez, instale o pacote **Arduino UNO R4 Boards** em
+   **Ferramentas > Placa > Gerenciador de Placas**.
+2. Ligue a placa pelo cabo USB-C (com dados, não só carga). Não precisa de
+   driver.
+3. Em **Ferramentas > Placa**, escolha **Arduino UNO R4 Minima** ou
+   **Arduino UNO R4 WiFi**, conforme a placa (a WiFi tem a matriz de LEDs).
+4. Em **Ferramentas > Porta**, escolha a porta COM da placa e clique em
+   **Carregar**.
+5. Se a gravação falhar ("No DFU capable USB device" ou "LIBUSB_ERROR"),
+   aperte o **RESET duas vezes rápido** e tente de novo; se ainda falhar,
+   desconecte e reconecte o cabo.
+
+### Arduino (C/C++): arduino-cli
+
+```bash
+arduino-cli core install arduino:renesas_uno
+arduino-cli compile --fqbn arduino:renesas_uno:minima pasta-do-sketch
+arduino-cli upload -p COMx --fqbn arduino:renesas_uno:minima pasta-do-sketch
+```
+
+Na UNO R4 WiFi, troque `minima` por `unor4wifi`.
+
 ## Código de teste e validação
 
 Há dois tipos de teste, cada um com o seu sketch:
@@ -210,16 +249,12 @@ resumo. Detalhes em
 
 ### Como rodar
 
-Há dois caminhos, com os mesmos sketches. **Para os alunos, o caminho 1
-(só a IDE) basta.** O caminho 2 é a ferramenta do professor: triagem de um
-lote de placas e registro no inventário.
+Pela IDE do Arduino (nada para instalar além da IDE). O professor também
+pode rodar os mesmos sketches pelo terminal (ver
+[Pelo terminal](#pelo-terminal-ferramenta-do-professor), no fim).
 
-#### Caminho 1: só a IDE do Arduino (nada para instalar além da IDE)
-
-1. Em **Ferramentas > Placa**, escolha **Arduino UNO R4 Minima** (ou
-   **WiFi**). Se não aparecer, instale o pacote **Arduino UNO R4 Boards**
-   no Gerenciador de Placas.
-2. Abra o sketch, escolha a porta COM e clique em **Carregar**.
+1. Abra o sketch.
+2. Grave na placa (ver [Como programar](#como-programar)).
 3. Abra o **Monitor Serial** em **115200 baud** (no UNO R4 a velocidade
    nem importa, porque a serial é USB nativa). A opção de final de linha
    também não importa.
@@ -239,7 +274,7 @@ lote de placas e registro no inventário.
    ```
 
    Antes do resumo aparecem linhas como `RESULTADO;clock;OK;...`. Elas são
-   para o script do caminho 2 e podem ser ignoradas. Envie `c` para rodar
+   para o script do professor e podem ser ignoradas. Envie `c` para rodar
    de novo.
 
 > **Sem final de linha:** só o Enter, com a caixa vazia, não envia nada.
@@ -251,7 +286,36 @@ bootloader) e a gravação volta a funcionar. Se ainda falhar, desconecte e
 reconecte o cabo USB. Visto na placa real depois de várias gravações
 seguidas.
 
-#### Caminho 2: pelo terminal, com o script `serial_placa.py`
+### A confirmar na placa real
+
+| Item | Como | Situação |
+|------|------|----------|
+| Testes `gpio` e `dac` | Teste da placa **sem** o shield | A rodar |
+| Teste `serial1` | Teste da placa com jumper D0↔D1 | A rodar |
+| Teste conjunto, versão nova | `serial_placa.py auto --shield` no R4 | A rodar (a gravação falhou por LIBUSB no dia; a versão anterior passou) |
+| UNO R4 WiFi | Os mesmos sketches (compilam para `unor4wifi`) | Sem placa testada |
+
+## Referências
+- Datasheet do Renesas RA4M1 (Renesas):
+  https://www.renesas.com/en/document/dst/ra4m1-group-datasheet
+- Datasheet do ESP32-S3-MINI-1 (Espressif, apenas UNO R4 WiFi):
+  https://www.espressif.com/sites/default/files/documentation/esp32-s3-mini-1_mini-1u_datasheet_en.pdf
+- Datasheet da placa UNO R4 Minima (Arduino):
+  https://docs.arduino.cc/resources/datasheets/ABX00080-datasheet.pdf
+- Datasheet da placa UNO R4 WiFi (Arduino):
+  https://docs.arduino.cc/resources/datasheets/ABX00087-datasheet.pdf
+- Página oficial do Arduino — UNO R4 Minima:
+  https://docs.arduino.cc/hardware/uno-r4-minima/
+- Página oficial do Arduino — UNO R4 WiFi:
+  https://docs.arduino.cc/hardware/uno-r4-wifi/
+
+## Para o professor / histórico de testes
+
+Esta parte é do professor: ferramentas de terminal, inventário das
+unidades do laboratório e resultados dos testes nas placas reais. Para
+usar a placa em aula, as seções acima bastam.
+
+### Pelo terminal (ferramenta do professor)
 
 O script [`scripts/serial_placa.py`](../../scripts/serial_placa.py)
 identifica a placa pela USB, grava o sketch certo, mostra o resultado e
@@ -266,8 +330,7 @@ registra a placa no inventário.
 3. Só para gravar pelo script (`--gravar`): instale o
    [arduino-cli](https://arduino.github.io/arduino-cli/latest/installation/)
    e o pacote da placa: `arduino-cli core install arduino:renesas_uno`.
-   Sem ele, grave o sketch pela IDE (caminho 1) e use o script só para
-   testar.
+   Sem ele, grave o sketch pela IDE e use o script só para testar.
 4. Na pasta raiz do repositório, confira se está tudo pronto:
 
    ```bash
@@ -323,16 +386,7 @@ Observações feitas durante os testes:
   `analogWrite(pino, 0)` vira um simples `digitalWrite(LOW)`, por isso o
   mesmo código não mostra o problema.)
 
-### A confirmar na placa real
-
-| Item | Como | Situação |
-|------|------|----------|
-| Testes `gpio` e `dac` | Teste da placa **sem** o shield | A rodar |
-| Teste `serial1` | Teste da placa com jumper D0↔D1 | A rodar |
-| Teste conjunto, versão nova | `serial_placa.py auto --shield` no R4 | A rodar (a gravação falhou por LIBUSB no dia; a versão anterior passou) |
-| UNO R4 WiFi | Os mesmos sketches (compilam para `unor4wifi`) | Sem placa testada |
-
-## Inventário (identificar cada placa)
+### Inventário (identificar cada placa)
 
 Cada RA4M1 sai de fábrica com um **ID único de 128 bits**, gravado no chip
 e impossível de apagar. No **UNO R4 Minima**, o core do Arduino usa esse ID
@@ -363,20 +417,6 @@ Para registrar (placa sozinha): `python scripts/serial_placa.py auto --gravar --
 **uma placa por vez**. Uma placa nova ganha a próxima etiqueta; uma já
 registrada só tem o último teste atualizado. O inventário não guarda dados
 pessoais: quem está com cada placa não entra neste repositório público.
-
-## Referências
-- Datasheet do Renesas RA4M1 (Renesas):
-  https://www.renesas.com/en/document/dst/ra4m1-group-datasheet
-- Datasheet do ESP32-S3-MINI-1 (Espressif, apenas UNO R4 WiFi):
-  https://www.espressif.com/sites/default/files/documentation/esp32-s3-mini-1_mini-1u_datasheet_en.pdf
-- Datasheet da placa UNO R4 Minima (Arduino):
-  https://docs.arduino.cc/resources/datasheets/ABX00080-datasheet.pdf
-- Datasheet da placa UNO R4 WiFi (Arduino):
-  https://docs.arduino.cc/resources/datasheets/ABX00087-datasheet.pdf
-- Página oficial do Arduino — UNO R4 Minima:
-  https://docs.arduino.cc/hardware/uno-r4-minima/
-- Página oficial do Arduino — UNO R4 WiFi:
-  https://docs.arduino.cc/hardware/uno-r4-wifi/
 
 ---
 
