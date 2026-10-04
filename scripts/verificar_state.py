@@ -56,6 +56,9 @@ def links_quebrados(caminho):
     caminho = Path(caminho)
     problemas = []
     texto = caminho.read_text(encoding="utf-8")
+    # Links dentro de código são exemplos, não links de verdade.
+    texto = re.sub(r"^```.*?^```", "", texto, flags=re.M | re.S)
+    texto = re.sub(r"`[^`\n]*`", "", texto)
     for alvo in RE_LINK.findall(texto):
         if re.match(r"^[a-z]+:", alvo):  # http:, https:, mailto:
             continue

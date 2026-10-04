@@ -29,6 +29,9 @@ resolva-os a partir da pasta do arquivo atual e monte a URL bruta acima.
    etiqueta, dono e defeitos conhecidos) ficam em
    [`inventario/`](inventario/README.md), separado do código. Antes de
    culpar o código por um defeito, veja se a unidade já tem algo anotado lá.
+5. Para explicar um termo técnico ao aluno, use o
+   [`GLOSSARIO.md`](GLOSSARIO.md) (um título por termo; link direto com
+   `GLOSSARIO.md#<termo>`, por exemplo `GLOSSARIO.md#pull-up-e-pull-down`).
 
 ## Regras ao usar este conteúdo
 

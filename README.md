@@ -25,6 +25,8 @@ Este repositório é público e serve a dois públicos:
 - [`boards/`](boards/) — placas de desenvolvimento (ESP32, Arduino, etc.)
 - [`shields/`](shields/) — shields e módulos que acoplam nas placas (teclado,
   display, etc.)
+- [`GLOSSARIO.md`](GLOSSARIO.md) — o que significa cada termo técnico (ADC,
+  pull-up, PSRAM, CH340...), em ordem alfabética.
 
 ## ⚠️ Atenção à tensão (5V × 3,3V)
 

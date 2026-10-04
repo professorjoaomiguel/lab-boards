@@ -66,11 +66,14 @@ para agentes que **constroem** o repositório.
 - `inventario/` — inventário das unidades físicas (placas e shields): quais
   existem, etiqueta, dono (professor ou SENAI) e o que se sabe de cada uma.
   Fica separado do código de teste. Ver `inventario/README.md`.
+- `GLOSSARIO.md` — termos técnicos em ordem alfabética (ver "Glossário").
 - `templates/item-README.md` — template a ser copiado para criar um item novo.
 - `scripts/gerar_indice.py` — gera `INDEX.md` a partir do front matter de
   todos os itens.
 - `scripts/gerar_inventario.py` — gera `inventario/relatorio.html` a partir
   dos CSVs do inventário (rodar sempre que um CSV mudar).
+- `scripts/verificar_state.py` — confere links, a seção "Resolvido" e o
+  tamanho do `.ai/STATE.md`.
 - `scripts/serial_placa.py` — lista as placas ligadas, roda os sketches de
   teste pela serial e registra placas em `inventario/` (`--help`).
 - `docs/superpowers/specs/` e `docs/superpowers/plans/` — histórico de
@@ -125,6 +128,23 @@ máxima por pino, e diga explicitamente com quais placas/shields do
 repositório o item é compatível. Quando um dado não puder ser confirmado
 pela serigrafia ou pelo datasheet, escreva que ele precisa ser medido
 (multímetro) em vez de supor.
+
+## Glossário
+
+O [`GLOSSARIO.md`](../GLOSSARIO.md) explica os termos técnicos, em ordem
+alfabética, um título `###` por termo (o título vira a âncora do link).
+
+- Ao usar num README um termo técnico que o glossário ainda não tem,
+  acrescente-o na letra certa: uma definição geral de 1 a 3 frases e,
+  quando houver, uma linha **Neste repositório:** com link para a seção
+  do README que tem o dado específico.
+- O glossário traz o **conceito**; valores de uma placa (pinos, tensões
+  medidas) ficam no README dela. Não copie dados de README para cá.
+- Em cada README, a **primeira** ocorrência de um termo do glossário leva
+  o link (`[ADC](../../GLOSSARIO.md#adc)`); as seguintes, não.
+- `scripts/test_glossario.py` confere a ordem alfabética, as âncoras
+  repetidas e os links de todos os `.md` (inclusive os que apontam para o
+  glossário).
 
 ## Código de teste (sketches)
 

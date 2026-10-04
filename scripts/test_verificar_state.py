@@ -54,6 +54,12 @@ class TestLinksQuebrados(unittest.TestCase):
         self.assertEqual(len(problemas), 1)
         self.assertIn("nao/existe.md", problemas[0])
 
+    def test_ignora_links_dentro_de_codigo(self):
+        md = escrever(self.pasta, "a/STATE.md",
+                      "Use `![foto](imagens/x.jpg)` aqui.\n\n"
+                      "```\n[y](../nao/existe.md)\n```\n")
+        self.assertEqual(vs.links_quebrados(md), [])
+
     def test_ancora_inexistente(self):
         md = escrever(self.pasta, "a/STATE.md",
                       "[x](../item/README.md#seção-ruim) [y](#sumiu)\n")
