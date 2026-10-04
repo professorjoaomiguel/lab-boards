@@ -142,8 +142,6 @@ trabalho do zero lendo só este arquivo e os links dele.
   Ao colocar a foto, troque o texto "Ainda sem foto" pela imagem, com
   texto alternativo descritivo.
 - Definir o produto de referência do ESP32-S3 N16R8 DevKit.
-- (2026-10-03) Ligar o GitHub Pages para ver o `inventario/relatorio.html`
-  online.
 - Documentar mais placas e shields conforme forem usados em aula.
 - (2026-10-04) CI no GitHub Actions: rodar os testes de `scripts/` (inclui
   a checagem do STATE) e conferir se `INDEX.md` e `relatorio.html` foram
@@ -192,9 +190,17 @@ trabalho do zero lendo só este arquivo e os links dele.
   fabricantes divergem; vale o teste real (README do shield).
 - **Tensão de operação obrigatória** (2026-09-24): seção e tag `5v`/`3v3`
   em todo item. Ver `.ai/CONVENTIONS.md`.
-- **Diretiva do repositório** (2026-09-28): público, para alunos e agentes
-  de IA, acesso local e pelo GitHub. `AGENTS.md` é a entrada; regras em
-  `.ai/CONVENTIONS.md`, seção "Diretiva do repositório".
+- **Diretiva do repositório** (2026-09-28; atualizada em 2026-10-04):
+  público, para alunos e agentes de IA, com **três modos de acesso**:
+  local, pelo GitHub (navegação e URL bruta) e pelo site no GitHub Pages
+  (`https://professorjoaomiguel.github.io/lab-boards/`). `AGENTS.md` é a
+  entrada; regras em `.ai/CONVENTIONS.md`, seção "Diretiva do repositório".
+- **GitHub Pages** (2026-10-04, decisão do usuário): branch `main`, raiz,
+  Jekyll padrão, **com** o inventário publicado. `_config.yml` publica a
+  `.ai/` (`include`) e fixa o `README.md` da raiz como home; README e
+  CONTRIBUTING têm front matter vazio para virar página; layout próprio
+  em `_layouts/default.html` (visual do site do professor). Todo push na
+  `main` republica o site.
 - **Licença e autoria** (2026-09-28): documentação CC BY-NC 4.0
   (`LICENSE`), código MIT (`LICENSE-CODE`), citação em `CITATION.cff`.
   Autor: Prof. Me. Joao Miguel Lac Roehe (@professorjoaomiguel), sem e-mail
@@ -215,6 +221,11 @@ trabalho do zero lendo só este arquivo e os links dele.
 
 ## Resolvido (últimos ~30 dias)
 
+- 2026-10-04: GitHub Pages no ar em
+  `https://professorjoaomiguel.github.io/lab-boards/`, com o relatório do
+  inventário em `inventario/relatorio.html`; descrição, homepage e tópicos
+  do repositório no GitHub. Conferido: 420 links e âncoras das páginas
+  publicadas.
 - 2026-10-04: READMEs dos itens no padrão aluno primeiro: "Resumo rápido"
   no topo, "Como programar" (agora também no UNO R3 e no R4) e conteúdo do
   professor (terminal, inventário, resultados) na seção final "Para o

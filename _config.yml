@@ -23,3 +23,12 @@ defaults:
       path: ""
     values:
       layout: default
+  # O README da raiz é a home. O plugin que transforma README em índice
+  # desiste aqui porque acha o INDEX.html (compara sem maiúsculas), então a
+  # URL é fixada. README.md e CONTRIBUTING.md têm front matter vazio
+  # (---/---): sem ele, o Jekyll do Pages só copia esses dois arquivos, sem
+  # gerar a página.
+  - scope:
+      path: "README.md"
+    values:
+      permalink: /

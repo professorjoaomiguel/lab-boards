@@ -89,6 +89,12 @@ class TestPages(unittest.TestCase):
                       or "{%" in a.read_text(encoding="utf-8")]
         self.assertEqual(com_liquid, [])
 
+    def test_readme_e_contributing_viram_pagina(self):
+        # Sem front matter, o Jekyll do Pages só copia estes dois arquivos.
+        for nome in ("README.md", "CONTRIBUTING.md"):
+            texto = (RAIZ / nome).read_text(encoding="utf-8")
+            self.assertTrue(texto.startswith("---\n---\n"), nome)
+
     def test_pasta_ai_e_publicada(self):
         config = (RAIZ / "_config.yml").read_text(encoding="utf-8")
         self.assertIn("include:\n  - .ai", config)
