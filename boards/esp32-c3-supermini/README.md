@@ -7,6 +7,17 @@ tags: [esp32, esp32-c3, supermini, risc-v, wifi, bluetooth, usb-c, usb-nativo, m
 
 # ESP32-C3 SuperMini
 
+## Resumo rápido
+
+| | |
+|---|---|
+| Tensão lógica | **3,3V** (não tolera 5V) |
+| Placa na IDE | **Nologo ESP32C3 Super Mini** (pacote esp32; FQBN `esp32:esp32:nologo_esp32c3_super_mini`), com USB CDC On Boot **Enabled** |
+| Driver USB | Não precisa (USB nativo do ESP32-C3) |
+| LED embutido | Azul, no GPIO8 (`LED_BUILTIN`); o nível que acende está **a confirmar** (a comunidade relata LOW) |
+| Botões | **BOOT** (GPIO9) e **RST** |
+| Cuidado nº 1 | Não é o Seeed XIAO ESP32C3: a pinagem é diferente, então tutoriais do XIAO não servem sem ajuste |
+
 ## Visão geral
 Placa minúscula (22,5 × 18 mm) com o chip **ESP32-C3**: um núcleo
 **[RISC-V](../../GLOSSARIO.md#risc-v-e-xtensa)** de 160 MHz, Wi-Fi 2,4 GHz e Bluetooth 5 LE, com 4 MB de flash
@@ -45,9 +56,11 @@ Compatibilidade no repositório:
   **não compatível** (formato e tensão diferentes).
 
 ## Fotos
-_Foto própria ainda não adicionada._ Fotos do produto podem ser vistas no
-anúncio do vendedor (link em **Referências**). Quando houver foto
-própria, colocar em `imagens/` com texto alternativo descritivo.
+_Ainda sem foto própria._ Previstas, na pasta `imagens/`:
+`vista-de-cima.jpg` (a placa de cima, com a antena vermelha "C3"),
+`serigrafia.jpg` (o lado com os números dos GPIOs) e `conector-usb.jpg`
+(o USB-C e os botões BOOT e RST). Fotos do produto estão no anúncio do
+vendedor (link em **Referências**). A pinagem está em texto logo abaixo.
 
 ## Diagrama esquemático / Pinout
 O fabricante não publica o esquemático. A pinagem abaixo vem da
