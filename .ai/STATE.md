@@ -124,8 +124,24 @@ trabalho do zero lendo só este arquivo e os links dele.
 
 ### Conteúdo e infraestrutura
 
-- Fotos: nenhuma placa tem foto própria (só o shield). Diagrama do
-  ESP32-S3 N16R8 DevKit e definição do produto de referência.
+- (2026-10-04) **Fotos para o professor tirar** (pasta `imagens/` de cada
+  item; os nomes já estão na seção "Fotos" de cada README):
+  - UNO R3: `vista-de-cima.jpg`, `conector-usb.jpg` (USB-B e o chip da
+    ponte: 16U2 ou CH340), `serigrafia.jpg` (verso). Uma do original e,
+    quando houver, uma do clone CH340.
+  - UNO R4: `vista-de-cima.jpg` (Minima; WiFi quando houver),
+    `conector-usb.jpg`, `serigrafia.jpg` (verso).
+  - ESP32-S3 UNO: `vista-de-cima.jpg`, `modulo.jpg` (gravação N16R8/N8R2
+    na tampa), `serigrafia.jpg` (nomes `IOxx`).
+  - ESP32-C3 SuperMini: `vista-de-cima.jpg`, `serigrafia.jpg` (números dos
+    GPIOs), `conector-usb.jpg` (USB-C e botões).
+  - ESP32-S3 N16R8 DevKit: `vista-de-cima.jpg`, `modulo.jpg`,
+    `serigrafia.jpg` (modelo da placa: ajuda a definir o produto de
+    referência). Diagrama de pinagem também pendente.
+  - Shield 9 em 1: já tem `frente-verso.jpg` e `pinout-anotado.jpg`.
+  Ao colocar a foto, troque o texto "Ainda sem foto" pela imagem, com
+  texto alternativo descritivo.
+- Definir o produto de referência do ESP32-S3 N16R8 DevKit.
 - (2026-10-03) Ligar o GitHub Pages para ver o `inventario/relatorio.html`
   online.
 - Documentar mais placas e shields conforme forem usados em aula.
@@ -199,6 +215,10 @@ trabalho do zero lendo só este arquivo e os links dele.
 
 ## Resolvido (últimos ~30 dias)
 
+- 2026-10-04: READMEs dos itens no padrão aluno primeiro: "Resumo rápido"
+  no topo, "Como programar" (agora também no UNO R3 e no R4) e conteúdo do
+  professor (terminal, inventário, resultados) na seção final "Para o
+  professor / histórico de testes". Template e CONVENTIONS atualizados.
 - 2026-10-04: README voltado ao aluno (tabela das placas, tensão,
   glossário, "Que placa é essa?", "Usado em", agente de IA); manutenção
   movida para [`CONTRIBUTING.md`](../CONTRIBUTING.md); guia
