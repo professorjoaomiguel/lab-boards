@@ -117,8 +117,11 @@
   raiz é a home (index.html) e o de inventario/ vira o índice da pasta.
   Links que ainda apontam para ".../README.md" vão para a pasta, e os para
   CONTRIBUTING.md vão para o CONTRIBUTING.html.
+  O "← Site do professor" do topo do README.md e do INDEX.md serve no
+  GitHub; no site ele já está na barra, então o parágrafo sai daqui.
 {%- endcomment %}
-{{ content | replace: '/README.md"', '/"' | replace: 'href="README.md"', 'href="./"' | replace: 'CONTRIBUTING.md"', 'CONTRIBUTING.html"' }}
+{%- assign voltar_md = '<p><a href="https://professorjoaomiguel.github.io/">← Site do professor</a></p>' %}
+{{ content | remove: voltar_md | replace: '/README.md"', '/"' | replace: 'href="README.md"', 'href="./"' | replace: 'CONTRIBUTING.md"', 'CONTRIBUTING.html"' }}
   </main>
   <footer class="rodape">
     <div class="rodape-interno">
