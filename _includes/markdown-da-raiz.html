@@ -1,0 +1,13 @@
+{%- comment -%}
+  Converte o texto de um .md da raiz (README.md ou CONTRIBUTING.md, que o
+  Jekyll do Pages não transforma em página) e ajusta os links relativos
+  para os endereços do site. Uso:
+    {% capture texto %}{% include_relative README.md %}{% endcapture %}
+    {% include markdown-da-raiz.html texto=texto %}
+{%- endcomment -%}
+{{ include.texto
+   | replace: "](README.md)", "](./)"
+   | replace: "](inventario/README.md)", "](inventario/)"
+   | replace: ".md)", ".html)"
+   | replace: ".md#", ".html#"
+   | markdownify }}

@@ -25,7 +25,9 @@ E **três modos de acesso**, que precisam funcionar igualmente bem:
   marcas do Liquid, a linguagem de modelos do Jekyll); o teste
   `scripts/test_glossario.py` confere. Os links relativos para `.md`
   continuam funcionando, e a pasta `.ai/` é publicada pelo `include` do
-  `_config.yml`.
+  `_config.yml`. **Não ponha front matter no `README.md` nem no
+  `CONTRIBUTING.md` da raiz**: o GitHub mostra como linhas horizontais. No
+  site, eles saem pelo `index.html` e pelo `CONTRIBUTING.html`.
 
 Todo conteúdo novo ou editado deve respeitar estas regras:
 

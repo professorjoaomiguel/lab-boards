@@ -1,0 +1,7 @@
+---
+title: Lab Boards
+permalink: /
+---
+{%- comment -%} Home do site: o texto é o README.md (ver _config.yml). {%- endcomment -%}
+{% capture texto %}{% include_relative README.md %}{% endcapture %}
+{% include markdown-da-raiz.html texto=texto %}

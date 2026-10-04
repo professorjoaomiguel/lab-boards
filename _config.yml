@@ -12,10 +12,15 @@ author: Prof. Me. Joao Miguel Lac Roehe
 include:
   - .ai
 
-# Só o que não deve virar página. scripts/ e inventario/ ficam: os .py e
-# os .csv são copiados como arquivos, e o relatorio.html abre como página.
+# Só o que não deve virar página. scripts/, inventario/ e templates/ ficam:
+# os .py e os .csv são copiados como arquivos, o relatorio.html abre como
+# página e o CONTRIBUTING linka o template.
+#
+# README.md e CONTRIBUTING.md (na raiz) não viram página sozinhos no Jekyll
+# do Pages, e um front matter neles apareceria no GitHub. Por isso a home
+# (index.html) e o CONTRIBUTING.html incluem o texto desses arquivos pelo
+# _includes/markdown-da-raiz.html, que ajusta os links .md para o site.
 exclude:
-  - templates/
   - .pytest_cache/
 
 defaults:
@@ -23,12 +28,11 @@ defaults:
       path: ""
     values:
       layout: default
-  # O README da raiz é a home. O plugin que transforma README em índice
-  # desiste aqui porque acha o INDEX.html (compara sem maiúsculas), então a
-  # URL é fixada. README.md e CONTRIBUTING.md têm front matter vazio
-  # (---/---): sem ele, o Jekyll do Pages só copia esses dois arquivos, sem
-  # gerar a página.
   - scope:
-      path: "README.md"
+      path: "INDEX.md"
     values:
-      permalink: /
+      title: Índice
+  - scope:
+      path: "IDENTIFICAR.md"
+    values:
+      title: Que placa é essa?

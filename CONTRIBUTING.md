@@ -1,5 +1,3 @@
----
----
 [← Voltar ao README](README.md)
 
 # Como manter o Lab Boards

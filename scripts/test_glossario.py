@@ -89,11 +89,15 @@ class TestPages(unittest.TestCase):
                       or "{%" in a.read_text(encoding="utf-8")]
         self.assertEqual(com_liquid, [])
 
-    def test_readme_e_contributing_viram_pagina(self):
-        # Sem front matter, o Jekyll do Pages só copia estes dois arquivos.
-        for nome in ("README.md", "CONTRIBUTING.md"):
-            texto = (RAIZ / nome).read_text(encoding="utf-8")
-            self.assertTrue(texto.startswith("---\n---\n"), nome)
+    def test_readme_e_contributing_publicados_pelos_html(self):
+        # O Jekyll do Pages não transforma estes .md em página, e front
+        # matter neles aparece no GitHub (como linhas horizontais). Por isso
+        # ficam sem front matter, e um .html de mesmo papel inclui o texto.
+        for md, pagina in (("README.md", "index.html"),
+                           ("CONTRIBUTING.md", "CONTRIBUTING.html")):
+            self.assertFalse((RAIZ / md).read_text(encoding="utf-8").startswith("---"), md)
+            self.assertIn(f"include_relative {md}",
+                          (RAIZ / pagina).read_text(encoding="utf-8"), pagina)
 
     def test_pasta_ai_e_publicada(self):
         config = (RAIZ / "_config.yml").read_text(encoding="utf-8")

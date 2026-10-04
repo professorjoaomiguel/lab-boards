@@ -197,8 +197,10 @@ trabalho do zero lendo só este arquivo e os links dele.
   entrada; regras em `.ai/CONVENTIONS.md`, seção "Diretiva do repositório".
 - **GitHub Pages** (2026-10-04, decisão do usuário): branch `main`, raiz,
   Jekyll padrão, **com** o inventário publicado. `_config.yml` publica a
-  `.ai/` (`include`) e fixa o `README.md` da raiz como home; README e
-  CONTRIBUTING têm front matter vazio para virar página; layout próprio
+  `.ai/` (`include`); o Jekyll do Pages não transforma `README.md` e
+  `CONTRIBUTING.md` em página, e front matter neles aparece no GitHub,
+  então `index.html` (a home) e `CONTRIBUTING.html` incluem o texto deles
+  (`_includes/markdown-da-raiz.html` ajusta os links); layout próprio
   em `_layouts/default.html` (visual do site do professor). Todo push na
   `main` republica o site.
 - **Licença e autoria** (2026-09-28): documentação CC BY-NC 4.0

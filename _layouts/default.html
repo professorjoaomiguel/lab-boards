@@ -134,7 +134,12 @@
     </div>
   </header>
   <main>
-{{ content }}
+{%- comment -%}
+  O README.md da raiz e o de inventario/ não são páginas README.html: o da
+  raiz é a home (index.html) e o de inventario/ vira o índice da pasta.
+  Links que ainda apontam para ".../README.md" vão para a pasta.
+{%- endcomment %}
+{{ content | replace: '/README.md"', '/"' | replace: 'href="README.md"', 'href="./"' }}
   </main>
   <footer class="rodape">
     <div class="rodape-interno">
