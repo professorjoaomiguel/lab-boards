@@ -85,7 +85,36 @@ Pinout e esquemático oficiais (Arduino):
 - [DAC](../../GLOSSARIO.md#dac) de até 12 bits no A0 (saída analógica real, com `analogWrite(A0, …)`)
 - [UART](../../GLOSSARIO.md#uart), I2C, [SPI](../../GLOSSARIO.md#spi) e CAN (D4/D5, requer transceptor externo)
 - USB nativa (HID: a placa pode agir como teclado ou mouse)
-- Relógio de tempo real (RTC)
+- Relógio de tempo real (RTC). No **Minima** ele não tem cristal de
+  32,768 kHz e usa o oscilador interno (LOCO), que pode adiantar ou atrasar
+  **horas por dia**: serve para medir intervalos curtos, não para guardar a
+  hora certa. Para isso, use um módulo RTC externo (ex: DS3231).
+
+### I2C: pull-up em A4/A5 (manual × placa real)
+
+**Achado na placa real (2026-10-04), nas 4 UNO R4 Minima do laboratório.**
+O manual e o fórum da Arduino dizem que o Minima **não tem** pull-up no
+[I2C](../../GLOSSARIO.md#i2c): os resistores R1 e R2 aparecem no esquemático,
+mas "não montados", para que A4/A5 continuem livres como entradas
+analógicas. Nas nossas placas é diferente:
+
+- sem nada ligado, A4 e A5 voltam para HIGH em ~6 µs depois de descarregados,
+  e o ADC lê ~1000 de 1023 (o A3, de comparação, fica em 0);
+- com a placa desligada, o multímetro mede **4,7 kΩ entre A4 e 5V**, o valor
+  típico de um [pull-up](../../GLOSSARIO.md#pull-up-e-pull-down) de I2C;
+- não há componentes marcados R1/R2 perto dos pinos SCL/SDA: o pull-up está
+  em outro ponto da placa.
+
+O que isso muda na prática:
+
+- **I2C:** um módulo sem pull-up próprio funciona direto. Um módulo de 3,3V
+  ligado em A4/A5 recebe 5V pelo pull-up da placa: confira a tensão do
+  módulo antes.
+- **A4/A5 como entrada:** um botão ou sensor nesses pinos já tem pull-up de
+  4,7 kΩ para 5V. Um sensor analógico de alta impedância ali lê errado.
+- O teste da placa mostra isso numa linha `i2c_pullup` (INFO), para cada
+  unidade registrar o que tem. Pode ser diferença de lote: ainda não vimos
+  uma Minima **sem** o pull-up.
 
 ### ADC: leitura errada de sensores que não absorvem corrente
 
@@ -228,6 +257,7 @@ com o firmware de teste.
 | `eeprom` | Grava, lê e **restaura** o último byte da EEPROM (8 KB) |
 | `rtc` | O relógio de tempo real conta os segundos |
 | `avcc` | Tensão de referência do ADC, medida pela própria placa |
+| `i2c_pullup` | Só informação: se A4/A5 têm pull-up na placa (ver [I2C: pull-up em A4/A5](#i2c-pull-up-em-a4a5-manual--placa-real)) |
 | `gpio` | [Pull-up](../../GLOSSARIO.md#pull-up-e-pull-down) interno e saída HIGH/LOW de D2–D12 e A1–A5 (D13 só saída: o LED L puxa o pino) |
 | `dac` | O DAC do A0 gera 25/50/75% e o ADC de 14 bits lê de volta |
 | `serial1` | O que sai pelo D1 (TX) volta pelo D0 (RX), com um jumper entre D0 e D1; sem jumper, fica "pulado" |
@@ -290,7 +320,8 @@ seguidas.
 
 | Item | Como | Situação |
 |------|------|----------|
-| Testes `gpio` e `dac` | Teste da placa **sem** o shield | A rodar |
+| Testes `gpio` e `dac` | Teste da placa **sem** o shield | OK em R4M-02, 03 e 04 (2026-10-04, versão 4 do sketch) |
+| Pull-up do I2C em A4/A5 | Teste da placa, linha `i2c_pullup` | Medido nas 4 Minima (4,7 kΩ); ver se toda placa do lote tem |
 | Teste `serial1` | Teste da placa com jumper D0↔D1 | A rodar |
 | Teste conjunto, versão nova | `serial_placa.py auto --shield` no R4 | A rodar (a gravação falhou por LIBUSB no dia; a versão anterior passou) |
 | UNO R4 WiFi | Os mesmos sketches (compilam para `unor4wifi`) | Sem placa testada |

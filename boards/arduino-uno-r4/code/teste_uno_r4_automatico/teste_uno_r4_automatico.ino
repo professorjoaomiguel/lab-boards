@@ -83,7 +83,7 @@
 #include <EEPROM.h>
 #include "RTC.h"
 
-const char *VERSAO = "4";
+const char *VERSAO = "5";
 
 // =============================================================================
 //  PINOS TESTADOS
@@ -148,6 +148,7 @@ const char *nomeDoTeste(const char *id) {
     {"relogio", "millis() e micros()"}, {"eeprom", "EEPROM"},
     {"rtc", "RTC (relógio)"},           {"shield", "Shield 9 em 1"},
     {"gpio", "Pinos livres (GPIO)"},    {"dac", "DAC no A0"},
+    {"i2c_pullup", "Pull-up do I2C (A4/A5)"},
     {"serial1", "Serial1 (D0/D1)"},     {"botoes", "Botões SW1 e SW2"},
     {"ir", "Receptor infravermelho"},   {"saidas", "LEDs D9 a D13"},
     {"dht11", "DHT11"},                 {"avcc", "Referência do ADC"},
@@ -545,10 +546,8 @@ void testeSerial1() {
 //  de 0V. Se algo o puxa para cima (como os pull-ups de 3,3 a 10 kΩ do
 //  Shield 9 em 1 em D2, D3, D4 e D6), ele volta para HIGH.
 //  Os 100 µs em LOW são curtos demais para danificar algo ligado ali.
-//  A4 e A5 ficam de fora: são também o SDA/SCL, e na UNO R4 Minima algo na
-//  própria placa os puxa para 5V (testado em 2026-10-04 em duas placas sem
-//  nada ligado: voltam a HIGH em ~6 µs; o ADC lê ~1000 de 1023). Eles ainda
-//  passam pelo teste "gpio" (pull-up e saída).
+//  A4 e A5 ficam de fora: são também o SDA/SCL e podem ter pull-up na
+//  própria placa (ver testePullupI2c). Eles ainda passam pelo teste "gpio".
 //  Devolve a lista dos pinos com algo ligado (vazia se estiver tudo livre).
 String pinosComAlgoLigado() {
   String encontrados;
@@ -567,6 +566,33 @@ String pinosComAlgoLigado() {
   }
   encontrados.trim();
   return encontrados;
+}
+
+// PULL-UP DO I2C EM A4/A5
+// O manual da Arduino diz que o UNO R4 Minima NÃO tem pull-up no I2C (R1/R2
+// do esquemático "não montados"). Nas 4 placas do laboratório (2026-10-04)
+// A4/A5 voltam a HIGH em ~6 µs depois de descarregados, o ADC lê ~1000 de
+// 1023 e o multímetro mede 4,7 kΩ entre A4 e 5V com a placa desligada: o
+// pull-up está montado. Só informa (INFO), para cada placa registrar o que
+// tem; não é defeito. Mesma medição de pinosComAlgoLigado().
+void testePullupI2c() {
+  Serial.println("# I2C: A4 (SDA) e A5 (SCL) têm pull-up na placa?");
+  String comPullup;
+  const uint8_t pinos[] = {A4, A5};
+  for (uint8_t pino : pinos) {
+    pinMode(pino, OUTPUT);
+    digitalWrite(pino, LOW);
+    delayMicroseconds(100);
+    pinMode(pino, INPUT);
+    delayMicroseconds(200);
+    if (digitalRead(pino) == HIGH) {
+      comPullup += nomePino(pino) + " ";
+    }
+  }
+  comPullup.trim();
+  resultado("i2c_pullup", "INFO",
+            comPullup.length() ? "pull-up na placa em " + comPullup
+                               : String("sem pull-up na placa"));
 }
 
 // A referência padrão do ADC é a alimentação analógica (AVCC), que na USB
@@ -599,6 +625,8 @@ void rodarTestes() {
   testeEeprom();
   testeRtc();
   testeAvcc();
+
+  testePullupI2c();
 
   // Os testes que acionam pinos só rodam com a placa sozinha.
   String ocupados = pinosComAlgoLigado();
