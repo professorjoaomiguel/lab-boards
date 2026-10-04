@@ -16,6 +16,7 @@ tags: [arduino, uno, uno-r4, renesas, ra4m1, usb-c, wifi, bluetooth, 5v]
 | Driver USB | Não precisa (não há chip de ponte USB-serial) |
 | LED embutido | D13 (`LED_BUILTIN`, marcado **L**), acende em HIGH |
 | Botões | RESET (duas vezes rápido: entra no bootloader) |
+| Sensor analógico | Use **A0 a A3**: A4/A5 têm pull-up de 4,7 kΩ nas placas do laboratório e leem errado ([por quê](#i2c-pull-up-em-a4a5-manual--placa-real)) |
 | Cuidado nº 1 | 8 mA por pino, contra 20 mA do UNO R3: LED com resistor baixo, relé ou motor ligado direto no pino podem danificar a placa |
 
 ## Visão geral
@@ -110,8 +111,10 @@ O que isso muda na prática:
 - **I2C:** um módulo sem pull-up próprio funciona direto. Um módulo de 3,3V
   ligado em A4/A5 recebe 5V pelo pull-up da placa: confira a tensão do
   módulo antes.
-- **A4/A5 como entrada:** um botão ou sensor nesses pinos já tem pull-up de
-  4,7 kΩ para 5V. Um sensor analógico de alta impedância ali lê errado.
+- **Sensores analógicos: use A0 a A3.** Em A4/A5, o resistor de 4,7 kΩ
+  empurra a tensão do pino para cima: um potenciômetro ou um LM35 ali mostra
+  um valor **mais alto que o real**. Deixe A4/A5 para o I2C (displays e
+  módulos com SDA/SCL). Um botão em A4/A5 funciona, já com pull-up.
 - O teste da placa mostra isso numa linha `i2c_pullup` (INFO), para cada
   unidade registrar o que tem. Pode ser diferença de lote: ainda não vimos
   uma Minima **sem** o pull-up.

@@ -83,7 +83,7 @@
 #include <EEPROM.h>
 #include "RTC.h"
 
-const char *VERSAO = "5";
+const char *VERSAO = "6";
 
 // =============================================================================
 //  PINOS TESTADOS
@@ -93,8 +93,9 @@ const char *VERSAO = "5";
 // O D13 fica fora da parte do pull-up: o LED "L" da placa está ligado nele
 // e puxa o pino para baixo. A entrada do RA4M1 só lê HIGH acima de 0,8 x
 // 5V = 4V, e o pull-up interno (fraco, dezenas de kΩ) não chega lá com o
-// LED conduzindo um pouquinho. Ele ainda passa pelo teste de saída.
-const uint8_t PINOS_GPIO[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, A1, A2, A3, A4, A5};
+// LED conduzindo um pouquinho. Ele ainda passa pelo teste de saída (e o LED
+// pisca junto).
+const uint8_t PINOS_GPIO[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, A1, A2, A3, A4, A5};
 
 // =============================================================================
 //  CONTAGEM E IMPRESSÃO DOS RESULTADOS
@@ -434,9 +435,13 @@ void testeGpio(const uint8_t *pinos, size_t quantidade) {
     uint8_t pino = pinos[i];
     testados += nomePino(pino) + " ";
 
-    pinMode(pino, INPUT_PULLUP);
-    delay(2);
-    bool pullupOk = (digitalRead(pino) == HIGH);
+    // D13: o LED L puxa o pino para baixo, então só o teste de saída.
+    bool pullupOk = true;
+    if (pino != LED_BUILTIN) {
+      pinMode(pino, INPUT_PULLUP);
+      delay(2);
+      pullupOk = (digitalRead(pino) == HIGH);
+    }
 
     // Segurança: se o pull-up não segurou o HIGH, algo externo está puxando
     // o pino para baixo (um fio, um módulo, outro shield). Nesse caso o pino
