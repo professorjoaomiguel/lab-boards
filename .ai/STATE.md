@@ -195,7 +195,7 @@ trabalho do zero lendo só este arquivo e os links dele.
 
 - 2026-10-04: [`GLOSSARIO.md`](../GLOSSARIO.md) com ~50 termos, regra no
   CONVENTIONS e `scripts/test_glossario.py` (ordem, âncoras e links de
-  todos os `.md`). Links da 1ª ocorrência nos READMEs: em andamento.
+  todos os `.md`); 1ª ocorrência dos termos linkada nos 6 READMEs.
 - 2026-10-04: `scripts/verificar_state.py` + teste; handoff do
   `/remember` passa a apontar para o STATE (`.claude/CLAUDE.md`).
 - 2026-10-04: faxina do STATE: separado em Em aberto / Decisões vigentes /

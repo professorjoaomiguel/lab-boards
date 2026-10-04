@@ -11,7 +11,7 @@ tags: [arduino, uno, uno-r3, avr, atmega328p, usb-b, 5v]
 A placa Arduino clássica, baseada no microcontrolador de 8 bits
 ATmega328P a 16 MHz. É a referência do formato UNO: a maioria dos shields
 do mercado foi projetada para ela. Usada em aula como primeira placa para
-introduzir entradas/saídas digitais, leitura analógica, PWM e comunicação
+introduzir entradas/saídas digitais, leitura analógica, [PWM](../../GLOSSARIO.md#pwm) e comunicação
 serial.
 
 ## Tensão de operação
@@ -39,8 +39,8 @@ Pinout e esquemático oficiais (Arduino):
 ## Componentes principais
 - Microcontrolador **ATmega328P** (AVR 8 bits, 16 MHz): 32 KB de flash,
   2 KB de SRAM, 1 KB de EEPROM
-- Microcontrolador **ATmega16U2**: ponte USB-serial (faz a comunicação da
-  USB com o ATmega328P). Em clones, costuma ser trocado por um CH340 (ver
+- Microcontrolador **[ATmega16U2](../../GLOSSARIO.md#atmega16u2)**: [ponte USB-serial](../../GLOSSARIO.md#ponte-usb-serial) (faz a comunicação da
+  USB com o ATmega328P). Em clones, costuma ser trocado por um [CH340](../../GLOSSARIO.md#ch340) (ver
   [Ponte USB-serial](#ponte-usb-serial))
 - Conector USB-B e conector de alimentação P4 (barrel jack)
 - Regulador de 5V e de 3,3V
@@ -49,20 +49,20 @@ Pinout e esquemático oficiais (Arduino):
 
 ## Funcionalidades / Periféricos
 - 14 pinos digitais (D0–D13), 6 com PWM (D3, D5, D6, D9, D10, D11)
-- 6 entradas analógicas (A0–A5), ADC de 10 bits
-- UART (D0/D1, compartilhada com a USB), I2C (A4/A5 e SDA/SCL), SPI
+- 6 entradas analógicas (A0–A5), [ADC](../../GLOSSARIO.md#adc) de 10 bits
+- [UART](../../GLOSSARIO.md#uart) (D0/D1, compartilhada com a USB), [I2C](../../GLOSSARIO.md#i2c) (A4/A5 e SDA/SCL), [SPI](../../GLOSSARIO.md#spi)
   (D10–D13 e ICSP)
 - Interrupções externas em D2 e D3
 
 ### ADC: cuidados medidos na placa real (2026-10-03)
 
-Achados com o LM35 do
+Achados com o [LM35](../../GLOSSARIO.md#lm35) do
 [Shield 9 em 1](../../shields/uno-shield-9in1/README.md), um sensor cuja
 saída quase não consegue **absorver** corrente:
 
 - **Depois de trocar de pino, espere antes de ler um sensor assim.** O ADC
   tem um capacitor interno que chega carregado com a tensão do pino lido
-  antes. Logo depois de ler um pino com tensão maior (LDR, potenciômetro ou
+  antes. Logo depois de ler um pino com tensão maior ([LDR](../../GLOSSARIO.md#ldr), potenciômetro ou
   o canal interno de 1,1 V), o LM35 deu até 445 mV na 1ª leitura e ~295 mV
   nas seguintes, contra 239 mV reais. **100 ms depois da troca**, a
   leitura fica certa. Descartar só 1 leitura não bastou. No
@@ -75,7 +75,7 @@ saída quase não consegue **absorver** corrente:
   int leitura = analogRead(A2);
   ```
 
-- **Depois de `analogReference(INTERNAL)`, espere ~0,5 s.** O pino AREF
+- **Depois de `analogReference(INTERNAL)`, espere ~0,5 s.** O pino [AREF](../../GLOSSARIO.md#aref)
   tem um capacitor de 100 nF na placa, que leva centenas de milissegundos
   para descarregar de 5 V até 1,1 V. Medido: o LM35 (246 mV reais) leu 0 a
   22 mV nos primeiros 20 ms, 235 mV aos 100 ms e 256 mV aos 500 ms.
@@ -88,8 +88,8 @@ saída quase não consegue **absorver** corrente:
 O ATmega328P não tem USB: ele só fala serial (UART, pinos D0/D1). Entre o
 conector USB e o ATmega328P existe um segundo chip, a **ponte USB-serial**,
 que o computador enxerga como uma porta COM. É por ela que o sketch é
-gravado e que o Monitor Serial funciona. A ponte também reinicia o
-ATmega328P antes de cada gravação (sinal DTR), o que dispara o bootloader.
+gravado e que o [Monitor Serial](../../GLOSSARIO.md#monitor-serial) funciona. A ponte também reinicia o
+ATmega328P antes de cada gravação (sinal DTR), o que dispara o [bootloader](../../GLOSSARIO.md#bootloader).
 
 Qual chip faz a ponte depende de quem fabricou a placa:
 
@@ -110,7 +110,7 @@ ICSP de 6 pinos perto dele. O CH340 é um chip retangular com a marcação
 - Se a placa não aparece como porta COM, quase sempre é falta do driver do
   CH340 (ou um cabo USB que só carrega, sem dados).
 - Só o ATmega16U2 é um microcontrolador reprogramável: com o firmware
-  certo (modo DFU), ele pode fazer a placa aparecer como teclado, mouse ou
+  certo (modo [DFU](../../GLOSSARIO.md#dfu)), ele pode fazer a placa aparecer como teclado, mouse ou
   dispositivo MIDI. Com o CH340, a placa só funciona como porta serial.
 - Como D0/D1 estão ligados à ponte, qualquer circuito nesses pinos pode
   atrapalhar a gravação e o Monitor Serial.
@@ -124,7 +124,7 @@ Há dois tipos de teste, cada um com o seu sketch:
 | **Só a placa** | [`code/teste_uno_r3_automatico`](code/teste_uno_r3_automatico/teste_uno_r3_automatico.ino) | Automático, só pela serial, **placa sozinha** (sem shield) | Triagem rápida e registro no inventário |
 | **Placa + Shield 9 em 1** | [`teste_shield_9em1_uno_r3`](../../shields/uno-shield-9in1/code/teste_shield_9em1_uno_r3/teste_shield_9em1_uno_r3.ino) (na pasta do shield) | Menu com testes guiados (ver, ouvir, apertar) e uma opção automática | Testar o shield e a placa juntos; informa sobre os dois |
 
-Os dois usam **115200 baud** no Monitor Serial e aceitam qualquer opção de
+Os dois usam **115200 [baud](../../GLOSSARIO.md#baud)** no Monitor Serial e aceitam qualquer opção de
 final de linha. Enquanto esperam um comando, o LED **L** (D13) pisca **duas
 vezes rápidas a cada 2 s**: é o sinal de que o firmware de teste está
 gravado.
@@ -145,9 +145,9 @@ gravado.
 | `relogio` | `millis()` e `micros()` medem 1 s corretamente |
 | `eeprom` | Grava, lê e **restaura** o último byte da EEPROM (1 KB) |
 | `vcc` | Tensão de alimentação, medida pela própria placa (até ~10% de erro) |
-| `gpio` | Pull-up interno e saída HIGH/LOW de D2–D12 e A1–A5 |
+| `gpio` | [Pull-up](../../GLOSSARIO.md#pull-up-e-pull-down) interno e saída HIGH/LOW de D2–D12 e A1–A5 |
 
-O UNO R3 não tem RTC, DAC, segunda serial nem ID único no chip, então esses
+O UNO R3 não tem RTC, [DAC](../../GLOSSARIO.md#dac), segunda serial nem ID único no chip, então esses
 testes do UNO R4 não existem aqui.
 
 **Como rodar pela IDE do Arduino:** placa **Arduino Uno**, grave o sketch,
@@ -184,7 +184,7 @@ Placa original (ATmega16U2), Vcc de 4,87–4,89 V na USB.
 - **Teste da placa com o shield encaixado:** chip, relógio, EEPROM e Vcc
   OK; `gpio` corretamente **pulado** ("ligado: D2 D4 D6 A1").
 - **Teste conjunto (opção `a`):** `ok=7 aviso=1`, com os dois shields
-  (LM35 em 23,9 °C nos dois; DHT11 em 28,3–28,8 °C). O aviso **é da placa**:
+  (LM35 em 23,9 °C nos dois; [DHT11](../../GLOSSARIO.md#dht11) em 28,3–28,8 °C). O aviso **é da placa**:
   o **pino D3 da R3-01 fica em LOW** sem ninguém apertar o SW2, mesmo com o
   pull-up interno do chip ligado. Trocando os shields entre o R3 e o R4, o
   defeito ficou no R3 e sumiu no R4. Causa provável: a porta D3 do

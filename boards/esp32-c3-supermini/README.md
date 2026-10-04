@@ -9,7 +9,7 @@ tags: [esp32, esp32-c3, supermini, risc-v, wifi, bluetooth, usb-c, usb-nativo, m
 
 ## Visão geral
 Placa minúscula (22,5 × 18 mm) com o chip **ESP32-C3**: um núcleo
-**RISC-V** de 160 MHz, Wi-Fi 2,4 GHz e Bluetooth 5 LE, com 4 MB de flash
+**[RISC-V](../../GLOSSARIO.md#risc-v-e-xtensa)** de 160 MHz, Wi-Fi 2,4 GHz e Bluetooth 5 LE, com 4 MB de flash
 dentro do próprio chip. Tem 16 pinos: 13 GPIOs e 3 de alimentação. O
 USB-C vai **direto no ESP32-C3** (USB nativo), sem chip conversor
 USB-serial.
@@ -55,17 +55,17 @@ serigrafia da placa e do diagrama do anúncio, e confere com a definição
 da placa **Nologo ESP32C3 Super Mini** no pacote esp32 da Arduino IDE
 (arquivo `variants/nologo_esp32c3_super_mini/pins_arduino.h`).
 
-A serigrafia mostra só o **número do GPIO** (`0`, `1`, ... `21`). No
+A serigrafia mostra só o **número do [GPIO](../../GLOSSARIO.md#gpio)** (`0`, `1`, ... `21`). No
 código, use esse número: `pinMode(4, OUTPUT)`.
 
 Vista **de cima**, com o **USB-C para cima**:
 
 | Lado esquerdo | GPIO | Função padrão | | Lado direito | GPIO | Função padrão |
 |---|---|---|---|---|---|---|
-| 5 | 5 | A5 (ADC2), SPI MISO | | 5V | — | Entrada/saída de 5V (ligado ao USB) |
+| 5 | 5 | A5 (ADC2), [SPI](../../GLOSSARIO.md#spi) MISO | | 5V | — | Entrada/saída de 5V (ligado ao USB) |
 | 6 | 6 | SPI MOSI | | G | — | Terra (GND) |
 | 7 | 7 | SPI SS (CS) | | 3.3 | — | Saída de 3,3V do regulador |
-| 8 | 8 | **I2C SDA**, **LED azul**, ⚠️ *strapping* | | 4 | 4 | A4 (ADC1), SPI SCK |
+| 8 | 8 | **[I2C](../../GLOSSARIO.md#i2c) SDA**, **LED azul**, ⚠️ *[strapping](../../GLOSSARIO.md#strapping-pinos-de)* | | 4 | 4 | A4 (ADC1), SPI SCK |
 | 9 | 9 | **I2C SCL**, **botão BOOT**, ⚠️ *strapping* | | 3 | 3 | A3 (ADC1) |
 | 10 | 10 | | | 2 | 2 | A2 (ADC1), ⚠️ *strapping* |
 | 20 | 20 | UART0 RX | | 1 | 1 | A1 (ADC1) |
@@ -83,12 +83,12 @@ o desenho mostra a placa vista por baixo. Confira sempre pela serigrafia.
   desses pinos no reset para decidir como iniciar. Com o GPIO9 em LOW no
   reset (botão BOOT apertado), a placa entra em modo de gravação. Não
   ligue nesses pinos nada que os force para LOW durante o reset. Os
-  resistores de pull-up do I2C (GPIO8/9) não atrapalham.
+  resistores de [pull-up](../../GLOSSARIO.md#pull-up-e-pull-down) do I2C (GPIO8/9) não atrapalham.
 - **Entradas analógicas:** use **A0–A4 (GPIO0 a GPIO4)**, que são do
   ADC1. O A5 (GPIO5) é do ADC2, que no ESP32-C3 tem leitura pouco
   confiável e não funciona junto com o Wi-Fi. Todas leem de **0 a 3,3V**,
   com 12 bits (`analogRead` devolve de 0 a 4095).
-- **GPIO20 e GPIO21 (RX/TX):** são a UART0. Como o Monitor Serial passa
+- **GPIO20 e GPIO21 (RX/TX):** são a UART0. Como o [Monitor Serial](../../GLOSSARIO.md#monitor-serial) passa
   pelo USB nativo, eles ficam livres para ligar outro módulo serial (GPS,
   por exemplo).
 
@@ -113,7 +113,7 @@ padrão (`Wire.begin()`) **não** usa os mesmos pinos físicos nesta placa.
 - Chip **ESP32-C3** (encapsulamento QFN32 de 5 × 5 mm), com 4 MB de flash
   interna (versão FH4/FN4): núcleo RISC-V de 32 bits a 160 MHz, 400 KB de
   SRAM, Wi-Fi 802.11 b/g/n (2,4 GHz) e Bluetooth 5 LE
-- **Sem PSRAM**
+- **Sem [PSRAM](../../GLOSSARIO.md#psram)**
 - Antena cerâmica na placa (componente vermelho marcado "C3")
 - Cristal de 40 MHz
 - Regulador de 3,3V (SOT-23-5)
@@ -124,10 +124,10 @@ padrão (`Wire.begin()`) **não** usa os mesmos pinos físicos nesta placa.
 
 ## Funcionalidades / Periféricos
 - Wi-Fi 2,4 GHz e Bluetooth 5 LE
-- GPIOs com PWM (LEDC), ADC de 12 bits, I2C, SPI, UART, I2S e CAN (TWAI)
+- GPIOs com [PWM](../../GLOSSARIO.md#pwm) (LEDC), [ADC](../../GLOSSARIO.md#adc) de 12 bits, I2C, SPI, [UART](../../GLOSSARIO.md#uart), I2S e CAN (TWAI)
 - USB nativo: gravação e Monitor Serial sem chip conversor
 - Modos de baixo consumo (deep sleep)
-- Programável em Arduino (C/C++) e em MicroPython (ver **Como
+- Programável em Arduino (C/C++) e em [MicroPython](../../GLOSSARIO.md#micropython) (ver **Como
   programar**); também aceita ESP-IDF
 
 ### Problema conhecido: Wi-Fi fraco
@@ -170,7 +170,7 @@ um programa trava o USB.
 O [ESPConnect](https://thelastoutpostworkshop.github.io/ESPConnect/) lê as
 informações do chip direto pelo navegador (Chrome, Edge ou Brave). Feche a
 Arduino IDE e o Thonny, clique em **Connect**, escolha a porta da placa e
-veja a aba **Device Info**: família (ESP32-C3), revisão, MAC e tamanho da
+veja a aba **Device Info**: família (ESP32-C3), revisão, [MAC](../../GLOSSARIO.md#mac) e tamanho da
 flash. Use só essa aba: as outras gravam e apagam a flash.
 
 ### Arduino (C/C++): Arduino IDE

@@ -9,13 +9,13 @@ tags: [arduino, uno, uno-r3, uno-r4, 5v, dht11, lm35, ldr, infravermelho, buzzer
 
 ## Visão geral
 Shield de aprendizado no formato Arduino UNO que reúne 9 periféricos em uma
-única placa: 2 botões, 2 LEDs, LED RGB, sensor DHT11, buzzer, receptor
-infravermelho, potenciômetro, LDR e sensor de temperatura LM35. Encaixa
+única placa: 2 botões, 2 LEDs, LED RGB, sensor [DHT11](../../GLOSSARIO.md#dht11), buzzer, receptor
+infravermelho, potenciômetro, [LDR](../../GLOSSARIO.md#ldr) e sensor de temperatura [LM35](../../GLOSSARIO.md#lm35). Encaixa
 direto sobre a placa, sem protoboard e sem fios, o que o torna ideal para
-aulas introdutórias de entradas/saídas digitais, leitura analógica, PWM e
+aulas introdutórias de entradas/saídas digitais, leitura analógica, [PWM](../../GLOSSARIO.md#pwm) e
 sensores.
 
-Também traz barras de pinos para expansão: I2C, serial TTL, digitais livres
+Também traz barras de pinos para expansão: [I2C](../../GLOSSARIO.md#i2c), serial TTL, digitais livres
 (D7, D8) e um analógico livre (A3), além do botão RESET repetido.
 
 O projeto original é o **Keyestudio Easy Module Shield V1** (código KS0183,
@@ -29,7 +29,7 @@ isso a [documentação da Keyestudio](https://wiki.keyestudio.com/Ks0183_keyestu
 | Tensão lógica | **5V** |
 | Alimentação | pino 5V do header da placa, o que fica ao lado do 3,3V (não tem alimentação própria). ✅ Medido |
 | Pino 3,3V do header | passa pelo shield, mas **não está ligado a nenhum componente**. ✅ Medido |
-| Pino IOREF do header | **não está ligado a nada**. ✅ Medido |
+| Pino [IOREF](../../GLOSSARIO.md#ioref) do header | **não está ligado a nada**. ✅ Medido |
 | Sensores que exigem 5V | LM35 (opera de 4V a 30V; não funciona em 3,3V) |
 
 > ⚠️ **Shield de 5V.** Use apenas em placas cuja lógica seja 5V. Em uma
@@ -51,7 +51,7 @@ LDR (5,2 kΩ com luz e 6,2 kΩ com o LDR coberto, numa mesma rodada).
 
 | Pino | Periférico | Circuito encontrado | Como foi medido |
 |------|------------|---------------------|-----------------|
-| D2, D3 | Botões SW1, SW2 | **Pull-up de ≈10 kΩ para o 5V.** O botão liga o pino ao GND: **ativo em LOW** | Pino↔5V: 10 kΩ solto. Pino↔GND: 0 Ω apertado |
+| D2, D3 | Botões SW1, SW2 | **[Pull-up](../../GLOSSARIO.md#pull-up-e-pull-down) de ≈10 kΩ para o 5V.** O botão liga o pino ao GND: **ativo em LOW** | Pino↔5V: 10 kΩ solto. Pino↔GND: 0 Ω apertado |
 | D4 | DHT11 | **Pull-up de ≈3,3 kΩ para o 5V** | D4↔5V: 3,2 kΩ |
 | D5 | Buzzer | Base de um transistor **NPN** (por resistor). Montagem exata (emissor no GND ou seguidor de emissor) não determinada | Modo diodo, ponta vermelha no D5: conduz para o GND (1,79V) e para o 5V (1,15V); inverso aberto. Código SMD do transistor ilegível |
 | D6 | Receptor IR | **Pull-up de ≈10 kΩ para o 5V** (na placa ou dentro do receptor) | D6↔5V: 10 kΩ |
@@ -66,11 +66,11 @@ coberto e com luz forte, e o nível (HIGH ou LOW) que faz o buzzer tocar.
 
 | Placa | Lógica | Compatível? | Observações |
 |-------|--------|-------------|-------------|
-| [Arduino UNO R3](../../boards/arduino-uno-r3/README.md) (ATmega328P) | 5V | ✅ Sim | Placa-alvo original do shield. Até 20 mA por pino. ADC de 10 bits. |
+| [Arduino UNO R3](../../boards/arduino-uno-r3/README.md) (ATmega328P) | 5V | ✅ Sim | Placa-alvo original do shield. Até 20 mA por pino. [ADC](../../GLOSSARIO.md#adc) de 10 bits. |
 | [Arduino UNO R4 Minima / WiFi](../../boards/arduino-uno-r4/README.md) (Renesas RA4M1) | 5V | ✅ Sim | Mesmo formato e pinagem. **Corrente máxima de 8 mA por pino** (menor que a do R3). ADC de 10 bits por padrão, configurável até 14 bits com `analogReadResolution()`. |
 | Arduino Mega 2560 | 5V | ✅ Segundo a Keyestudio | Não testado aqui. Os pinos D2–D13 e A0–A3 coincidem com os do UNO. |
 | [ESP32-S3 UNO](../../boards/esp32-s3-uno/README.md) | 3,3V | ❌ Não, sem modificação | Encaixa perfeitamente, mas o shield leva 5V aos GPIOs: pelos pull-ups em D2, D3, D4 e D6 e **direto** pelo potenciômetro em A0 (ver "Medições do circuito"). Modificação em estudo, ver abaixo. |
-| ESP32-S3 N16R8 DevKit e outras placas de 3,3V | 3,3V | ❌ Não | Risco de queimar os GPIOs. Ver [ESP32-S3 N16R8](../../boards/esp32-s3-n16r8/README.md). |
+| ESP32-S3 [N16R8](../../GLOSSARIO.md#n16r8) DevKit e outras placas de 3,3V | 3,3V | ❌ Não | Risco de queimar os GPIOs. Ver [ESP32-S3 N16R8](../../boards/esp32-s3-n16r8/README.md). |
 
 ### Modificação para 3,3V (em estudo, não testada)
 
@@ -88,7 +88,7 @@ curto entre 5V e 3,3V (medido). Consequências previstas:
   uma forma reversível (dessoldar o pino 5V, ou um jumper seletor 5V/3,3V)
   a cortar o pino.
 
-O pino **AREF** do shield **não está ligado a nada** (medido sem
+O pino **[AREF](../../GLOSSARIO.md#aref)** do shield **não está ligado a nada** (medido sem
 alimentação, 2026-10-03: sem continuidade com o 5V nem com o 3,3V). Isso
 importa na ESP32-S3 UNO, em que a posição AREF está ligada ao reset da
 placa.
@@ -132,7 +132,7 @@ placa.
 > **Atenção:** D13 também é o LED embutido do UNO (`LED_BUILTIN`), então o
 > LED de 3 mm do D13 acende junto com ele. D9–D11 são pinos PWM, o que permite variar
 > as cores do LED RGB com `analogWrite()`. O serial TTL usa os pinos D0/D1. No
-> UNO R3, eles são a mesma porta da USB: evite usá-los com o Monitor Serial
+> UNO R3, eles são a mesma porta da USB: evite usá-los com o [Monitor Serial](../../GLOSSARIO.md#monitor-serial)
 > aberto. No UNO R4, o serial TTL é o `Serial1`, independente da USB.
 
 ## Componentes principais
@@ -143,7 +143,7 @@ placa.
 - Buzzer **ativo** (com oscilador interno), acionado por transistor NPN: liga
   com o D5 em HIGH (testado em 2026-10-03; a Keyestudio diz passivo)
 - Receptor infravermelho (IR)
-- Potenciômetro (trimpot)
+- Potenciômetro ([trimpot](../../GLOSSARIO.md#trimpot))
 - LDR (fotoresistor)
 - Sensor de temperatura LM35 (LM35D, faixa de 0 a 100 °C, segundo a Keyestudio)
 - Botão RESET e LED de alimentação
@@ -162,7 +162,7 @@ O teste do shield é um **teste conjunto (placa + shield)**: um sketch por
 placa, [`code/teste_shield_9em1_uno_r3`](code/teste_shield_9em1_uno_r3/teste_shield_9em1_uno_r3.ino)
 e [`code/teste_shield_9em1_uno_r4`](code/teste_shield_9em1_uno_r4/teste_shield_9em1_uno_r4.ino)
 (Minima e WiFi). Ele mostra a placa (modelo e tensão de referência) e um
-menu no Monitor Serial (115200 baud, qualquer final de linha): testes
+menu no Monitor Serial (115200 [baud](../../GLOSSARIO.md#baud), qualquer final de linha): testes
 **guiados** de cada periférico, em que alguém aperta, gira, olha e ouve, e
 a opção **`a`**, um teste **automático** do shield com resumo. O SW1 do
 próprio shield serve para continuar e voltar ao menu, e o potenciômetro
@@ -186,7 +186,7 @@ substitui a medição: clones podem trocar componentes. Confirme com o teste.
 | Botões: algum preso em LOW? | Teste automático (`botoes`) e troca de shields entre placas | Não se aplica | ✅ **Os dois shields testados estão bons.** O "SW2 preso em LOW" visto no UNO R3-01 **é da placa**: trocando os shields entre o R3 e o R4 (2026-10-03), o defeito ficou no R3-01 (D3 em LOW com qualquer shield) e sumiu no R4. Ver o README do UNO R3 |
 | LEDs D12 e D13: nível que acende | Teste 1 | HIGH acende (Keyestudio e RoboticX) | ✅ Ativos em HIGH (confirmado na placa) |
 | LEDs D12 e D13: cor de cada um | Teste 1 | D12 vermelho, D13 azul (Keyestudio) | ✅ **D12 vermelho, D13 azul** (padrão, confirmado nos shields testados, 2026-10-03). ⚠️ Pode haver variação de montagem entre lotes |
-| LED RGB: cátodo ou ânodo comum | Teste 2, parte B | Cátodo comum: a cor acende com o pino em HIGH (Keyestudio e RoboticX) | ✅ Ativo em HIGH, cátodo comum (confirmado na placa) |
+| LED RGB: cátodo ou ânodo comum | Teste 2, parte B | Cátodo comum: a cor acende com o pino em HIGH (Keyestudio e RoboticX) | ✅ Ativo em HIGH, [cátodo comum](../../GLOSSARIO.md#cátodo-comum) (confirmado na placa) |
 | Cor ligada a D9, D10 e D11 | Teste 2, parte A | D9 = vermelho, D10 = verde, D11 = azul (Keyestudio e RoboticX) | ✅ **D9 = vermelho, D10 = azul, D11 = verde** (confirmado na placa; **difere** da documentação dos fabricantes) |
 | Buzzer: ativo ou passivo, e nível que liga | Teste 4 | **Passivo, liga em LOW** (Keyestudio: "passive buzzer"; no código, LOW = som e HIGH = silêncio, o que indica transistor PNP) | ✅ **Ativo, liga em HIGH**, igual em **dois shields**: o nº 2 no UNO R4 e o do UNO R3-01 (2026-10-03; **difere** da Keyestudio). Com o padrão novo (`HIGH`), o buzzer fica mudo no menu; a escala e a melodia saem "fibriladas" nos dois. Transistor NPN (multímetro, 2026-10-01). Com o sketch antigo (`LOW` = ligado), o D5 ficava em HIGH para "desligar" e o buzzer **apitou sem parar**: só um buzzer ativo apita com tensão constante. Pulsos de 250 ms em HIGH: 3 bipes nítidos. Ver "Faixa de frequência do buzzer" abaixo |
 | Botões: pull-up ou pull-down | Teste 3 (nível de repouso) | Pull-down: o exemplo da RoboticX trata o botão apertado como HIGH. O da Keyestudio usa interrupção por borda de descida, que funciona nos dois casos e não confirma nada | ✅ **Pull-up de ≈10 kΩ, ativo em LOW** (multímetro, 2026-10-01; **difere** do exemplo da RoboticX). Falta ver no Teste 3 |

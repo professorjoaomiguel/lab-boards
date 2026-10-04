@@ -16,13 +16,13 @@ barras de pinos nas mesmas posições. Vendida como "TZT D1 ESP32-S3" ou
 Ela junta o processador do ESP32-S3 (dois núcleos de 240 MHz, Wi-Fi e
 Bluetooth) com a disposição de pinos que os alunos já conhecem do UNO.
 Serve para projetos de IoT, Wi-Fi, Bluetooth e processamento mais pesado
-(ex: imagem e voz com a PSRAM).
+(ex: imagem e voz com a [PSRAM](../../GLOSSARIO.md#psram)).
 
 > ⚠️ **O formato é de UNO, mas a tensão não é.** Os pinos trabalham em
 > **3,3V**. Leia a seção **Tensão de operação** antes de encaixar qualquer
 > shield.
 
-**Variantes:** o mesmo anúncio vende a versão **N16R8** (16 MB de flash e
+**Variantes:** o mesmo anúncio vende a versão **[N16R8](../../GLOSSARIO.md#n16r8)** (16 MB de flash e
 8 MB de PSRAM) e a **N8R2** (8 MB de flash e 2 MB de PSRAM). A diferença
 está só no módulo. Confira a gravação na tampa metálica do módulo
 (`ESP32-S3-N16R8` ou `ESP32-S3-N8R2`) ou rode o sketch de teste, que
@@ -35,7 +35,7 @@ que é a placa estreita, de encaixar na protoboard.
 | | |
 |---|---|
 | Tensão lógica dos pinos | **3,3V** |
-| Alimentação | USB-C 5V, ou conector DC de **5 a 18V** (segundo o fabricante), ou pino VIN |
+| Alimentação | USB-C 5V, ou conector DC de **5 a 18V** (segundo o fabricante), ou pino [VIN](../../GLOSSARIO.md#vin) |
 | Reguladores | Conversor chaveado (DC-DC) para 5V + regulador AMS1117 para 3,3V |
 | Tolera 5V nas entradas? | **Não**: máximo de 3,6V nos GPIOs |
 | Corrente máxima por pino | 40 mA (máximo absoluto); prefira até 20 mA |
@@ -43,13 +43,13 @@ que é a placa estreita, de encaixar na protoboard.
 > ⚠️ **Não encaixe shields de 5V nesta placa**, como o
 > [Shield Multifunção 9 em 1](../../shields/uno-shield-9in1/README.md).
 > O encaixe físico é perfeito, e por isso o risco é maior: um sinal de 5V
-> vindo do shield para um GPIO pode queimar a porta ou o ESP32-S3.
+> vindo do shield para um [GPIO](../../GLOSSARIO.md#gpio) pode queimar a porta ou o ESP32-S3.
 >
 > Dois detalhes do formato UNO que enganam:
-> - A posição do **IOREF** (que num UNO avisa o shield de que a lógica é
+> - A posição do **[IOREF](../../GLOSSARIO.md#ioref)** (que num UNO avisa o shield de que a lógica é
 >   5V) está ligada a **5V**. Um shield que se adapta pelo IOREF vai achar
 >   que pode mandar 5V.
-> - A posição do **AREF** está ligada ao **RST** (reset). Um shield que
+> - A posição do **[AREF](../../GLOSSARIO.md#aref)** está ligada ao **RST** (reset). Um shield que
 >   use o AREF vai mexer no reset da placa.
 >
 > Para usar módulos de 5V, use um conversor de nível lógico (level
@@ -70,7 +70,7 @@ própria, colocar em `imagens/` com texto alternativo descritivo.
 ## Diagrama esquemático / Pinout
 O fabricante não publica o esquemático. A pinagem abaixo foi levantada da
 serigrafia da placa e do diagrama do anúncio do vendedor, e confere com os
-pinos padrão do ESP32-S3 no Arduino (SPI, I2C e serial).
+pinos padrão do ESP32-S3 no Arduino ([SPI](../../GLOSSARIO.md#spi), [I2C](../../GLOSSARIO.md#i2c) e serial).
 
 Nesta placa, os nomes da serigrafia são os **números de GPIO** (ex: `IO18`
 = GPIO18). No código, use sempre o número do GPIO: `pinMode(18, OUTPUT)`.
@@ -80,13 +80,13 @@ Nomes de UNO como `D2` ou `A0` **não existem** para esta placa na IDE.
 
 | Posição no UNO | Serigrafia | GPIO | Função padrão / observação |
 |---|---|---|---|
-| D0 | RXD | 44 | UART0 RX, ligado ao CH340 (Monitor Serial) |
+| D0 | RXD | 44 | UART0 RX, ligado ao [CH340](../../GLOSSARIO.md#ch340) ([Monitor Serial](../../GLOSSARIO.md#monitor-serial)) |
 | D1 | TXD | 43 | UART0 TX, ligado ao CH340 (Monitor Serial) |
 | D2 | IO18 | 18 | |
 | D3 | IO17 | 17 | |
 | D4 | IO19 | 19 | USB nativo D− do ESP32-S3 |
 | D5 | IO20 | 20 | USB nativo D+ do ESP32-S3 |
-| D6 | IO3 | 3 | ⚠️ pino de *strapping* (ver abaixo) |
+| D6 | IO3 | 3 | ⚠️ pino de *[strapping](../../GLOSSARIO.md#strapping-pinos-de)* (ver abaixo) |
 | D7 | IO14 | 14 | |
 | D8 | IO21 | 21 | |
 | D9 | IO46 | 46 | ⚠️ pino de *strapping* (ver abaixo) |
@@ -129,7 +129,7 @@ UNO), com resolução de 12 bits (`analogRead` devolve de 0 a 4095).
 | Ao lado da barra digital | IO38, IO39, IO40, IO41, IO42 | 38–42 | Livres (IO39–IO42 também são JTAG) |
 | Ao lado da barra de alimentação | IO45 | 45 | ⚠️ pino de *strapping* |
 | Ao lado da barra de alimentação | IO15, IO16, IO47 | 15, 16, 47 | Livres |
-| Ao lado da barra de alimentação | IO48 | 48 | Também ligado ao LED RGB WS2812 da placa |
+| Ao lado da barra de alimentação | IO48 | 48 | Também ligado ao LED RGB [WS2812](../../GLOSSARIO.md#ws2812) da placa |
 
 ### Pinos que exigem cuidado
 
@@ -147,7 +147,7 @@ UNO), com resolução de 12 bits (`analogRead` devolve de 0 a 4095).
   Ligar algo neles atrapalha o upload.
 
 ## Componentes principais
-- Módulo **ESP32-S3-WROOM-1-N16R8** (ou N8R2): ESP32-S3 dual-core Xtensa
+- Módulo **ESP32-S3-WROOM-1-N16R8** (ou N8R2): ESP32-S3 dual-core [Xtensa](../../GLOSSARIO.md#risc-v-e-xtensa)
   LX7 a 240 MHz, 512 KB de SRAM, Wi-Fi 802.11 b/g/n (2,4 GHz) e
   Bluetooth 5 LE, antena na placa (PCB)
 - 16 MB de flash e 8 MB de PSRAM octal (N16R8) — ou 8 MB e 2 MB (N8R2)
@@ -162,12 +162,12 @@ UNO), com resolução de 12 bits (`analogRead` devolve de 0 a 4095).
 
 ## Funcionalidades / Periféricos
 - Wi-Fi 2,4 GHz e Bluetooth 5 LE (com Bluetooth Mesh)
-- GPIOs com PWM (LEDC), ADC de 12 bits, I2C, SPI, UART, I2S, CAN (TWAI)
+- GPIOs com [PWM](../../GLOSSARIO.md#pwm) (LEDC), [ADC](../../GLOSSARIO.md#adc) de 12 bits, I2C, SPI, [UART](../../GLOSSARIO.md#uart), I2S, CAN (TWAI)
   e sensores de toque capacitivos
 - PSRAM para buffers grandes: imagem, áudio e aprendizado de máquina
   (ESP-DL, ESP-SR)
 - LED RGB endereçável na própria placa, útil como indicador de estado
-- Programável em Arduino (C/C++) e em MicroPython (ver **Como programar**);
+- Programável em Arduino (C/C++) e em [MicroPython](../../GLOSSARIO.md#micropython) (ver **Como programar**);
   também aceita ESP-IDF
 
 ## Como programar
@@ -203,7 +203,7 @@ e sem gravar nenhum programa. É o jeito mais rápido de saber qual variante
    programa por vez pode usar a porta COM.
 3. Clique em **Connect** e escolha a porta do CH340.
 4. Na aba **Device Info**, anote: família do chip (ESP32-S3), revisão,
-   endereço MAC, tamanho da flash, frequência do cristal e os recursos
+   endereço [MAC](../../GLOSSARIO.md#mac), tamanho da flash, frequência do cristal e os recursos
    (*features*) do chip, onde aparece a PSRAM embutida, quando houver.
 5. Clique em **Disconnect** para liberar a porta.
 
@@ -305,7 +305,7 @@ use no menu **Ferramentas**:
 
 ### Arduino (C/C++): arduino-cli
 
-As mesmas opções da IDE vão no **FQBN** (o nome completo da placa), depois
+As mesmas opções da IDE vão no **[FQBN](../../GLOSSARIO.md#fqbn)** (o nome completo da placa), depois
 de `esp32:esp32:esp32s3:`.
 
 ```sh
@@ -367,7 +367,7 @@ módulos com PSRAM quad (R2) ou sem PSRAM, a variante padrão é a certa.
      "Espressif • ESP32-S3", que é a padrão, e placas de outros
      fabricantes). Use o menu **≡** da janela do instalador para escolher
      o arquivo `.bin` baixado. Nesse menu também dá para subir a
-     velocidade para 460 800 baud: o padrão de 115 200 leva ~105 s.
+     velocidade para 460 800 [baud](../../GLOSSARIO.md#baud): o padrão de 115 200 leva ~105 s.
    - **Pela linha de comando (`esptool`):**
 
      ```sh

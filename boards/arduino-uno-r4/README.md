@@ -20,7 +20,7 @@ Existem duas versões:
 | Microcontrolador principal | RA4M1 | RA4M1 |
 | Wi-Fi / Bluetooth | — | Sim, via módulo ESP32-S3-MINI-1 |
 | Matriz de LEDs 12×8 | — | Sim |
-| Conector Qwiic (I2C) | — | Sim |
+| Conector Qwiic ([I2C](../../GLOSSARIO.md#i2c)) | — | Sim |
 | Conector SWD/JTAG | Sim | — |
 
 ## Tensão de operação
@@ -66,17 +66,17 @@ Pinout e esquemático oficiais (Arduino):
 - Botão RESET
 
 ## Funcionalidades / Periféricos
-- 14 pinos digitais (D0–D13), 6 com PWM (D3, D5, D6, D9, D10, D11)
-- 6 entradas analógicas (A0–A5): ADC de 10 bits por padrão, até 14 bits
+- 14 pinos digitais (D0–D13), 6 com [PWM](../../GLOSSARIO.md#pwm) (D3, D5, D6, D9, D10, D11)
+- 6 entradas analógicas (A0–A5): [ADC](../../GLOSSARIO.md#adc) de 10 bits por padrão, até 14 bits
   com `analogReadResolution(14)`
-- DAC de até 12 bits no A0 (saída analógica real, com `analogWrite(A0, …)`)
-- UART, I2C, SPI e CAN (D4/D5, requer transceptor externo)
+- [DAC](../../GLOSSARIO.md#dac) de até 12 bits no A0 (saída analógica real, com `analogWrite(A0, …)`)
+- [UART](../../GLOSSARIO.md#uart), I2C, [SPI](../../GLOSSARIO.md#spi) e CAN (D4/D5, requer transceptor externo)
 - USB nativa (HID: a placa pode agir como teclado ou mouse)
 - Relógio de tempo real (RTC)
 
 ### ADC: leitura errada de sensores que não absorvem corrente
 
-**Achado na placa real (2026-10-03), com o LM35 do Shield 9 em 1.** Vale
+**Achado na placa real (2026-10-03), com o [LM35](../../GLOSSARIO.md#lm35) do Shield 9 em 1.** Vale
 para qualquer sensor cuja saída só *fornece* corrente, como o LM35.
 
 **Sintoma.** O LM35 marcava de 31 °C a 77 °C numa sala a ~25 °C. O
@@ -86,7 +86,7 @@ multímetro no pino A2 mostrava a tensão certa (0,253 V = 25,3 °C), mas o
 | Situação (14 bits, referência AVCC = 4,92 V) | A2 lido pelo ADC | A2 no multímetro |
 |---|---|---|
 | Logo depois de ligar, só o A2 | 302–308 mV (≈31 °C) | — |
-| Depois de **uma** leitura do A1 (LDR, ~4,5 V) | **765–777 mV** (≈77 °C) | 0,253 V |
+| Depois de **uma** leitura do A1 ([LDR](../../GLOSSARIO.md#ldr), ~4,5 V) | **765–777 mV** (≈77 °C) | 0,253 V |
 | … e depois de 200 leituras do A2, 5 s parado ou outro canal | continua ~771 mV | — |
 | Com a **descarga do capacitor** ligada (abaixo), em qualquer ordem | **259 mV** (≈26 °C) | 0,253 V |
 
@@ -138,13 +138,13 @@ teste do shield tem uma versão por placa.
 
 ## Ponte USB-serial
 Diferente do UNO R3, o UNO R4 **não tem um chip dedicado de ponte
-USB-serial** (nem ATmega16U2, nem CH340). Como não há chip de ponte, não é
+USB-serial** (nem [ATmega16U2](../../GLOSSARIO.md#atmega16u2), nem [CH340](../../GLOSSARIO.md#ch340)). Como não há chip de ponte, não é
 preciso instalar driver extra no Windows.
 
 - **UNO R4 Minima:** o RA4M1 tem USB nativa. O conector USB-C vai direto ao
   microcontrolador, que grava o sketch, faz o `Serial` e pode agir como
   teclado ou mouse (HID). Se um sketch travar a USB e a placa sumir da
-  porta COM, **aperte RESET duas vezes rápido** para entrar no bootloader.
+  porta COM, **aperte RESET duas vezes rápido** para entrar no [bootloader](../../GLOSSARIO.md#bootloader).
 - **UNO R4 WiFi:** por padrão, o USB-C vai ao **ESP32-S3**, que faz a ponte
   USB-serial até o RA4M1 (é ele quem grava o RA4M1). A comunicação pode ser
   desviada direto para a USB nativa do RA4M1, por software (pino P408/D40
@@ -162,8 +162,8 @@ Há dois tipos de teste, cada um com o seu sketch:
 | **Só a placa** | [`code/teste_uno_r4_automatico`](code/teste_uno_r4_automatico/teste_uno_r4_automatico.ino) | Automático, só pela serial, **placa sozinha** (sem shield) | Triagem rápida (lote novo, placa suspeita) e registro no inventário |
 | **Placa + Shield 9 em 1** | [`teste_shield_9em1_uno_r4`](../../shields/uno-shield-9in1/code/teste_shield_9em1_uno_r4/teste_shield_9em1_uno_r4.ino) (na pasta do shield) | Menu com testes guiados (ver, ouvir, apertar) e uma opção automática | Testar o shield e a placa juntos; informa sobre os dois |
 
-Nenhum precisa de biblioteca externa. Os dois usam **115200 baud** e
-aceitam qualquer opção de final de linha do Monitor Serial.
+Nenhum precisa de biblioteca externa. Os dois usam **115200 [baud](../../GLOSSARIO.md#baud)** e
+aceitam qualquer opção de final de linha do [Monitor Serial](../../GLOSSARIO.md#monitor-serial).
 
 **Sinal de "firmware de teste gravado":** enquanto o sketch espera um
 comando, o LED **L** (D13) pisca **duas vezes rápidas a cada 2 s**, um
@@ -189,7 +189,7 @@ com o firmware de teste.
 | `eeprom` | Grava, lê e **restaura** o último byte da EEPROM (8 KB) |
 | `rtc` | O relógio de tempo real conta os segundos |
 | `avcc` | Tensão de referência do ADC, medida pela própria placa |
-| `gpio` | Pull-up interno e saída HIGH/LOW de D2–D12 e A1–A5 (D13 só saída: o LED L puxa o pino) |
+| `gpio` | [Pull-up](../../GLOSSARIO.md#pull-up-e-pull-down) interno e saída HIGH/LOW de D2–D12 e A1–A5 (D13 só saída: o LED L puxa o pino) |
 | `dac` | O DAC do A0 gera 25/50/75% e o ADC de 14 bits lê de volta |
 | `serial1` | O que sai pelo D1 (TX) volta pelo D0 (RX), com um jumper entre D0 e D1; sem jumper, fica "pulado" |
 
@@ -245,7 +245,7 @@ lote de placas e registro no inventário.
 > **Sem final de linha:** só o Enter, com a caixa vazia, não envia nada.
 > Por isso o comando para começar é a letra `c`, e não só o Enter.
 
-**Se a gravação falhar** ("No DFU capable USB device" ou "LIBUSB_ERROR"),
+**Se a gravação falhar** ("No [DFU](../../GLOSSARIO.md#dfu) capable USB device" ou "LIBUSB_ERROR"),
 aperte o **RESET duas vezes rápido**: o LED L passa a pulsar devagar (modo
 bootloader) e a gravação volta a funcionar. Se ainda falhar, desconecte e
 reconecte o cabo USB. Visto na placa real depois de várias gravações
@@ -301,7 +301,7 @@ por vez usa a porta. Se aparecer `não foi possível abrir COM8`, é isso.
 - **Teste da placa com o shield encaixado:** `ok=5`, com `gpio` e `dac`
   corretamente **pulados** ("algo ligado em D2 D3 D4 D6 A1 A4 A5") e
   `serial1` pulado (sem jumper). AVCC de 4,90 V.
-- **Teste conjunto (opção `a`, shield nº 2):** LM35 em 27,2 °C e DHT11 em
+- **Teste conjunto (opção `a`, shield nº 2):** LM35 em 27,2 °C e [DHT11](../../GLOSSARIO.md#dht11) em
   25,0 °C (diferença de 2,2 °C), botões e IR em repouso corretos. Com a
   correção do ADC (ver
   [ADC: leitura errada de sensores que não absorvem corrente](#adc-leitura-errada-de-sensores-que-não-absorvem-corrente)).

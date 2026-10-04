@@ -8,8 +8,8 @@ tags: [esp32, esp32-s3, wifi, bluetooth, devkit, usb-c, 3v3]
 # ESP32-S3 N16R8 DevKit
 
 ## Visão geral
-Placa de desenvolvimento baseada no módulo ESP32-S3 (dual-core Xtensa LX7),
-com 16MB de memória flash e 8MB de PSRAM (daí o sufixo "N16R8"). Usada em
+Placa de desenvolvimento baseada no módulo ESP32-S3 (dual-core [Xtensa](../../GLOSSARIO.md#risc-v-e-xtensa) LX7),
+com 16MB de memória flash e 8MB de [PSRAM](../../GLOSSARIO.md#psram) (daí o sufixo "[N16R8](../../GLOSSARIO.md#n16r8)"). Usada em
 aula para projetos que exigem mais memória do que o ESP32 clássico, como
 processamento de imagem, buffers de tela e projetos com Wi-Fi/Bluetooth
 simultâneos.
@@ -24,7 +24,7 @@ simultâneos.
 
 > ⚠️ **Não use shields de 5V diretamente nesta placa**, como o
 > [Shield Multifunção 9 em 1](../../shields/uno-shield-9in1/README.md).
-> Qualquer sinal de 5V em um GPIO pode queimar a porta ou o ESP32-S3. Para
+> Qualquer sinal de 5V em um [GPIO](../../GLOSSARIO.md#gpio) pode queimar a porta ou o ESP32-S3. Para
 > ligar módulos de 5V, use um conversor de nível lógico (level shifter) ou
 > um divisor resistivo nas entradas.
 
@@ -51,7 +51,7 @@ referenciar aqui com `![esquemático](imagens/nome-do-arquivo.png)`._
 
 ## Funcionalidades / Periféricos
 - Wi-Fi e Bluetooth Low Energy integrados
-- GPIOs disponíveis para I2C, SPI, UART, PWM e ADC
+- GPIOs disponíveis para [I2C](../../GLOSSARIO.md#i2c), [SPI](../../GLOSSARIO.md#spi), [UART](../../GLOSSARIO.md#uart), [PWM](../../GLOSSARIO.md#pwm) e [ADC](../../GLOSSARIO.md#adc)
 - Suporte nativo a USB (OTG) via ESP32-S3
 
 ## Código de teste e validação
