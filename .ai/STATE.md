@@ -28,7 +28,7 @@ trabalho do zero lendo só este arquivo e os links dele.
   deixar aqui só uma linha com o ponteiro.
 - **Handoff do `/remember`:** não copia o backlog; aponta para cá. Item em
   aberto que só exista no handoff entra aqui antes (regra em
-  `.claude/CLAUDE.md`).
+  `.ai/CONVENTIONS.md`, seção "Handoff do `/remember`").
 
 ## Itens documentados
 
@@ -186,13 +186,19 @@ trabalho do zero lendo só este arquivo e os links dele.
 - **Scripts documentados no próprio arquivo** (2026-09-28): Python com
   docstrings e `--help`; PowerShell com ajuda por comentários. Ver
   `.ai/CONVENTIONS.md`, seção "Scripts".
-- **`.ai/` como fonte única para agentes** (2026-07-23). Estrutura, template,
-  tags e índice: ver
-  `docs/superpowers/specs/2026-07-23-repositorio-documentacao-placas-design.md`
-  e `docs/superpowers/plans/2026-07-23-lab-dev-boards-scaffold.md`.
+- **`.ai/` como fonte única para agentes** (2026-07-23): estrutura, template,
+  tags e índice estão descritos no `.ai/CONVENTIONS.md`.
+- **Internos fora do repositório público** (2026-10-04, decisão do
+  usuário): `docs/` (histórico de design e planos, pesquisa) fica só na
+  máquina do mantenedor, no `.gitignore` (continua no histórico do git).
+  O `.claude/` fica, porque o `.claude/CLAUDE.md` importa o `AGENTS.md`
+  para quem clona; a regra do handoff do `/remember` foi para o
+  CONVENTIONS.
 
 ## Resolvido (últimos ~30 dias)
 
+- 2026-10-04: `docs/superpowers/` saiu do repositório (`git rm --cached`);
+  regra do handoff do `/remember` movida para o CONVENTIONS.
 - 2026-10-04: [`GLOSSARIO.md`](../GLOSSARIO.md) com ~50 termos, regra no
   CONVENTIONS e `scripts/test_glossario.py` (ordem, âncoras e links de
   todos os `.md`); 1ª ocorrência dos termos linkada nos 6 READMEs.

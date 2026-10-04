@@ -76,8 +76,8 @@ para agentes que **constroem** o repositório.
   tamanho do `.ai/STATE.md`.
 - `scripts/serial_placa.py` — lista as placas ligadas, roda os sketches de
   teste pela serial e registra placas em `inventario/` (`--help`).
-- `docs/superpowers/specs/` e `docs/superpowers/plans/` — histórico de
-  design e planos de implementação deste repositório.
+- `docs/` — material local do mantenedor (histórico de design, pesquisa).
+  **Não é publicado:** está no `.gitignore`.
 
 ## Slugs
 
@@ -250,3 +250,21 @@ destino, idade da seção "Resolvido", limite de linhas); o teste
 um link quebrado no STATE faz a suíte falhar. Qualquer
 mudança no script deve manter esses testes passando e seguir TDD (teste
 antes da implementação).
+
+## Handoff do `/remember`
+
+O plugin `remember` do Claude Code guarda um *handoff* em
+`.remember/remember.md` (local, fora do git), sobrescrito por inteiro a
+cada `/remember`. O backlog versionado deste repositório é o
+`.ai/STATE.md`, então a regra de "não perder item em aberto da nota
+anterior" é cumprida assim:
+
+1. Antes de escrever o handoff, leia a nota anterior inteira. Todo item em
+   aberto dela que **não** esteja no `.ai/STATE.md` entra no STATE
+   primeiro (com data), em commit próprio.
+2. O handoff guarda só o que é da sessão: onde o trabalho parou, o que
+   ficou pela metade, o commit atual e se houve push.
+3. O "Next" lista no máximo os 3 próximos passos imediatos e termina com
+   "Backlog completo: `.ai/STATE.md`". Não copie o resto do backlog.
+4. O "Context" guarda só dicas operacionais que ainda não estão nos
+   READMEs ou neste arquivo.

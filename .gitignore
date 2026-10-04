@@ -19,3 +19,7 @@ docs/*.url
 docs/*.jpg
 docs/*.jpeg
 docs/*.png
+
+# Histórico de design e planos (superpowers): fica só na máquina do
+# mantenedor. Ver .ai/STATE.md, decisão "Internos fora do repositório público".
+docs/superpowers/
