@@ -40,8 +40,31 @@ class TestExtrair(unittest.TestCase):
         self.assertIn((BASE + "pasta/p.html", "x"), links)
         self.assertEqual(len(links), 3)  # o link externo fica de fora
 
+    def test_referencia_compartilhada_entra_e_src_interno_nao(self):
+        html = ('<link rel="stylesheet" href="/assets/tokens.css">'
+                '<img src="/assets/avatar.png"> <img src="foto.jpg">'
+                '<a href="/outro-repo/x.html">outro site</a>')
+        _, links = vsite.extrair(html, BASE + "p.html", BASE)
+        self.assertEqual(sorted(links), [
+            ("https://exemplo.github.io/assets/avatar.png", ""),
+            ("https://exemplo.github.io/assets/tokens.css", ""),
+        ])
+
 
 class TestVarrer(unittest.TestCase):
+    def test_referencia_compartilhada_conferida_sem_varrer(self):
+        css = "https://exemplo.github.io/assets/tokens.css"
+        buscar = site_falso({
+            BASE: ('<link href="/assets/tokens.css"><img src="/assets/sumiu.png">',
+                   "text/html"),
+            css: ('<a href="/assets/nao-segue.html">x</a>', "text/css"),
+        })
+        resultado = vsite.varrer(BASE, [""], buscar)
+        self.assertEqual(resultado.status[css], 200)
+        self.assertEqual(resultado.paginas_visitadas, 1)
+        self.assertEqual(vsite.problemas(resultado, BASE),
+                         ["404 /assets/sumiu.png (em /)"])
+
     def test_site_sem_problemas(self):
         buscar = site_falso({
             BASE: ('<a href="a.html#s">a</a>', "text/html"),

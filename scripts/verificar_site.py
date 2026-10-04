@@ -7,7 +7,11 @@ O QUE FAZ
     links internos, e aponta:
       - página que não abre (404 ou outro erro);
       - link com #âncora para um título que não existe na página;
-      - link que leva a um arquivo .md cru (no site, o certo é a página).
+      - link que leva a um arquivo .md cru (no site, o certo é a página);
+      - arquivo da referência visual compartilhada (/assets/ do site do
+        professor: tokens.css, topbar.css, avatar.png) que não abre. Ele
+        fica fora do Lab Boards: o script só confere que dá 200, sem
+        percorrer.
 
     Os testes do repositório conferem os links como funcionam no GitHub. O
     site é gerado pelo Jekyll a cada push, e a home e o CONTRIBUTING passam
@@ -47,6 +51,12 @@ INICIO = ["", "INDEX.html", "GLOSSARIO.html", "IDENTIFICAR.html",
 
 RE_ID = re.compile(r'\bid="([^"]+)"')
 RE_HREF = re.compile(r'\bhref="([^"]+)"')
+RE_SRC = re.compile(r'\bsrc="([^"]+)"')
+
+
+def prefixo_compartilhado(base):
+    """Pasta da referência visual do site do professor (mesmo domínio)."""
+    return urllib.parse.urljoin(base, "/assets/")
 
 
 @dataclass
@@ -59,15 +69,22 @@ class Resultado:
 
 
 def extrair(texto_html, url_pagina, base):
-    """Devolve (ids, links) de uma página; só links que ficam dentro de `base`.
+    """Devolve (ids, links) de uma página.
 
-    Cada link é (url_sem_âncora, âncora), com a âncora já decodificada.
+    Entram os href que ficam dentro de `base` e os href e src da referência
+    visual compartilhada (`/assets/` do mesmo domínio, no site do
+    professor). Cada link é (url_sem_âncora, âncora), com a âncora já
+    decodificada.
     """
+    compartilhado = prefixo_compartilhado(base)
     ids = {html.unescape(i) for i in RE_ID.findall(texto_html)}
+    candidatos = [(h, True) for h in RE_HREF.findall(texto_html)]
+    candidatos += [(s, False) for s in RE_SRC.findall(texto_html)]
     links = []
-    for href in RE_HREF.findall(texto_html):
-        alvo = urllib.parse.urljoin(url_pagina, html.unescape(href))
-        if not alvo.startswith(base):
+    for bruto, eh_href in candidatos:
+        alvo = urllib.parse.urljoin(url_pagina, html.unescape(bruto))
+        interno = eh_href and alvo.startswith(base)
+        if not (interno or alvo.startswith(compartilhado)):
             continue
         pagina, _, ancora = alvo.partition("#")
         links.append((pagina, urllib.parse.unquote(ancora)))
@@ -116,6 +133,8 @@ def varrer(base, inicio, buscar=buscar_na_web):
 def problemas(r, base):
     """Lista os problemas da varredura, um texto por problema, sem repetir."""
     def curto(url):
+        if not url.startswith(base):  # referência compartilhada (/assets/)
+            return urllib.parse.urlparse(url).path
         return url[len(base):] or "/"
 
     achados = set()
