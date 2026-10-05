@@ -77,7 +77,8 @@ a barra do topo) é o
 [`DESIGN.md`](https://professorjoaomiguel.github.io/DESIGN.html) do site do
 professor (repositório `professorjoaomiguel.github.io`). **Nada disso é
 definido aqui.** O `_layouts/default.html` carrega de lá
-`/assets/tokens.css`, `/assets/topbar.css` e `/assets/avatar.png` (caminho
+`/assets/tokens.css`, `/assets/topbar.css`, `/assets/theme.js` (chave
+claro/escuro, no `<head>` sem `defer`) e `/assets/avatar.png` (caminho
 começando com `/`, sem `relative_url`: é o mesmo domínio, outro
 repositório) e usa a marcação da barra do DESIGN.md.
 
@@ -99,6 +100,11 @@ repositório) e usa a marcação da barra do DESIGN.md.
   arquivos e a mesma barra, com links absolutos, reserva em cada
   `var(--token, valor)` e um estilo mínimo da barra em `:where()`, que o
   `topbar.css` sempre sobrescreve.
+  Ele não carrega o `theme.js` (segue sempre o sistema): os selos de
+  situação têm cor própria num `@media (prefers-color-scheme)`, que não
+  enxergaria a escolha manual. Para pôr a chave nele, trocar esse `@media`
+  por `:root[data-theme="dark"]` + `:root:not([data-theme="light"])`,
+  como no `tokens.css`.
 
 ## Estrutura do repositório
 

@@ -10,12 +10,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   {%- comment -%}
-    Cores, fonte, larguras e a barra do topo vêm do site do professor
+    Cores, fonte, larguras, a barra do topo e a chave claro/escuro vêm do site do professor
     (referência única: https://professorjoaomiguel.github.io/DESIGN.html).
     Os caminhos começam com "/" de propósito: mesmo domínio, outro repo.
   {%- endcomment %}
   <link rel="stylesheet" href="/assets/tokens.css">
   <link rel="stylesheet" href="/assets/topbar.css">
+  <script src="/assets/theme.js"></script>
   <link rel="icon" type="image/png" href="/assets/avatar.png">
   <style>
     /* Só o estilo do conteúdo. As variáveis vêm de /assets/tokens.css; as
@@ -110,6 +111,7 @@
         <li><a href="{{ '/GLOSSARIO.html' | relative_url }}">Glossário</a></li>
       </ul>
       <a class="topbar-back" href="https://professorjoaomiguel.github.io/">← Site do professor</a>
+      <button class="theme-toggle" type="button" hidden></button>
     </div>
   </nav>
   <main>
