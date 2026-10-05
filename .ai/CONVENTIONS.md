@@ -88,8 +88,8 @@ repositório) e usa a marcação da barra do DESIGN.md.
 - Larguras e raios pelos tokens (`--page-max`, `--gutter`, `--radius-sm`).
   Hover sem movimento (nada de `translateY`); respeitar
   `prefers-reduced-motion`. A barra é fixa: títulos com âncora levam
-  `scroll-margin-top: 4.5rem` (5.5rem até 560px, onde a barra tem 2
-  linhas).
+  `scroll-margin-top: var(--anchor-offset, 4.5rem)` (o token já cresce
+  no celular, onde a barra tem 2 linhas).
 - **Mudança visual (cor, fonte, barra) se pede no repositório do site do
   professor**, não aqui; ela vale para todos os sites de uma vez.
 - O `scripts/verificar_site.py` confere que os arquivos de `/assets/`

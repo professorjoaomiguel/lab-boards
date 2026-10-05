@@ -43,12 +43,9 @@
     h1 { font-size: 2rem; margin-top: .4em; }
     h2 { font-size: 1.45rem; padding-bottom: .25em; border-bottom: 1px solid var(--border); }
     h3 { font-size: 1.15rem; }
-    /* A barra do topo é fixa: o título da âncora não pode ficar embaixo dela. */
-    h2[id], h3[id], h4[id] { scroll-margin-top: 4.5rem; }
-    /* No celular a barra tem 2 linhas (76px em 360px). */
-    @media (max-width: 560px) {
-      h2[id], h3[id], h4[id] { scroll-margin-top: 5.5rem; }
-    }
+    /* A barra do topo é fixa: o título da âncora não pode ficar embaixo dela.
+       O tokens.css ajusta o valor à barra (maior no celular, com 2 linhas). */
+    h2[id], h3[id], h4[id] { scroll-margin-top: var(--anchor-offset, 4.5rem); }
     code {
       font-family: var(--mono, monospace);
       font-size: .88em;
