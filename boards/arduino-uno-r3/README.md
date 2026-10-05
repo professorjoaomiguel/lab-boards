@@ -89,10 +89,21 @@ saída quase não consegue **absorver** corrente:
   int leitura = analogRead(A2);
   ```
 
-- **Depois de `analogReference(INTERNAL)`, espere ~0,5 s.** O pino [AREF](../../GLOSSARIO.md#aref)
+- **Depois de `analogReference(INTERNAL)`, faça uma leitura e só então
+  espere ~0,5 s.** O pino [AREF](../../GLOSSARIO.md#aref)
   tem um capacitor de 100 nF na placa, que leva centenas de milissegundos
   para descarregar de 5 V até 1,1 V. Medido: o LM35 (246 mV reais) leu 0 a
   22 mV nos primeiros 20 ms, 235 mV aos 100 ms e 256 mV aos 500 ms.
+  A ordem importa: `analogReference()` só guarda o modo, e a referência
+  só troca no próximo `analogRead()` (core AVR 1.8.8, `wiring_analog.c`).
+  Esperar antes dessa leitura não adianta: o capacitor ainda nem começou a
+  descarregar.
+
+  ```cpp
+  analogReference(INTERNAL);
+  analogRead(A2);   // descartada: é esta leitura que troca a referência
+  delay(500);       // espera o capacitor do AREF chegar a 1,1 V
+  ```
 - **Medir o Vcc sem multímetro:** o ADC pode ler a referência interna de
   1,1 V usando o Vcc como régua: Vcc = 1,1 V × 1023 / leitura. Na USB, a
   placa testada mediu **4,87 a 4,89 V**. O valor de 1,1 V varia de 1,0 a
