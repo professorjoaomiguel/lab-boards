@@ -48,7 +48,8 @@ cada uma ([UNO R4](../boards/arduino-uno-r4/README.md#inventário-identificar-ca
 | `etiqueta_colada` | `sim` quando a etiqueta já está colada na peça; `não` enquanto não estiver |
 | `dono` | `professor` (do Prof. Joao Miguel), `SENAI` ou `a confirmar` |
 | `variante` | UNO R3: `ATmega16U2` (original e clones de melhor qualidade) ou `CH340` (clones) |
-| `registrado_em`, `ultimo_teste` | Datas (AAAA-MM-DD) |
+| `entrou_em` | Quando a unidade chegou ao laboratório (compra, doação, empréstimo). Escrita à mão: `AAAA-MM` quando só se sabe o mês, `AAAA-MM-DD` quando se sabe o dia. Vazia = a confirmar |
+| `registrado_em`, `ultimo_teste` | Datas (AAAA-MM-DD) do primeiro e do último teste registrados pelo script |
 | `resultado` | Resumo do último teste (ex: `ok=5 falha=0 aviso=0 pulado=0`) |
 | `obs` | Defeitos, consertos e observações. Escrita à mão; o script não apaga |
 

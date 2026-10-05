@@ -126,8 +126,11 @@ PREFIXO_ETIQUETA = {"UNO R4 Minima": "R4M", "UNO R4 WiFi": "R4W", "UNO R3": "R3"
 # Colunas dos inventários de placas Arduino (pasta inventario/, separada do
 # código de teste). "dono" é preenchido à mão: professor, SENAI ou
 # "a confirmar". "etiqueta_colada" diz se a etiqueta física já está na placa.
+# "entrou_em" (AAAA-MM ou AAAA-MM-DD, à mão) é quando a placa chegou ao
+# laboratório (compra, doação, empréstimo); "registrado_em" é o 1º teste.
 COLUNAS_INVENTARIO = ["etiqueta", "etiqueta_colada", "modelo", "variante", "dono",
-                      "id_unico", "registrado_em", "ultimo_teste", "resultado", "obs"]
+                      "entrou_em", "id_unico", "registrado_em", "ultimo_teste",
+                      "resultado", "obs"]
 
 # Variante pela ponte USB-serial (VID:PID). Importa no UNO R3: o original
 # usa o ATmega16U2 (tem número de série); os clones, o CH340 (não tem).
@@ -345,7 +348,8 @@ def atualizar_inventario(caminho, id_unico, modelo, resultado, data, variante=""
         etiqueta = f"{prefixo}-{len(mesmo_modelo) + 1:02d}"
         # Placa nova: o dono e a etiqueta física são conferidos à mão depois.
         linhas.append({"etiqueta": etiqueta, "etiqueta_colada": "não", "modelo": modelo,
-                       "variante": variante, "dono": "a confirmar", "id_unico": id_unico,
+                       "variante": variante, "dono": "a confirmar", "entrou_em": "",
+                       "id_unico": id_unico,
                        "registrado_em": data, "ultimo_teste": data,
                        "resultado": resultado, "obs": ""})
         nova = True

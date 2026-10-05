@@ -57,7 +57,9 @@ novo.
 O final da saída diz uma de duas coisas:
 
 - `Placa NOVA registrada como R4M-NN`: o script criou a linha com dono
-  `a confirmar` e `etiqueta_colada` = `não`. Preencha o dono no CSV.
+  `a confirmar`, `etiqueta_colada` = `não` e `entrou_em` vazio. Pergunte
+  ao professor o dono e quando a placa chegou ao laboratório (basta o
+  mês: `AAAA-MM`) e preencha no CSV.
 - `Placa R4M-NN já registrada: último teste atualizado`: a placa já
   existia. Avise o professor, porque ele pode ter ligado a mesma placa sem
   querer.
@@ -111,7 +113,7 @@ Formato: `R4M-03 · AA2F`. Quando o professor disser que colou, mude
 
 ### Fechar a placa
 
-1. Ajuste o CSV, se precisar (dono, `obs`).
+1. Ajuste o CSV, se precisar (dono, `entrou_em`, `obs`).
 2. `python scripts/gerar_inventario.py` (o relatório vem dos CSVs; nunca
    edite o HTML à mão).
 3. Commit **local** do CSV junto com o `relatorio.html`, um por placa, ex:

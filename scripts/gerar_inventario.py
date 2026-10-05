@@ -59,7 +59,7 @@ TIPOS = {
 # Colunas que têm lugar próprio no relatório. As demais de cada arquivo
 # (ex: flash e PSRAM do ESP32-S3) aparecem em "detalhes".
 COLUNAS_COMUNS = {"etiqueta", "etiqueta_colada", "modelo", "variante", "dono",
-                  "id_unico", "mac", "registrado_em", "ultimo_teste", "testado_em",
+                  "entrou_em", "id_unico", "mac", "registrado_em", "ultimo_teste", "testado_em",
                   "resultado", "obs"}
 
 
@@ -96,7 +96,7 @@ def ler_inventarios(pasta=PASTA_PADRAO):
     Returns:
         Lista de dicts, um por unidade, com as chaves tipo, modelo,
         etiqueta, etiqueta_colada, dono, variante, identificador,
-        registrado_em, ultimo_teste, resultado, situacao, obs, arquivo e
+        entrou_em, registrado_em, ultimo_teste, resultado, situacao, obs, arquivo e
         detalhes (dict com as colunas próprias do arquivo).
 
     Raises:
@@ -116,6 +116,7 @@ def ler_inventarios(pasta=PASTA_PADRAO):
                     "dono": linha.get("dono", "") or "a confirmar",
                     "variante": linha.get("variante", ""),
                     "identificador": linha.get("id_unico") or linha.get("mac", ""),
+                    "entrou_em": linha.get("entrou_em", ""),
                     "registrado_em": linha.get("registrado_em", ""),
                     "ultimo_teste": linha.get("ultimo_teste") or linha.get("testado_em", ""),
                     "resultado": linha.get("resultado", ""),
@@ -372,7 +373,7 @@ MODELO_HTML = r"""<!doctype html>
   }
   function detalhes(i) {
     const extra = Object.assign({}, i.detalhes, {
-      "registrado em": i.registrado_em, "resultado": i.resultado, "arquivo": i.arquivo});
+      "entrou no lab em": i.entrou_em, "registrado em": i.registrado_em, "resultado": i.resultado, "arquivo": i.arquivo});
     const d = document.createElement("details");
     const s = document.createElement("summary"); s.textContent = "ver"; d.appendChild(s);
     const dl = document.createElement("dl");

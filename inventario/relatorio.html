@@ -138,6 +138,7 @@
   "dono": "SENAI",
   "variante": "ATmega16U2",
   "identificador": "754373038303511081A2",
+  "entrou_em": "",
   "registrado_em": "2026-10-03",
   "ultimo_teste": "2026-10-03",
   "resultado": "ok=4 falha=1 aviso=0 pulado=0",
@@ -154,6 +155,7 @@
   "dono": "professor",
   "variante": "ATmega16U2",
   "identificador": "5573132353635161F0B0",
+  "entrou_em": "",
   "registrado_em": "2026-10-03",
   "ultimo_teste": "2026-10-03",
   "resultado": "ok=5 falha=0 aviso=0 pulado=0",
@@ -170,6 +172,7 @@
   "dono": "professor",
   "variante": "",
   "identificador": "32151A295A323839538E33354B573459",
+  "entrou_em": "2026-09",
   "registrado_em": "2026-10-03",
   "ultimo_teste": "2026-10-04",
   "resultado": "ok=7 falha=0 aviso=0 pulado=1",
@@ -186,6 +189,7 @@
   "dono": "professor",
   "variante": "",
   "identificador": "32150D2C5A323839D01F33354B573459",
+  "entrou_em": "2026-09",
   "registrado_em": "2026-10-04",
   "ultimo_teste": "2026-10-04",
   "resultado": "ok=7 falha=0 aviso=0 pulado=1",
@@ -202,6 +206,7 @@
   "dono": "professor",
   "variante": "",
   "identificador": "321533235A323839AA2F33354B573459",
+  "entrou_em": "2026-09",
   "registrado_em": "2026-10-04",
   "ultimo_teste": "2026-10-04",
   "resultado": "ok=7 falha=0 aviso=0 pulado=1",
@@ -218,6 +223,7 @@
   "dono": "professor",
   "variante": "",
   "identificador": "321507245A3238395B1E33354B573459",
+  "entrou_em": "2026-09",
   "registrado_em": "2026-10-04",
   "ultimo_teste": "2026-10-04",
   "resultado": "ok=7 falha=0 aviso=0 pulado=1",
@@ -234,6 +240,7 @@
   "dono": "professor",
   "variante": "",
   "identificador": "e0:72:a1:d4:1e:20",
+  "entrou_em": "",
   "registrado_em": "2026-09-29",
   "ultimo_teste": "",
   "resultado": "",
@@ -257,6 +264,7 @@
   "dono": "a confirmar",
   "variante": "",
   "identificador": "",
+  "entrou_em": "",
   "registrado_em": "",
   "ultimo_teste": "2026-10-03",
   "resultado": "LM35 instável",
@@ -275,6 +283,7 @@
   "dono": "a confirmar",
   "variante": "",
   "identificador": "",
+  "entrou_em": "",
   "registrado_em": "",
   "ultimo_teste": "2026-10-03",
   "resultado": "LM35 instável",
@@ -293,6 +302,7 @@
   "dono": "a confirmar",
   "variante": "",
   "identificador": "",
+  "entrou_em": "",
   "registrado_em": "",
   "ultimo_teste": "2026-10-03",
   "resultado": "tudo OK",
@@ -309,6 +319,7 @@
   "dono": "a confirmar",
   "variante": "",
   "identificador": "",
+  "entrou_em": "",
   "registrado_em": "",
   "ultimo_teste": "2026-10-03",
   "resultado": "a confirmar",
@@ -325,6 +336,7 @@
   "dono": "a confirmar",
   "variante": "",
   "identificador": "",
+  "entrou_em": "",
   "registrado_em": "",
   "ultimo_teste": "",
   "resultado": "não testado",
@@ -397,7 +409,7 @@
   }
   function detalhes(i) {
     const extra = Object.assign({}, i.detalhes, {
-      "registrado em": i.registrado_em, "resultado": i.resultado, "arquivo": i.arquivo});
+      "entrou no lab em": i.entrou_em, "registrado em": i.registrado_em, "resultado": i.resultado, "arquivo": i.arquivo});
     const d = document.createElement("details");
     const s = document.createElement("summary"); s.textContent = "ver"; d.appendChild(s);
     const dl = document.createElement("dl");

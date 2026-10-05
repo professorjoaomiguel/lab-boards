@@ -165,6 +165,21 @@ class TestInventario(unittest.TestCase):
         self.assertEqual(self.ler()[0]["obs"], "pino D7 torto")
 
 
+    def test_placa_nova_entra_sem_data_de_entrada(self):
+        sp.atualizar_inventario(self.csv, "AAA", "UNO R4 Minima", "", "2026-10-03")
+        self.assertEqual(self.ler()[0]["entrou_em"], "")
+
+    def test_preserva_data_de_entrada_escrita_a_mao(self):
+        sp.atualizar_inventario(self.csv, "AAA", "UNO R4 Minima", "", "2026-10-03")
+        linhas = self.ler()
+        linhas[0]["entrou_em"] = "2026-09"
+        with open(self.csv, "w", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=sp.COLUNAS_INVENTARIO, lineterminator="\n")
+            w.writeheader()
+            w.writerows(linhas)
+        sp.atualizar_inventario(self.csv, "AAA", "UNO R4 Minima", "ok=3", "2026-10-04")
+        self.assertEqual(self.ler()[0]["entrou_em"], "2026-09")
+
 class TestVarianteUsb(unittest.TestCase):
     def test_r3_original_e_clone(self):
         self.assertEqual(sp.variante_usb(0x2341, 0x0043), "ATmega16U2")

@@ -40,9 +40,9 @@ class TestLerInventarios(unittest.TestCase):
     def setUp(self):
         self.pasta = tempfile.mkdtemp()
         escrever(self.pasta, "arduino-uno-r3.csv",
-                 "etiqueta,etiqueta_colada,modelo,variante,dono,id_unico,registrado_em,"
-                 "ultimo_teste,resultado,obs\n"
-                 "R3-01,não,UNO R3,ATmega16U2,SENAI,ABC,2026-10-03,2026-10-03,"
+                 "etiqueta,etiqueta_colada,modelo,variante,dono,entrou_em,id_unico,"
+                 "registrado_em,ultimo_teste,resultado,obs\n"
+                 "R3-01,não,UNO R3,ATmega16U2,SENAI,2026-09,ABC,2026-10-03,2026-10-03,"
                  "ok=4 falha=1 aviso=0 pulado=0,D3 preso\n")
         escrever(self.pasta, "esp32-s3-uno.csv",
                  "etiqueta,etiqueta_colada,dono,mac,unique_id_128,registrado_em,obs\n"
@@ -61,6 +61,8 @@ class TestLerInventarios(unittest.TestCase):
         self.assertEqual(r3["identificador"], "ABC")
         self.assertEqual(r3["situacao"], "com falha")
         self.assertEqual(r3["dono"], "SENAI")
+        self.assertEqual(r3["entrou_em"], "2026-09")
+        self.assertNotIn("entrou_em", r3["detalhes"])
 
         s3 = por_etiqueta["1e:20"]
         self.assertEqual(s3["tipo"], "ESP32-S3 UNO")
@@ -73,6 +75,8 @@ class TestLerInventarios(unittest.TestCase):
         self.assertEqual(shield["tipo"], "Shield 9 em 1")
         self.assertEqual(shield["situacao"], "ok")
         self.assertEqual(shield["ultimo_teste"], "2026-10-03")
+        # Arquivo sem a coluna: a data de entrada fica vazia.
+        self.assertEqual(shield["entrou_em"], "")
 
     def test_ignora_arquivos_que_nao_sao_csv(self):
         escrever(self.pasta, "README.md", "# nada")
