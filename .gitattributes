@@ -1,0 +1,18 @@
+# Padrão: texto detectado automaticamente, sempre LF (repo e disco)
+* text=auto eol=lf
+
+# Scripts do cmd.exe precisam de CRLF
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+
+# Scripts de shell precisam de LF
+*.sh   text eol=lf
+
+# Binários (explícito, evita detecção errada)
+*.pdf  binary
+*.png  binary
+*.jpg  binary
+*.pptx binary
+*.docx binary
+*.xlsx binary
+*.exe  binary
